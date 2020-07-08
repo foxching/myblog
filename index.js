@@ -12,7 +12,9 @@ app.use(express.urlencoded({ extended: false }));
 const Post = require('./models/post')
 
 app.get('/', (req, res) => {
-    res.send('Hello')
+    Post.find({}).sort({ "createdAt": "asc" }).exec(function (err, posts) {
+        res.render('user/home', { posts: posts })
+    })
 })
 
 app.get('/admin/dashboard', (req, res) => {
@@ -26,7 +28,7 @@ app.get('/admin/post', (req, res) => {
 app.post('/do-post', (req, res) => {
     let post = new Post({
         title: req.body.title,
-        content: req.body.content
+        content: req.body.content,
     })
     post.save(function (err) {
         if (err) {
