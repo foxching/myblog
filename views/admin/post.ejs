@@ -1,30 +1,38 @@
 <%- include('header') %>
-<div class="container-fluid mt-5">
-    <form method="POST" onsubmit="return doPost(this)">
-        <div class="form-group">
-            <label for="title">Title</label>
-            <input name="title" class="form-control" placeholder="Title">
-        </div>
-        <div class="form-group">
-            <label for="content">Content</label>
-            <textarea name="content" class="form-control" placeholder="Title"></textarea>
-        </div>
-        <input type="submit" class="btn btn-info" value=Post>
-    </form>
-</div>
 
-<script>
-    function doPost(form) {
-        $.ajax({
-            url: '/do-post',
-            method: "POST",
-            data: { title: form.title.value, content: form.content.value },
-            success: function (response) {
-                alert(response)
-            }
-        })
-        return false
-    }
-</script>
+<div id="layoutSidenav_content">
+    <main>
+        <div class="container-fluid">
+            <h1 class="mt-4">New Post</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                <li class="breadcrumb-item active">New Post</li>
+            </ol>
+            <form method="POST" onsubmit="return doPost(this)">
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input name="title" class="form-control" placeholder="Blog Title..">
+                </div>
+                <div class="form-group">
+                    <label for="content">Content</label>
+                    <textarea name="content" class="form-control" placeholder="Enter Text here......" rows="5"
+                        cols="20"></textarea>
+                </div>
+                <input type="submit" class="btn btn-info" value="Submit">
+            </form>
 
-<%- include('footer') %>
+
+            <script>
+                function doPost(form) {
+                    $.ajax({
+                        url: '/do-post',
+                        method: "POST",
+                        data: { title: form.title.value, content: form.content.value },
+                        success: function (response) {
+                            alert(response)
+                        }
+                    })
+                    return false
+                }
+            </script>
+            <%- include('footer') %>
