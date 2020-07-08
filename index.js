@@ -1,5 +1,6 @@
 const express = require('express')
 const mongoose = require('mongoose');
+const { format } = require('date-fns');
 const app = express()
 
 app.use('/static', express.static(__dirname + '/static'))
@@ -9,11 +10,23 @@ app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+app.use((req, res, next) => {
+    res.locals.format = format;
+    next();
+});
+
 const Post = require('./models/post')
 
 app.get('/', (req, res) => {
-    Post.find({}).sort({ "createdAt": "asc" }).exec(function (err, posts) {
+    Post.find({}).sort({ "createdAt": "desc" }).exec(function (err, posts) {
         res.render('user/home', { posts: posts })
+    })
+})
+
+app.get('/posts/:id', (req, res) => {
+    Post.findById(req.params.id, function (err, post) {
+        if (err) return console.log(err)
+        res.render('user/post', { post: post })
     })
 })
 

@@ -20,8 +20,8 @@
                     <a href="posts/<%= post.id %>" class="btn btn-primary">Read More &rarr;</a>
                 </div>
                 <div class="card-footer text-muted">
-                    Posted on January 1, 2020 by
-                    <a href="#">Start Bootstrap</a>
+                    Posted on <%- format(post.createdAt, 'MMMM d yyyy') %> by
+                    <a href="#">Admin</a>
                 </div>
             </div>
             <% }) %>
