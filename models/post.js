@@ -14,7 +14,8 @@ const postSchema = mongoose.Schema({
         type: Date,
         default: Date.now
 
-    }
+    },
+    comments: []
 });
 
 module.exports = mongoose.model('Post', postSchema);

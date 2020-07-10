@@ -1,6 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose');
 const { format } = require('date-fns');
+var ObjectId = require('mongodb').ObjectID;
 const app = express()
 
 app.use('/static', express.static(__dirname + '/static'))
@@ -24,10 +25,12 @@ app.get('/', (req, res) => {
 })
 
 app.get('/posts/:id', (req, res) => {
-    Post.findById(req.params.id, function (err, post) {
+    console.log(req.params.id)
+    Post.findOne({ "_id": ObjectId(req.params.id) }, function (err, post) {
         if (err) return console.log(err)
         res.render('user/post', { post: post })
     })
+    console.log(ObjectId(req.params.id))
 })
 
 app.get('/admin/dashboard', (req, res) => {
@@ -50,11 +53,23 @@ app.post('/do-post', (req, res) => {
             res.send('Posted')
         }
     })
-
-    // Post.save(req.body, function (err, data) {
-    //     res.send('Posted Successfully')
-    // })
 })
+
+app.post('/do-comment', function (req, res) {
+    Post.updateOne(
+        { "_id": new ObjectId(req.body.post_id) },
+        { $push: { comments: { username: req.body.username, comment: req.body.comment } } },
+        function (err, result) {
+            if (err) {
+                res.send(err);
+            } else {
+                res.send(result);
+            }
+        }
+    );
+})
+
+
 
 //mongodb connection
 mongoose.connect('mongodb://localhost/myblog', { useNewUrlParser: true, useUnifiedTopology: true });
