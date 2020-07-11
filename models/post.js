@@ -15,6 +15,9 @@ const postSchema = mongoose.Schema({
         default: Date.now
 
     },
+    image: {
+        type: String,
+    },
     comments: []
 });
 

@@ -1,7 +1,9 @@
 const express = require('express')
 const mongoose = require('mongoose');
 const { format } = require('date-fns');
-var ObjectId = require('mongodb').ObjectID;
+var ObjectId = require('mongodb').ObjectID
+const formidable = require('formidable')
+const fs = require('fs')
 const app = express()
 
 app.use('/static', express.static(__dirname + '/static'))
@@ -42,10 +44,7 @@ app.get('/admin/post', (req, res) => {
 })
 
 app.post('/do-post', (req, res) => {
-    let post = new Post({
-        title: req.body.title,
-        content: req.body.content,
-    })
+    let post = new Post(req.body)
     post.save(function (err) {
         if (err) {
             console.log(err)
@@ -69,6 +68,17 @@ app.post('/do-comment', function (req, res) {
     );
 })
 
+app.post('/do-upload-image', function (req, res) {
+    const formData = new formidable.IncomingForm()
+    formData.uploadDir = 'static/images/';
+    formData.parse(req, (err, fields, files) => {
+        let oldPath = files.file.path
+        let newPath = "static/images/" + files.file.name
+        fs.rename(oldPath, newPath, function (err) {
+            res.send("/" + newPath)
+        })
+    });
+})
 
 
 //mongodb connection

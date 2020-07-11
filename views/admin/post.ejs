@@ -13,6 +13,11 @@
                     <label for="title">Title</label>
                     <input name="title" class="form-control" placeholder="Blog Title..">
                 </div>
+                <!-- Button to Open the Modal -->
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+                    Upload Image
+                </button>
+
                 <div class="form-group">
                     <label for="content">Content</label>
                     <textarea name="content" class="form-control" placeholder="Enter Text here......" rows="5"
@@ -27,12 +32,61 @@
                     $.ajax({
                         url: '/do-post',
                         method: "POST",
-                        data: { title: form.title.value, content: form.content.value },
+                        data: { title: form.title.value, content: form.content.value, image: imagePath },
                         success: function (response) {
+                            console.log(response)
                             alert(response)
                         }
                     })
                     return false
                 }
+            </script>
+            <!-- The Modal -->
+            <div class="modal" id="myModal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <h4 class="modal-title">Modal Heading</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+
+                        <!-- Modal body -->
+                        <div class="modal-body">
+                            <form method="POST" enctype="multipart/form-data" id="form-upload">
+                                <div class="form-group">
+                                    <input type="file" name="file" class="form-control">
+                                </div>
+                                <input type="submit" class="btn btn-success" value="Upload">
+                            </form>
+                        </div>
+
+                        <!-- Modal footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <script>
+                var imagePath = "";
+                $("#form-upload").on("submit", function (e) {
+                    e.preventDefault()
+                    $.ajax({
+                        url: '/do-upload-image',
+                        method: "POST",
+                        data: new FormData(this),
+                        contentType: false,
+                        cache: false,
+                        processData: false,
+                        success: function (response) {
+                            imagePath = response;
+                            $("#myModal").modal("hide");
+                            $('.modal-backdrop').remove();
+                        }
+                    })
+                })
             </script>
             <%- include('footer') %>
