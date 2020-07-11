@@ -22,9 +22,12 @@
             <p>Posted on <%- format(post.createdAt, "MMMM d yyyy 'at' p") %></p>
 
             <hr>
-
-            <!-- Preview Image -->
+            <% if(post.image) { %>
+            <img class="img-fluid rounded" src="<%= post.image %> " alt="">
+            <% } else { %>
             <img class="img-fluid rounded" src="http://placehold.it/900x300" alt="">
+            <% } %>
+            <!-- Preview Image -->
 
             <hr>
 
