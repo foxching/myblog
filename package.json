@@ -16,6 +16,7 @@
     "express-session": "^1.17.1",
     "formidable": "^1.2.2",
     "mongoose": "^5.9.22",
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.4",
+    "socket.io": "^2.3.0"
   }
 }

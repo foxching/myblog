@@ -71,13 +71,17 @@
             </div>
             <script>
                 function doPost(form) {
+                    const formData = { title: form.title.value, content: form.content.value, image: imagePath }
                     $.ajax({
                         url: '/do-post',
                         method: "POST",
-                        data: { title: form.title.value, content: form.content.value, image: imagePath },
+                        data: formData,
                         success: function (response) {
-                            console.log(response)
-                            alert(response)
+                            alert(response.text)
+                            formData._id = response._id
+                            formData.createdAt = response.createdAt
+                            let socket = io()
+                            socket.emit("new_post", formData)
                         }
                     })
                     return false

@@ -1,11 +1,13 @@
 const express = require('express')
 const mongoose = require('mongoose');
 const { format } = require('date-fns');
-var ObjectId = require('mongodb').ObjectID
+const ObjectId = require('mongodb').ObjectID
 const formidable = require('formidable')
 const fs = require('fs')
 const session = require('express-session')
 const app = express()
+const http = require('http').createServer(app)
+const io = require('socket.io')(http)
 
 app.use('/static', express.static(__dirname + '/static'))
 app.set('view engine', 'ejs');
@@ -30,20 +32,7 @@ app.use((req, res, next) => {
 const Post = require('./models/post')
 const Admin = require('./models/user')
 
-app.get('/', (req, res) => {
-    Post.find({}).sort({ "createdAt": "desc" }).exec(function (err, posts) {
-        res.render('user/home', { posts: posts })
-    })
-})
 
-app.get('/posts/:id', (req, res) => {
-    console.log(req.params.id)
-    Post.findOne({ "_id": ObjectId(req.params.id) }, function (err, post) {
-        if (err) return console.log(err)
-        res.render('user/post', { post: post })
-    })
-    console.log(ObjectId(req.params.id))
-})
 
 app.get('/admin/dashboard', (req, res) => {
     if (req.session.admin) {
@@ -78,13 +67,32 @@ app.get('/do-logout', (req, res) => {
     res.redirect('/admin')
 })
 
+app.get('/', (req, res) => {
+    Post.find({}).sort({ "createdAt": "desc" }).exec(function (err, posts) {
+        res.render('user/home', { posts: posts })
+    })
+})
+
+app.get('/posts/:id', (req, res) => {
+    console.log(req.params.id)
+    Post.findOne({ "_id": ObjectId(req.params.id) }, function (err, post) {
+        if (err) return console.log(err)
+        res.render('user/post', { post: post })
+    })
+    console.log(ObjectId(req.params.id))
+})
+
 app.post('/do-post', (req, res) => {
     let post = new Post(req.body)
-    post.save(function (err) {
+    post.save(function (err, post) {
         if (err) {
             console.log(err)
         } else {
-            res.send('Posted')
+            res.send({
+                text: "Posted Successfully",
+                _id: post._id,
+                createdAt: post.createdAt
+            })
         }
     })
 })
@@ -128,6 +136,15 @@ db.on('error', function (err) {
     console.log(err);
 });
 
-app.listen(3000, () => {
+io.on("connection", (socket) => {
+    console.log("User Connected")
+
+    socket.on("new_post", (formData) => {
+        console.log(formData)
+        socket.broadcast.emit("new_post", formData)
+    })
+})
+
+http.listen(3000, () => {
     console.log('Server is running at port')
 })

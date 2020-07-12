@@ -11,28 +11,27 @@
                 <small></small>
             </h1>
 
-            <% posts.forEach((post) => { %>
-            <div class="card mb-4">
-                <% if(post.image) { %>
-                <img class="card-img-top" src="<%= post.image %> " alt="Card image cap">
-                <% } else { %>
-                <img class="card-img-top" src="http://placehold.it/750x300" alt="Card image cap">
-                <% } %>
-                <div class="card-body">
-                    <h2 class="card-title"><%= post.title %> </h2>
-                    <p class="card-text"><%= post.content %> </p>
-                    <a href="posts/<%= post.id %>" class="btn btn-primary">Read More &rarr;</a>
-                </div>
-                <div class="card-footer text-muted">
-                    Posted on <%- format(post.createdAt, 'MMMM d yyyy') %> by
-                    <a href="#">Admin</a>
-                </div>
-            </div>
-            <% }) %>
             <!-- Blog Post -->
-
-
-
+            <div id="posts">
+                <% posts.forEach((post) => { %>
+                <div class="card mb-4">
+                    <% if(post.image) { %>
+                    <img class="card-img-top" src="<%= post.image %> " alt="Card image cap">
+                    <% } else { %>
+                    <img class="card-img-top" src="http://placehold.it/750x300" alt="Card image cap">
+                    <% } %>
+                    <div class="card-body">
+                        <h2 class="card-title"><%= post.title %> </h2>
+                        <p class="card-text"><%= post.content %> </p>
+                        <a href="posts/<%= post.id %>" class="btn btn-primary">Read More &rarr;</a>
+                    </div>
+                    <div class="card-footer text-muted">
+                        Posted on <%- format(post.createdAt, 'MMMM d yyyy') %> by
+                        <a href="#">Admin</a>
+                    </div>
+                </div>
+                <% }) %>
+            </div>
 
             <!-- Pagination -->
             <ul class="pagination justify-content-center mb-4">
@@ -113,5 +112,29 @@
 
 </div>
 <!-- /.container -->
+<script>
+    let socket = io();
+    socket.on("new_post", (formData) => {
+        console.log(formData)
+        let html = "";
+        let image = formData.image ? formData.image : "http://placehold.it/750x300"
+        let createdAt = dateFns.format(formData.createdAt, 'MMMM D YYYY')
+
+        html += '<div class="card mb-4">';
+        html += '<img class="card-img-top" src="' + image + '" alt="Card image cap">';
+        html += '<div class="card-body">';
+        html += '<h2 class="card-title">' + formData.title + '</h2>';
+        html += '<p class="card-text">' + formData.title + '</p>';
+        html += '<a href="posts/' + formData._id + '" class="btn btn-primary">Read More &rarr;</a>';
+        html += '</div>';
+        html += '<div class="card-footer text-muted">';
+        html += 'Posted on ' + createdAt + ' by';
+        html += '<a href="#"> Admin </a>';
+        html += '</div>';
+        html += '</div>';
+        $("#posts").prepend(html)
+
+    })
+</script>
 
 <%- include('footer') %>
