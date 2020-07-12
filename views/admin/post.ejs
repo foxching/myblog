@@ -26,8 +26,7 @@
                 <input type="submit" class="btn btn-info" value="Submit">
             </form>
 
-
-            <script>
+            <!-- <script>
                 function doPost(form) {
                     $.ajax({
                         url: '/do-post',
@@ -40,7 +39,7 @@
                     })
                     return false
                 }
-            </script>
+            </script> -->
             <!-- The Modal -->
             <div class="modal" id="myModal">
                 <div class="modal-dialog">
@@ -71,6 +70,19 @@
                 </div>
             </div>
             <script>
+                function doPost(form) {
+                    $.ajax({
+                        url: '/do-post',
+                        method: "POST",
+                        data: { title: form.title.value, content: form.content.value, image: imagePath },
+                        success: function (response) {
+                            console.log(response)
+                            alert(response)
+                        }
+                    })
+                    return false
+                }
+
                 var imagePath = "";
                 $("#form-upload").on("submit", function (e) {
                     e.preventDefault()

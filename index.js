@@ -4,6 +4,7 @@ const { format } = require('date-fns');
 var ObjectId = require('mongodb').ObjectID
 const formidable = require('formidable')
 const fs = require('fs')
+const session = require('express-session')
 const app = express()
 
 app.use('/static', express.static(__dirname + '/static'))
@@ -13,12 +14,21 @@ app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+//express session
+app.use(
+    session({
+        key: "admin",
+        secret: "any string",
+    })
+);
+
 app.use((req, res, next) => {
     res.locals.format = format;
     next();
 });
 
 const Post = require('./models/post')
+const Admin = require('./models/user')
 
 app.get('/', (req, res) => {
     Post.find({}).sort({ "createdAt": "desc" }).exec(function (err, posts) {
@@ -36,11 +46,36 @@ app.get('/posts/:id', (req, res) => {
 })
 
 app.get('/admin/dashboard', (req, res) => {
-    res.render('admin/dashboard')
+    if (req.session.admin) {
+        res.render('admin/dashboard')
+    } else {
+        res.redirect('/admin')
+    }
 })
 
 app.get('/admin/post', (req, res) => {
-    res.render('admin/post')
+    if (req.session.admin) {
+        res.render('admin/post')
+    } else {
+        res.redirect('/admin')
+    }
+})
+
+app.post('/do-admin-login', (req, res) => {
+    Admin.findOne({ "email": req.body.email, "password": req.body.password }, function (err, admin) {
+        if (admin !== "") {
+            req.session.admin = admin
+        }
+        res.send(admin)
+    })
+})
+app.get('/admin', (req, res) => {
+    res.render('admin/login')
+})
+
+app.get('/do-logout', (req, res) => {
+    req.session.destroy()
+    res.redirect('/admin')
 })
 
 app.post('/do-post', (req, res) => {
