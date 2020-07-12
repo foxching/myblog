@@ -115,7 +115,7 @@
 <script>
     let socket = io();
     socket.on("new_post", (formData) => {
-        console.log(formData)
+        //console.log(formData)
         let html = "";
         let image = formData.image ? formData.image : "http://placehold.it/750x300"
         let createdAt = dateFns.format(formData.createdAt, 'MMMM D YYYY')

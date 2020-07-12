@@ -41,7 +41,7 @@
                 <h5 class="card-header">Leave a Comment:</h5>
                 <div class="card-body">
                     <form method="POST" onsubmit="return doComment(this)">
-                        <input type="hidden" name="post_id" value="<%= post._id %>">
+                        <input type="hidden" id="post_id" name="post_id" value="<%= post._id %>">
                         <div class="form-group">
                             <input type="text" name="username" class="form-control">
                         </div>
@@ -52,34 +52,24 @@
                     </form>
                 </div>
             </div>
-            <script>
-                function doComment(form) {
-                    $.ajax({
-                        url: '/do-comment',
-                        method: "POST",
-                        data: { username: form.username.value, comment: form.comment.value, post_id: form.post_id.value },
-                        success: function (response) {
-                            alert(response)
-                        }
-                    })
-                    return false
-                }
-            </script>
 
             <!-- Single Comment -->
-            <% if(post.comments) { %>
-            <% post.comments = post.comments.reverse() %>
-            <% post.comments.forEach((comment) => { %>
-            <div class="media mb-4">
-                <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
-                <div class="media-body">
-                    <h5 class="mt-0"><%= comment.username %> </h5>
-                    <%= comment.comment %>
+            <div id="comments">
+                <% if(post.comments) { %>
+                <% post.comments = post.comments.reverse() %>
+                <% post.comments.forEach((comment) => { %>
+                <div class="media mb-4">
+                    <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
+                    <div class="media-body">
+                        <h5 class="mt-0"><%= comment.username %> </h5>
+                        <%= comment.comment %>
+                    </div>
                 </div>
-            </div>
-            <% }) %>
+                <% }) %>
+                <% } %>
 
-            <% } %>
+
+            </div>
 
         </div>
 
@@ -150,7 +140,37 @@
 
 </div>
 <!-- /.container -->
+<script>
+    let socket = io();
+    function doComment(form) {
+        let commentData = { username: form.username.value, comment: form.comment.value, post_id: form.post_id.value }
+        $.ajax({
+            url: '/do-comment',
+            method: "POST",
+            data: commentData,
+            success: function (response) {
+                commentData._id = response._id
+                socket.emit("new_comment", commentData)
+            }
+        })
+        return false
+    }
+    socket.on('new_comment', (commentData) => {
+        if (commentData.id != $("#post_id").value) {
+            return
+        }
+        let html = "";
+        html += '<div class="media mb-4" >';
+        html += '<img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">';
+        html += '<div class="media-body">';
+        html += '<h5 class="mt-0"> ' + commentData.username + ' </h5>';
+        html += ' ' + commentData.comment + '';
+        html += '</div>';
+        html += '</div>';
+        $("#comments").prepend(html)
 
+    })
+</script>
 
 
 

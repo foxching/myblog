@@ -79,7 +79,7 @@ app.get('/posts/:id', (req, res) => {
         if (err) return console.log(err)
         res.render('user/post', { post: post })
     })
-    console.log(ObjectId(req.params.id))
+
 })
 
 app.post('/do-post', (req, res) => {
@@ -105,7 +105,10 @@ app.post('/do-comment', function (req, res) {
             if (err) {
                 res.send(err);
             } else {
-                res.send(result);
+                res.send({
+                    text: "Comment Successfully",
+                    _id: result.id
+                });
             }
         }
     );
@@ -140,8 +143,12 @@ io.on("connection", (socket) => {
     console.log("User Connected")
 
     socket.on("new_post", (formData) => {
-        console.log(formData)
+        //console.log(formData)
         socket.broadcast.emit("new_post", formData)
+    })
+
+    socket.on("new_comment", (commentData) => {
+        io.emit("new_comment", commentData)
     })
 })
 
