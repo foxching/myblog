@@ -57,7 +57,7 @@
                 </div>
             </div>
 
-            <!-- Single Comment -->
+            <!-- Comments -->
             <div id="comments">
                 <% if(post.comments) { %>
                 <% post.comments = post.comments.reverse() %>
@@ -68,19 +68,22 @@
                         <h5 class="mt-0"><%= comment.username %> </h5>
                         <%= comment.comment %>
 
-                        <% if(comment.replies) { %>
-                        <% comment.replies.forEach(function(reply) { %>
-                        <div class="media mb-4">
-                            <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
-                            <div class="media-body">
-                                <h5 class="mt-0"><%= reply.username %></h5>
-                                <%= reply.reply %>
+                        <!-- Replies -->
+                        <div id="comments-<%= comment._id %>">
+                            <% if(comment.replies) { %>
+                            <% comment.replies.forEach(function(reply) { %>
+                            <div class="media mb-4">
+                                <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
+                                <div class="media-body">
+                                    <h5 class="mt-0"><%= reply.username %></h5>
+                                    <%= reply.reply %>
+                                </div>
                             </div>
+                            <% }) %>
+                            <% } %>
                         </div>
 
-                        <% }) %>
-                        <% } %>
-
+                        <!-- Reply form-->
                         <div class="col-md-8 mt-2">
                             <form method="POST" onsubmit="return doReply(this)">
                                 <input type="hidden" name="post_id" value="<%= post._id %>">
@@ -175,7 +178,12 @@
 <script>
     let socket = io();
     function doComment(form) {
-        let formData = { post_id: form.post_id.value, username: form.username.value, email: form.email.value, comment: form.comment.value }
+        let formData = {
+            post_id: form.post_id.value,
+            username: form.username.value,
+            email: form.email.value,
+            comment: form.comment.value
+        }
         $.ajax({
             url: '/do-comment',
             method: "POST",
@@ -183,6 +191,9 @@
             success: function (response) {
                 formData._id = response._id
                 socket.emit("new_comment", formData)
+                form.username.value = ""
+                form.email.value = ""
+                form.comment.value = ""
             }
         })
         return false
@@ -217,15 +228,31 @@
             method: "POST",
             data: formData,
             success: function (response) {
-                alert(response.text)
+                //alert(response.text)
+                formData._id = response._id
+                socket.emit("new_reply", formData)
+
+                form.username.value = ""
+                form.reply.value = ""
             }
         })
         return false
     }
 
+    socket.on('new_reply', (replyData) => {
+        //console.log(replyData)
+        let html = ""
+        html += '<div class="media mb-4">';
+        html += '<img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">';
+        html += '<div class="media-body">';
+        html += '<h5 class="mt-0">' + replyData.username + ' </h5>';
+        html += ' ' + replyData.reply + ' ';
+        html += '</div>';
+        html += ' </div>';
+        $("#comments-" + replyData.comment_id).append(html)
+    })
+
 </script>
-
-
 
 
 <%- include('footer') %>

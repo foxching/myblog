@@ -188,6 +188,10 @@ io.on("connection", (socket) => {
     socket.on("new_comment", (commentData) => {
         io.emit("new_comment", commentData)
     })
+
+    socket.on("new_reply", (replyData) => {
+        io.emit("new_reply", replyData)
+    })
 })
 
 http.listen(3000, () => {
