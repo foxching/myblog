@@ -97,10 +97,23 @@ app.post('/do-post', (req, res) => {
     })
 })
 
+app.post('/do-upload-image', function (req, res) {
+    const formData = new formidable.IncomingForm()
+    formData.uploadDir = 'static/images/';
+    formData.parse(req, (err, fields, files) => {
+        let oldPath = files.file.path
+        let newPath = "static/images/" + files.file.name
+        fs.rename(oldPath, newPath, function (err) {
+            res.send("/" + newPath)
+        })
+    });
+})
+
 app.post('/do-comment', function (req, res) {
+    let comment_id = ObjectId()
     Post.updateOne(
         { "_id": new ObjectId(req.body.post_id) },
-        { $push: { comments: { username: req.body.username, comment: req.body.comment } } },
+        { $push: { comments: { _id: comment_id, username: req.body.username, email: req.body.email, comment: req.body.comment } } },
         function (err, result) {
             if (err) {
                 res.send(err);
@@ -114,17 +127,23 @@ app.post('/do-comment', function (req, res) {
     );
 })
 
-app.post('/do-upload-image', function (req, res) {
-    const formData = new formidable.IncomingForm()
-    formData.uploadDir = 'static/images/';
-    formData.parse(req, (err, fields, files) => {
-        let oldPath = files.file.path
-        let newPath = "static/images/" + files.file.name
-        fs.rename(oldPath, newPath, function (err) {
-            res.send("/" + newPath)
+app.post('/do-reply', (req, res) => {
+    let reply_id = ObjectId()
+    Post.updateOne(
+        { "_id": new ObjectId(req.body.post_id), "comments._id": new ObjectId(req.body.comment_id) },
+        { $push: { "comments.$.replies": { _id: reply_id, username: req.body.username, reply: req.body.reply } } },
+        function (err, result) {
+            if (err) {
+                console.log(err)
+            } else {
+                res.send({
+                    text: "Replied Successfully",
+                    _id: reply_id
+                })
+            }
         })
-    });
 })
+
 
 
 //mongodb connection
@@ -139,6 +158,7 @@ db.on('error', function (err) {
     console.log(err);
 });
 
+//socket connection
 io.on("connection", (socket) => {
     console.log("User Connected")
 

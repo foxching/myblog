@@ -43,10 +43,14 @@
                     <form method="POST" onsubmit="return doComment(this)">
                         <input type="hidden" id="post_id" name="post_id" value="<%= post._id %>">
                         <div class="form-group">
-                            <input type="text" name="username" class="form-control">
+                            <input type="text" name="username" class="form-control" placeholder="Username">
                         </div>
                         <div class="form-group">
-                            <textarea name="comment" class="form-control" rows="3"></textarea>
+                            <input type="text" name="email" class="form-control" placeholder="Email">
+                        </div>
+                        <div class="form-group">
+                            <textarea name="comment" class="form-control" rows="3"
+                                placeholder="Comment here.."></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
@@ -63,12 +67,38 @@
                     <div class="media-body">
                         <h5 class="mt-0"><%= comment.username %> </h5>
                         <%= comment.comment %>
+
+                        <% if(comment.replies) { %>
+                        <% comment.replies.forEach(function(reply) { %>
+                        <div class="media mb-4">
+                            <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
+                            <div class="media-body">
+                                <h5 class="mt-0"><%= reply.username %></h5>
+                                <%= reply.reply %>
+                            </div>
+                        </div>
+
+                        <% }) %>
+                        <% } %>
+
+                        <div class="col-md-8 mt-2">
+                            <form method="POST" onsubmit="return doReply(this)">
+                                <input type="hidden" name="post_id" value="<%= post._id %>">
+                                <input type="hidden" name="comment_id" value="<%= comment._id %>">
+
+                                <div class="form-group">
+                                    <input type="text" name="username" class="form-control" placeholder="Your Name">
+                                </div>
+                                <div class="form-group">
+                                    <textarea name="reply" class="form-control" placeholder="Enter Reply"></textarea>
+                                </div>
+                                <input type="submit" class="btn btn-info btn-sm" value="Reply">
+                            </form>
+                        </div>
                     </div>
                 </div>
                 <% }) %>
                 <% } %>
-
-
             </div>
 
         </div>
@@ -140,23 +170,25 @@
 
 </div>
 <!-- /.container -->
+
 <script>
     let socket = io();
     function doComment(form) {
-        let commentData = { username: form.username.value, comment: form.comment.value, post_id: form.post_id.value }
+        let formData = { post_id: form.post_id.value, username: form.username.value, email: form.email.value, comment: form.comment.value }
         $.ajax({
             url: '/do-comment',
             method: "POST",
-            data: commentData,
+            data: formData,
             success: function (response) {
-                commentData._id = response._id
-                socket.emit("new_comment", commentData)
+                formData._id = response._id
+                socket.emit("new_comment", formData)
             }
         })
         return false
     }
     socket.on('new_comment', (commentData) => {
-        if (commentData.id != $("#post_id").value) {
+        //console.log(commentData)
+        if (commentData.post_id != $("#post_id").val()) {
             return
         }
         let html = "";
@@ -170,6 +202,25 @@
         $("#comments").prepend(html)
 
     })
+
+    function doReply(form) {
+        let formData = {
+            post_id: form.post_id.value,
+            comment_id: form.comment_id.value,
+            username: form.username.value,
+            reply: form.reply.value
+        }
+        $.ajax({
+            url: '/do-reply',
+            method: "POST",
+            data: formData,
+            success: function (response) {
+                alert(response.text)
+            }
+        })
+        return false
+    }
+
 </script>
 
 
