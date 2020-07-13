@@ -8,6 +8,7 @@ const session = require('express-session')
 const app = express()
 const http = require('http').createServer(app)
 const io = require('socket.io')(http)
+const nodemailer = require('nodemailer')
 
 app.use('/static', express.static(__dirname + '/static'))
 app.set('view engine', 'ejs');
@@ -136,9 +137,26 @@ app.post('/do-reply', (req, res) => {
             if (err) {
                 console.log(err)
             } else {
-                res.send({
-                    text: "Replied Successfully",
-                    _id: reply_id
+                let transporter = nodemailer.createTransport({
+                    "service": "gmail",
+                    "auth": {
+                        "user": "rechielagria@gmail.com",
+                        "pass": "Ruth@Ching_123"
+                    }
+                })
+
+                let mailOptions = {
+                    "from": "My Blog",
+                    "to": req.body.comment_email,
+                    "subject": "New Reply",
+                    "text": req.body.username + ' has replied on your comment.  http://localhost:3000/posts/' + req.body.post_id
+                }
+
+                transporter.sendMail(mailOptions, function (err, info) {
+                    res.send({
+                        text: "Replied Successfully",
+                        _id: reply_id
+                    })
                 })
             }
         })
