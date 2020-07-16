@@ -109,7 +109,7 @@ app.get('/admin/posts/edit/:id', (req, res) => {
 })
 
 app.post('/do-edit-post', (req, res) => {
-    Post.updateOne({ "_id": ObjectId(req.body._id) }, { $set: { "title": req.body.title, "content": req.body.content } }, function (err, post) {
+    Post.updateOne({ "_id": ObjectId(req.body._id) }, { $set: { "title": req.body.title, "content": req.body.content, "image": req.body.image } }, function (err, post) {
         res.send('Post Updated Successfully')
     })
 })
@@ -123,6 +123,21 @@ app.post('/do-upload-image', function (req, res) {
         fs.rename(oldPath, newPath, function (err) {
             res.send("/" + newPath)
         })
+    });
+})
+
+app.post('/do-update-image', function (req, res) {
+    const formData = new formidable.IncomingForm()
+    formData.uploadDir = 'static/images/';
+    formData.parse(req, (err, fields, files) => {
+        fs.unlink(fields.image.replace("/", ""), function (err) {
+            let oldPath = files.file.path
+            let newPath = "static/images/" + files.file.name
+            fs.rename(oldPath, newPath, function (err) {
+                res.send("/" + newPath)
+            })
+        })
+
     });
 })
 

@@ -14,19 +14,53 @@
                     <input name="title" class="form-control" placeholder="Blog Title.." value="<%= post.title %>"
                         required>
                 </div>
+                <!-- Button to Open the Modal -->
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+                    Update Image
+                </button>
 
                 <div class="form-group">
                     <label for="content">Content</label>
                     <textarea name="content" class="form-control" placeholder="Enter Text here......" rows="5" cols="20"
-                        required><%= post.content %> </textarea>
+                        required><%= post.content.substring(0, 10) %> </textarea>
                 </div>
                 <input type="submit" class="btn btn-info" value="Submit">
             </form>
-            <script>
+            <!-- The Modal -->
+            <div class="modal" id="myModal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
 
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <h4 class="modal-title">Modal Heading</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+
+                        <!-- Modal body -->
+                        <div class="modal-body">
+                            <form method="POST" enctype="multipart/form-data" id="form-upload">
+                                <input type="hidden" name="image" value="<%= post.image %>">
+                                <div class="form-group">
+                                    <input type="file" name="file" class="form-control">
+                                </div>
+                                <input type="submit" class="btn btn-success" value="Upload">
+                            </form>
+                        </div>
+
+                        <!-- Modal footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <script>
                 let postId = '<%= post.id %>'
+                let image = '<%= post.image %>'
                 function doEdit(form) {
-                    const formData = { title: form.title.value, content: form.content.value, _id: postId }
+                    const formData = { title: form.title.value, content: form.content.value, _id: postId, image: image }
                     $.ajax({
                         url: '/do-edit-post',
                         method: "POST",
@@ -37,5 +71,22 @@
                     })
                     return false
                 }
+
+                $("#form-upload").on("submit", function (e) {
+                    e.preventDefault()
+                    $.ajax({
+                        url: '/do-update-image',
+                        method: "POST",
+                        data: new FormData(this),
+                        contentType: false,
+                        cache: false,
+                        processData: false,
+                        success: function (response) {
+                            image = response;
+                            $("#myModal").modal("hide");
+                            $('.modal-backdrop').remove();
+                        }
+                    })
+                })
             </script>
             <%- include('footer') %>
