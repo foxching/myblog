@@ -34,6 +34,19 @@ const Post = require('./models/post')
 const Admin = require('./models/user')
 
 
+app.post('/do-admin-login', (req, res) => {
+    Admin.findOne({ "email": req.body.email, "password": req.body.password }, function (err, admin) {
+        if (admin !== "") {
+            req.session.admin = admin
+        }
+        res.send(admin)
+    })
+})
+
+app.get('/admin', (req, res) => {
+    res.render('admin/login')
+})
+
 
 app.get('/admin/dashboard', (req, res) => {
     if (req.session.admin) {
@@ -43,44 +56,30 @@ app.get('/admin/dashboard', (req, res) => {
     }
 })
 
-app.get('/admin/post', (req, res) => {
-    if (req.session.admin) {
-        res.render('admin/post')
-    } else {
+
+app.get('/admin/posts', (req, res) => {
+    if (!req.session.admin) {
         res.redirect('/admin')
     }
-})
-
-app.post('/do-admin-login', (req, res) => {
-    Admin.findOne({ "email": req.body.email, "password": req.body.password }, function (err, admin) {
-        if (admin !== "") {
-            req.session.admin = admin
-        }
-        res.send(admin)
+    Post.find({}, function (err, posts) {
+        if (err) return console.log(err)
+        res.render('admin/posts', { posts: posts })
     })
 })
-app.get('/admin', (req, res) => {
-    res.render('admin/login')
-})
+
 
 app.get('/do-logout', (req, res) => {
     req.session.destroy()
     res.redirect('/admin')
 })
 
-app.get('/', (req, res) => {
-    Post.find({}).sort({ "createdAt": "desc" }).exec(function (err, posts) {
-        res.render('user/home', { posts: posts })
-    })
-})
 
-app.get('/posts/:id', (req, res) => {
-    console.log(req.params.id)
-    Post.findOne({ "_id": ObjectId(req.params.id) }, function (err, post) {
-        if (err) return console.log(err)
-        res.render('user/post', { post: post })
-    })
-
+app.get('/admin/add-post', (req, res) => {
+    if (req.session.admin) {
+        res.render('admin/add-post')
+    } else {
+        res.redirect('/admin')
+    }
 })
 
 app.post('/do-post', (req, res) => {
@@ -98,6 +97,23 @@ app.post('/do-post', (req, res) => {
     })
 })
 
+
+app.get('/admin/posts/edit/:id', (req, res) => {
+    if (!req.session.admin) {
+        res.redirect('/admin')
+    }
+    Post.findById({ "_id": ObjectId(req.params.id) }, function (err, post) {
+        if (err) return console.log(err)
+        res.render('admin/edit-post', { post: post })
+    })
+})
+
+app.post('/do-edit-post', (req, res) => {
+    Post.updateOne({ "_id": ObjectId(req.body._id) }, { $set: { "title": req.body.title, "content": req.body.content } }, function (err, post) {
+        res.send('Post Updated Successfully')
+    })
+})
+
 app.post('/do-upload-image', function (req, res) {
     const formData = new formidable.IncomingForm()
     formData.uploadDir = 'static/images/';
@@ -108,6 +124,22 @@ app.post('/do-upload-image', function (req, res) {
             res.send("/" + newPath)
         })
     });
+})
+
+
+app.get('/', (req, res) => {
+    Post.find({}).sort({ "createdAt": "desc" }).exec(function (err, posts) {
+        res.render('user/home', { posts: posts })
+    })
+})
+
+app.get('/posts/:id', (req, res) => {
+    console.log(req.params.id)
+    Post.findOne({ "_id": ObjectId(req.params.id) }, function (err, post) {
+        if (err) return console.log(err)
+        res.render('user/post', { post: post })
+    })
+
 })
 
 app.post('/do-comment', function (req, res) {

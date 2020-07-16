@@ -11,7 +11,7 @@
             <form method="POST" onsubmit="return doPost(this)">
                 <div class="form-group">
                     <label for="title">Title</label>
-                    <input name="title" class="form-control" placeholder="Blog Title..">
+                    <input name="title" class="form-control" placeholder="Blog Title.." required>
                 </div>
                 <!-- Button to Open the Modal -->
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
@@ -20,8 +20,8 @@
 
                 <div class="form-group">
                     <label for="content">Content</label>
-                    <textarea name="content" class="form-control" placeholder="Enter Text here......" rows="5"
-                        cols="20"></textarea>
+                    <textarea name="content" class="form-control" placeholder="Enter Text here......" rows="5" cols="20"
+                        required></textarea>
                 </div>
                 <input type="submit" class="btn btn-info" value="Submit">
             </form>
