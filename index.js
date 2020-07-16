@@ -141,6 +141,13 @@ app.post('/do-update-image', function (req, res) {
     });
 })
 
+app.post('/do-delete-post', function (req, res) {
+    fs.unlink(req.body.image.replace("/", ""), function (err) {
+        Post.remove({ "_id": ObjectId(req.body._id) }, function (err) {
+            res.send('Post Removed')
+        })
+    })
+})
 
 app.get('/', (req, res) => {
     Post.find({}).sort({ "createdAt": "desc" }).exec(function (err, posts) {
