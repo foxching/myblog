@@ -21,7 +21,7 @@
                     </thead>
                     <tbody>
                         <% posts.forEach(function(post){ %>
-                        <tr>
+                        <tr id="post-<%= post._id %>">
                             <td><%= post.title %> </td>
                             <td><%= post.content %> </td>
                             <td>
@@ -45,17 +45,22 @@
             </div>
             <script>
                 function doDelete(postId, image) {
-                    $.ajax({
-                        url: '/do-delete-post',
-                        method: "POST",
-                        data: {
-                            "_id": postId, "image": image
-                        },
-                        success: function (response) {
-                            alert(response)
-                        }
-                    })
+                    if (confirm('Are you sure want to delete?')) {
+                        $.ajax({
+                            url: '/do-delete-post',
+                            method: "POST",
+                            data: {
+                                "_id": postId, "image": image
+                            },
+                            success: function (response) {
+                                let socket = io();
+                                socket.emit('delete_post', postId)
+                            }
+                        })
+                    }
+
                 }
+
             </script>
 
 

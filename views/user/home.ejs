@@ -14,7 +14,7 @@
             <!-- Blog Post -->
             <div id="posts">
                 <% posts.forEach((post) => { %>
-                <div class="card mb-4">
+                <div class="card mb-4" id="post-<%= post.id %>">
                     <% if(post.image) { %>
                     <img class="card-img-top" src="<%= post.image %> " alt="Card image cap">
                     <% } else { %>
@@ -114,13 +114,16 @@
 <!-- /.container -->
 <script>
     let socket = io();
+    socket.on("delete_post", (id) => {
+        document.getElementById("post-" + id).remove()
+    })
     socket.on("new_post", (formData) => {
         //console.log(formData)
         let html = "";
         let image = formData.image ? formData.image : "http://placehold.it/750x300"
         let createdAt = dateFns.format(formData.createdAt, 'MMMM D YYYY')
 
-        html += '<div class="card mb-4">';
+        html += '<div class="card mb-4" id="post-' + formData._id + '">';
         html += '<img class="card-img-top" src="' + image + '" alt="Card image cap">';
         html += '<div class="card-body">';
         html += '<h2 class="card-title">' + formData.title + '</h2>';

@@ -246,6 +246,11 @@ io.on("connection", (socket) => {
     socket.on("new_reply", (replyData) => {
         io.emit("new_reply", replyData)
     })
+
+    socket.on("delete_post", (id) => {
+        socket.broadcast.emit("delete_post", id)
+    })
+
 })
 
 http.listen(3000, () => {
