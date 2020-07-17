@@ -36,12 +36,20 @@
             <!-- Pagination -->
             <ul class="pagination justify-content-center mb-4">
                 <li class="page-item">
-                    <a class="page-link" href="#">&larr; Older</a>
+                    <a class="page-link" href="#" onclick="getPrevious()">&larr; Older</a>
                 </li>
-                <li class="page-item disabled">
-                    <a class="page-link" href="#">Newer &rarr;</a>
+                <li class="page-item">
+                    <a class="page-link" href="#" onclick="getNext()">Newer &rarr;</a>
                 </li>
             </ul>
+            <!-- <div class="row text-center mb-3">
+                <div class="col-md-6 col-sm-6">
+                    <button type="submit" class="btn btn-info " onclick="getPrevious()">Previous</button>
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    <button type="button" class="btn btn-info "  onclick="getNext()">Next</button>
+                </div>
+            </div> -->
 
         </div>
 
@@ -113,7 +121,57 @@
 </div>
 <!-- /.container -->
 <script>
+
+    let start = 0;
+    let limit = parseInt("<%= postLimit %>")
+
+    function getNext() {
+        start = start + limit
+        $.ajax({
+            url: "/get-posts/" + start + "/" + limit,
+            method: "GET",
+            success: function (response) {
+               renderPost(response)
+            }
+        })
+    }
+    function getPrevious() {
+        start = start - limit
+        $.ajax({
+            url: "/get-posts/" + start + "/" + limit,
+            method: "GET",
+            success: function (response) {
+               renderPost(response)
+            }
+        })
+    }
+
+    function renderPost(posts) {
+            if (posts.length > 0) {
+                let html = ""
+                for (let a = 0; a < posts.length; a++) {
+                    let image = posts[a].image ? posts[a].image : "http://placehold.it/750x300"
+                    html += '<div class="card mb-4" id="post-'+ posts[a]._id + '">';
+                    html += '<img class="card-img-top" src=" '+ image + ' " alt="Card image cap">';
+                    html += '<div class="card-body">';
+                    html += '<h2 class="card-title">'+ posts[a].title + '</h2>';
+                    html += '<p class="card-text">' + posts[a].content + ' </p>';
+                    html += '<a href="posts/' + posts[a]._id + '" class="btn btn-primary">Read More &rarr;</a>';
+                    html += '</div>';
+                    html += '<div class="card-footer text-muted">';
+                    html += 'Posted on ' +  dateFns.format(posts[a].createdAt, 'MMMM D YYYY') + ' by';
+                    html += '<a href="#">Admin</a>';
+                    html += '</div>';
+                    html += '</div>';
+            }
+            $("#posts").html(html)
+        }
+    }
+
+    
+
     let socket = io();
+
     socket.on("delete_post", (id) => {
         document.getElementById("post-" + id).remove()
     })

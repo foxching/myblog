@@ -32,6 +32,7 @@ app.use((req, res, next) => {
 
 const Post = require('./models/post')
 const Admin = require('./models/user')
+const Setting = require('./models/setting')
 
 
 app.post('/do-admin-login', (req, res) => {
@@ -97,6 +98,22 @@ app.post('/do-post', (req, res) => {
     })
 })
 
+app.get('/admin/settings', (req, res) => {
+    if (req.session.admin) {
+        Setting.findOne({}, function (err, setting) {
+            res.render('admin/settings', { setting: setting.post_limit })
+        })
+
+    } else {
+        res.redirect('/admin')
+    }
+})
+
+app.post('/admin/settings', (req, res) => {
+    Setting.updateOne({}, { "post_limit": req.body.post_limit }, { upsert: true }, function (err, document) {
+        res.redirect('/admin/settings')
+    })
+})
 
 app.get('/admin/posts/edit/:id', (req, res) => {
     if (!req.session.admin) {
@@ -149,10 +166,22 @@ app.post('/do-delete-post', function (req, res) {
     })
 })
 
-app.get('/', (req, res) => {
-    Post.find({}).sort({ "createdAt": "desc" }).exec(function (err, posts) {
-        res.render('user/home', { posts: posts })
+app.get('/get-posts/:start/:limit', (req, res) => {
+    let start = parseInt(req.params.start)
+    let limit = parseInt(req.params.limit)
+
+    Post.find({}).sort({ "_id": -1 }).skip(start).limit(limit).exec(function (err, posts) {
+        res.send(posts)
     })
+})
+app.get('/', (req, res) => {
+    Setting.findOne({}, function (err, setting) {
+        let postLimit = parseInt(setting.post_limit)
+        Post.find({}).sort({ "createdAt": "desc" }).limit(postLimit).exec(function (err, posts) {
+            res.render('user/home', { posts: posts, postLimit: postLimit })
+        })
+    })
+
 })
 
 app.get('/posts/:id', (req, res) => {
