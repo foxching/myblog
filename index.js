@@ -10,12 +10,15 @@ const http = require('http').createServer(app)
 const io = require('socket.io')(http)
 const nodemailer = require('nodemailer')
 
+
 app.use('/static', express.static(__dirname + '/static'))
 app.set('view engine', 'ejs');
 
 //body parse
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+
 
 //express session
 app.use(
@@ -77,7 +80,7 @@ app.get('/do-logout', (req, res) => {
 
 app.get('/admin/add-post', (req, res) => {
     if (req.session.admin) {
-        res.render('admin/add-post')
+        res.render('admin/add-post', { newPost: new Post() })
     } else {
         res.redirect('/admin')
     }
@@ -276,9 +279,9 @@ io.on("connection", (socket) => {
         io.emit("new_reply", replyData)
     })
 
-    socket.on("delete_post", (id) => {
-        socket.broadcast.emit("delete_post", id)
-    })
+    // socket.on("delete_post", (id) => {
+    //     socket.broadcast.emit("delete_post", id)
+    // })
 
 })
 

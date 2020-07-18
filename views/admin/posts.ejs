@@ -23,7 +23,7 @@
                         <% posts.forEach(function(post){ %>
                         <tr id="post-<%= post._id %>">
                             <td><%= post.title %> </td>
-                            <td><%= post.content %> </td>
+                            <td><%- post.content.substring(0, 30) + '...' %> </td>
                             <td>
                                 <% if(post.image == "") { %>
                                 <img src="http://placehold.it/750x300" style="width: 150px;">
@@ -53,14 +53,14 @@
                                 "_id": postId, "image": image
                             },
                             success: function (response) {
-                                let socket = io();
-                                socket.emit('delete_post', postId)
+                                window.location.href = "/admin/posts"
+                                // let socket = io();
+                                // socket.emit('delete_post', postId)
                             }
                         })
                     }
 
                 }
-
             </script>
 
 

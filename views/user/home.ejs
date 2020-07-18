@@ -22,7 +22,7 @@
                     <% } %>
                     <div class="card-body">
                         <h2 class="card-title"><%= post.title %> </h2>
-                        <p class="card-text"><%= post.content %> </p>
+                        <p class="card-text"><%- post.content.substring(0, 200) + '...' %> </p>
                         <a href="posts/<%= post.id %>" class="btn btn-primary">Read More &rarr;</a>
                     </div>
                     <div class="card-footer text-muted">
@@ -131,7 +131,7 @@
             url: "/get-posts/" + start + "/" + limit,
             method: "GET",
             success: function (response) {
-               renderPost(response)
+                renderPost(response)
             }
         })
     }
@@ -141,40 +141,40 @@
             url: "/get-posts/" + start + "/" + limit,
             method: "GET",
             success: function (response) {
-               renderPost(response)
+                renderPost(response)
             }
         })
     }
 
     function renderPost(posts) {
-            if (posts.length > 0) {
-                let html = ""
-                for (let a = 0; a < posts.length; a++) {
-                    let image = posts[a].image ? posts[a].image : "http://placehold.it/750x300"
-                    html += '<div class="card mb-4" id="post-'+ posts[a]._id + '">';
-                    html += '<img class="card-img-top" src=" '+ image + ' " alt="Card image cap">';
-                    html += '<div class="card-body">';
-                    html += '<h2 class="card-title">'+ posts[a].title + '</h2>';
-                    html += '<p class="card-text">' + posts[a].content + ' </p>';
-                    html += '<a href="posts/' + posts[a]._id + '" class="btn btn-primary">Read More &rarr;</a>';
-                    html += '</div>';
-                    html += '<div class="card-footer text-muted">';
-                    html += 'Posted on ' +  dateFns.format(posts[a].createdAt, 'MMMM D YYYY') + ' by';
-                    html += '<a href="#">Admin</a>';
-                    html += '</div>';
-                    html += '</div>';
+        if (posts.length > 0) {
+            let html = ""
+            for (let a = 0; a < posts.length; a++) {
+                let image = posts[a].image ? posts[a].image : "http://placehold.it/750x300"
+                html += '<div class="card mb-4" id="post-' + posts[a]._id + '">';
+                html += '<img class="card-img-top" src=" ' + image + ' " alt="Card image cap">';
+                html += '<div class="card-body">';
+                html += '<h2 class="card-title">' + posts[a].title + '</h2>';
+                html += '<p class="card-text">' + posts[a].content + ' </p>';
+                html += '<a href="posts/' + posts[a]._id + '" class="btn btn-primary">Read More &rarr;</a>';
+                html += '</div>';
+                html += '<div class="card-footer text-muted">';
+                html += 'Posted on ' + dateFns.format(posts[a].createdAt, 'MMMM D YYYY') + ' by';
+                html += '<a href="#">Admin</a>';
+                html += '</div>';
+                html += '</div>';
             }
             $("#posts").html(html)
         }
     }
 
-    
+
 
     let socket = io();
 
-    socket.on("delete_post", (id) => {
-        document.getElementById("post-" + id).remove()
-    })
+    // socket.on("delete_post", (id) => {
+    //     document.getElementById("post-" + id).remove()
+    // })
     socket.on("new_post", (formData) => {
         //console.log(formData)
         let html = "";
@@ -196,6 +196,16 @@
         $("#posts").prepend(html)
 
     })
+
+    function truncateString(str, num) {
+        // If the length of str is less than or equal to num
+        // just return str--don't truncate it.
+        if (str.length <= num) {
+            return str
+        }
+        // Return str truncated with '...' concatenated to the end of str.
+        return str.slice(0, num) + '...'
+    }
 </script>
 
 <%- include('footer') %>

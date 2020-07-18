@@ -21,8 +21,8 @@
 
                 <div class="form-group">
                     <label for="content">Content</label>
-                    <textarea name="content" class="form-control" placeholder="Enter Text here......" rows="5" cols="20"
-                        required><%= post.content.substring(0, 10) %> </textarea>
+                    <textarea name="content" id="ta" class="form-control" rows="10" cols="30"
+                        required><%= post.content %></textarea>
                 </div>
                 <input type="submit" class="btn btn-info" value="Submit">
             </form>
@@ -57,10 +57,24 @@
                 </div>
             </div>
             <script>
+
+                $(function () {
+                    if ($('textarea#ta').length) {
+                        CKEDITOR.replace('ta');
+                    }
+
+                });
+
+
                 let postId = '<%= post.id %>'
                 let image = '<%= post.image %>'
                 function doEdit(form) {
-                    const formData = { title: form.title.value, content: form.content.value, _id: postId, image: image }
+                    const formData = {
+                        title: form.title.value,
+                        content: CKEDITOR.instances['ta'].getData(),
+                        _id: postId,
+                        image: image
+                    }
                     $.ajax({
                         url: '/do-edit-post',
                         method: "POST",
