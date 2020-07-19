@@ -78,7 +78,7 @@
     <script>
         function doLogin(form) {
             $.ajax({
-                url: '/do-admin-login',
+                url: '/admin/do-admin-login',
                 method: "POST",
                 data: { email: form.email.value, password: form.password.value },
                 success: function (response) {

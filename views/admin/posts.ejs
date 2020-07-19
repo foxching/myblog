@@ -47,7 +47,7 @@
                 function doDelete(postId, image) {
                     if (confirm('Are you sure want to delete?')) {
                         $.ajax({
-                            url: '/do-delete-post',
+                            url: '/admin/posts/do-delete-post',
                             method: "POST",
                             data: {
                                 "_id": postId, "image": image

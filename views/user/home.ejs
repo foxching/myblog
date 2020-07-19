@@ -155,7 +155,7 @@
                 html += '<img class="card-img-top" src=" ' + image + ' " alt="Card image cap">';
                 html += '<div class="card-body">';
                 html += '<h2 class="card-title">' + posts[a].title + '</h2>';
-                html += '<p class="card-text">' + posts[a].content + ' </p>';
+                html += '<p class="card-text">' + posts[a].content.substring(0, 200) + '...' + ' </p>';
                 html += '<a href="posts/' + posts[a]._id + '" class="btn btn-primary">Read More &rarr;</a>';
                 html += '</div>';
                 html += '<div class="card-footer text-muted">';

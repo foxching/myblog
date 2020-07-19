@@ -76,11 +76,12 @@
                         image: image
                     }
                     $.ajax({
-                        url: '/do-edit-post',
+                        url: '/admin/posts/do-edit-post',
                         method: "POST",
                         data: formData,
                         success: function (response) {
                             alert(response)
+                            window.location.href = "/admin/posts"
                         }
                     })
                     return false
@@ -89,7 +90,7 @@
                 $("#form-upload").on("submit", function (e) {
                     e.preventDefault()
                     $.ajax({
-                        url: '/do-update-image',
+                        url: '/admin/posts/do-update-image',
                         method: "POST",
                         data: new FormData(this),
                         contentType: false,

@@ -71,7 +71,7 @@
                         image: imagePath
                     }
                     $.ajax({
-                        url: '/do-post',
+                        url: '/admin/posts/do-post',
                         method: "POST",
                         data: formData,
                         success: function (response) {
@@ -89,7 +89,7 @@
                 $("#form-upload").on("submit", function (e) {
                     e.preventDefault()
                     $.ajax({
-                        url: '/do-upload-image',
+                        url: '/admin/posts/do-upload-image',
                         method: "POST",
                         data: new FormData(this),
                         contentType: false,
