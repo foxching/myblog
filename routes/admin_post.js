@@ -9,11 +9,13 @@ const Post = require('../models/post')
 router.get('/', (req, res) => {
     if (!req.session.admin) {
         res.redirect('/admin')
+    } else {
+        Post.find({}, function (err, posts) {
+            if (err) return console.log(err)
+            res.render('admin/posts', { posts: posts })
+        })
     }
-    Post.find({}, function (err, posts) {
-        if (err) return console.log(err)
-        res.render('admin/posts', { posts: posts })
-    })
+
 })
 
 

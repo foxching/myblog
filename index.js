@@ -34,10 +34,14 @@ app.use((req, res, next) => {
 
 const indexRoutes = require('./routes/index')
 const adminRoutes = require('./routes/admin')
-const admin_post = require('./routes/admin_post')
+const admin_posts = require('./routes/admin_post')
+const admin_pages = require('./routes/admin_page')
+const admin_categories = require('./routes/admin_category')
 
 
-app.use('/admin/posts', admin_post)
+app.use('/admin/posts', admin_posts)
+app.use('/admin/pages', admin_pages)
+app.use('/admin/categories', admin_categories)
 app.use('/admin', adminRoutes)
 app.use('/', indexRoutes)
 

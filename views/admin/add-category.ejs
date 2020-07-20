@@ -1,0 +1,19 @@
+<%- include('header') %>
+<div id="layoutSidenav_content">
+    <main>
+        <div class="container-fluid">
+            <h1 class="mt-4">New Category</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                <li class="breadcrumb-item active">New Category</li>
+            </ol>
+            <form method="POST" onsubmit="return doCreateCategory(this)">
+                <div class="form-group">
+                    <label for="title">Category</label>
+                    <input name="title" class="form-control" value="<%= newCategory.title %>" placeholder="Title.."
+                        required>
+                </div>
+                <input type="submit" class="btn btn-info" value="Submit">
+            </form>
+
+            <%- include('footer') %>

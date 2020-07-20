@@ -1,0 +1,57 @@
+<%- include('header') %>
+
+<div id="layoutSidenav_content">
+    <main>
+        <div class="container-fluid">
+            <h1 class="mt-4">New Page</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                <li class="breadcrumb-item active">New Page</li>
+            </ol>
+            <form method="POST" onsubmit="return doCreatePage(this)">
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input name="title" class="form-control" value="<%= newPage.title %>" placeholder="Title.."
+                        required>
+                </div>
+                <div class="form-group">
+                    <label for="title">Slug</label>
+                    <input name="slug" class="form-control" value="<%= newPage.slug %>" placeholder="Slug..">
+                </div>
+
+                <div class="form-group">
+                    <label for="content">Content</label>
+                    <textarea name="content" id="ta" class="form-control" rows="10" cols="30"
+                        required><%= newPage.content %></textarea>
+                </div>
+                <input type="submit" class="btn btn-info" value="Submit">
+            </form>
+
+
+            <script>
+                $(function () {
+                    if ($('textarea#ta').length) {
+                        CKEDITOR.replace('ta');
+                    }
+
+                });
+
+                function doCreatePage(form) {
+                    const formData = {
+                        title: form.title.value,
+                        slug: form.slug.value,
+                        content: CKEDITOR.instances['ta'].getData(),
+                    }
+                    $.ajax({
+                        url: '/admin/pages/create-page',
+                        method: "POST",
+                        data: formData,
+                        success: function (response) {
+                            alert(response)
+
+                        }
+                    })
+                    return false
+                }
+            </script>
+            <%- include('footer') %>
