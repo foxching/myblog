@@ -2,27 +2,28 @@
 <div id="layoutSidenav_content">
     <main>
         <div class="container-fluid">
-            <h1 class="mt-4">New Category</h1>
+            <h1 class="mt-4">Edit Category</h1>
             <ol class="breadcrumb mb-4">
                 <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-                <li class="breadcrumb-item active">New Category</li>
+                <li class="breadcrumb-item active">Edit Category</li>
             </ol>
-            <form method="POST" onsubmit="return doCreateCategory(this)">
+            <form method="POST" onsubmit="return doEditCategory(this)">
                 <div class="form-group">
                     <label for="title">Category</label>
-                    <input name="title" class="form-control" value="<%= newCategory.title %>" placeholder="Title.."
+                    <input name="title" class="form-control" value="<%= category.title %>" placeholder="Title.."
                         required>
                 </div>
                 <input type="submit" class="btn btn-info" value="Submit">
             </form>
             <script>
-
-                function doCreateCategory(form) {
+                let categoryId = '<%= category.id %>'
+                function doEditCategory(form) {
                     const formData = {
                         title: form.title.value,
+                        _id: categoryId,
                     }
                     $.ajax({
-                        url: '/admin/categories/add-category',
+                        url: '/admin/categories/edit-category',
                         method: "POST",
                         data: formData,
                         success: function (response) {

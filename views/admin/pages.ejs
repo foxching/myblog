@@ -20,11 +20,11 @@
                     <% pages.forEach(function(page) { %>
                     <tr id="id_<%= page._id %>" class="<%= page.slug %>">
                         <td><%= page.title %></td>
-                        <td><a href="/admin/pages/edit-page/<%= page.id %>">Edit</a></td>
+                        <td><a href="/admin/pages/edit-page/<%= page.id %>" class="btn btn-warning btn-sm">Edit</a></td>
                         <% if(page.slug == 'home') { %>
                         <td></td>
                         <% } else { %>
-                        <td><a class="confirmDeletion" href="/admin/pages/delete-page/<%= page.id %>">Delete</a></td>
+                        <td><button class="btn btn-danger btn-sm" onclick="doDelete()">Delete</button></td>
                         <% } %>
                     </tr>
                     <% }) %>
