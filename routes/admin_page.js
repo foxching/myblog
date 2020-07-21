@@ -89,6 +89,16 @@ router.post('/edit-page', (req, res) => {
 
 })
 
+router.post('/delete-page', (req, res) => {
+    if (!req.session.admin) {
+        res.redirect('/admin')
+    } else {
+        Page.remove({ "_id": ObjectId(req.body._id) }, function (err) {
+            res.send('Page Removed')
+        })
+    }
+})
+
 
 
 

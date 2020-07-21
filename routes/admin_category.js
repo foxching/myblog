@@ -94,6 +94,16 @@ router.get('/edit-category/:id', (req, res) => {
 })
 
 
+router.post('/delete-category', (req, res) => {
+    if (!req.session.admin) {
+        res.redirect('/admin')
+    } else {
+        Category.remove({ "_id": ObjectId(req.body._id) }, function (err) {
+            res.send('Category Removed')
+        })
+    }
+})
+
 
 
 module.exports = router

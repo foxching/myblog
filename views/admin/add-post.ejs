@@ -10,17 +10,24 @@
             </ol>
             <form method="POST" onsubmit="return doPost(this)">
                 <div class="form-group">
-                    <label for="title">Title</label>
+                    <label for="title">Title:</label>
                     <input name="title" class="form-control" value="<%= newPost.title %>" placeholder="Blog Title.."
                         required>
+                </div>
+                <div class="form-group">
+                    <label for="category">Category:</label>
+                    <select class="form-control" name="category">
+                        <% categories.forEach(function(cat) { %>
+                        <option value="<%= cat.slug %>"><%= cat.title %></option>
+                        <% }) %>
+                    </select>
                 </div>
                 <!-- Button to Open the Modal -->
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
                     Upload Image
                 </button>
-
                 <div class="form-group">
-                    <label for="content">Content</label>
+                    <label for="content">Content:</label>
                     <textarea name="content" id="ta" class="form-control" rows="10" cols="30"
                         required><%= newPost.content %></textarea>
                 </div>
@@ -67,6 +74,7 @@
                 function doPost(form) {
                     const formData = {
                         title: form.title.value,
+                        category: form.category.value,
                         content: CKEDITOR.instances['ta'].getData(),
                         image: imagePath
                     }
@@ -89,7 +97,7 @@
                 $("#form-upload").on("submit", function (e) {
                     e.preventDefault()
                     $.ajax({
-                        url: '/admin/posts/do-upload-image',
+                        url: '/admin/posts/upload-image',
                         method: "POST",
                         data: new FormData(this),
                         contentType: false,

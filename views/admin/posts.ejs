@@ -13,7 +13,7 @@
                     <thead>
                         <tr>
                             <th>Title</th>
-                            <th>Post Content</th>
+                            <th>Category</th>
                             <th>Post Image</th>
                             <th>Comments</th>
                             <th>Action</th>
@@ -23,7 +23,7 @@
                         <% posts.forEach(function(post){ %>
                         <tr id="post-<%= post._id %>">
                             <td><%= post.title %> </td>
-                            <td><%- post.content.substring(0, 30) + '...' %> </td>
+                            <td><%- post.category %> </td>
                             <td>
                                 <% if(post.image == "") { %>
                                 <img src="http://placehold.it/750x300" style="width: 150px;">
@@ -34,7 +34,7 @@
                             <td><%= post.comments.length %></td>
                             <td>
                                 <a href="/posts/<%= post._id %>" class="btn btn-primary btn-sm">View</a>
-                                <a href="/admin/posts/edit/<%= post.id %>" class="btn btn-warning btn-sm">Edit</a>
+                                <a href="/admin/posts/edit-post/<%= post.id %>" class="btn btn-warning btn-sm">Edit</a>
                                 <button class="btn btn-danger btn-sm"
                                     onclick="doDelete('<%= post._id %>', '<%= post.image %>')">Delete</button>
                             </td>
@@ -43,11 +43,12 @@
                     </tbody>
                 </table>
             </div>
+
             <script>
                 function doDelete(postId, image) {
                     if (confirm('Are you sure want to delete?')) {
                         $.ajax({
-                            url: '/admin/posts/do-delete-post',
+                            url: '/admin/posts/delete-post',
                             method: "POST",
                             data: {
                                 "_id": postId, "image": image
@@ -59,7 +60,6 @@
                             }
                         })
                     }
-
                 }
             </script>
 

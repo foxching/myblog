@@ -21,11 +21,30 @@
                         <td><%= cat.title %></td>
                         <td><a href="/admin/categories/edit-category/<%= cat._id %>"
                                 class="btn btn-warning btn-sm">Edit</a></td>
-                        <td><button class="btn btn-danger btn-sm" onclick="doDelete()">Delete</button>
+                        <td><button class="btn btn-danger btn-sm" onclick="doDelete('<%= cat._id %>')">Delete</button>
                         </td>
                     </tr>
                     <% }) %>
                 </tbody>
             </table>
+
+            <script>
+                function doDelete(catId) {
+                    if (confirm('Are you sure want to delete?')) {
+                        $.ajax({
+                            url: '/admin/categories/delete-category',
+                            method: "POST",
+                            data: {
+                                "_id": catId,
+                            },
+                            success: function (response) {
+                                window.location.href = "/admin/categories"
+                                // let socket = io();
+                                // socket.emit('delete_post', postId)
+                            }
+                        })
+                    }
+                }
+            </script>
 
             <%- include('footer') %>

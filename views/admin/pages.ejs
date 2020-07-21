@@ -24,11 +24,33 @@
                         <% if(page.slug == 'home') { %>
                         <td></td>
                         <% } else { %>
-                        <td><button class="btn btn-danger btn-sm" onclick="doDelete()">Delete</button></td>
+                        <td><button class="btn btn-danger btn-sm" onclick="doDelete('<%= page._id %>')">Delete</button>
+                        </td>
                         <% } %>
                     </tr>
                     <% }) %>
                 </tbody>
             </table>
+
+            <script>
+
+                function doDelete(pageId) {
+                    if (confirm('Are you sure want to delete?')) {
+                        $.ajax({
+                            url: '/admin/pages/delete-page',
+                            method: "POST",
+                            data: {
+                                "_id": pageId,
+                            },
+                            success: function (response) {
+                                window.location.href = "/admin/pages"
+                                // let socket = io();
+                                // socket.emit('delete_post', postId)
+                            }
+                        })
+                    }
+
+                }
+            </script>
 
             <%- include('footer') %>
