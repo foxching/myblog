@@ -17,12 +17,37 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 
+//Page Model
+const Page = require('./models/page');
+
+//pages variables
+Page.find({}).exec(function (err, pages) {
+    if (err) {
+        console.log(err);
+    } else {
+        app.locals.pages = pages;
+    }
+});
+
+//Category Model
+var Category = require('./models/category');
+
+Category.find(function (err, categories) {
+    if (err) {
+        console.log(err);
+    } else {
+        app.locals.categories = categories;
+    }
+});
+
 
 //express session
 app.use(
     session({
         key: "admin",
         secret: "any string",
+        resave: true,
+        saveUninitialized: true
     })
 );
 
@@ -34,9 +59,9 @@ app.use((req, res, next) => {
 
 const indexRoutes = require('./routes/index')
 const adminRoutes = require('./routes/admin')
-const admin_posts = require('./routes/admin_post')
-const admin_pages = require('./routes/admin_page')
-const admin_categories = require('./routes/admin_category')
+const admin_posts = require('./routes/admin_posts')
+const admin_pages = require('./routes/admin_pages')
+const admin_categories = require('./routes/admin_categories')
 
 
 app.use('/admin/posts', admin_posts)

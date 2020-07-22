@@ -7,6 +7,9 @@ const Post = require('../models/post')
 const Category = require('../models/category')
 
 
+/* 
+* GET posts
+*/
 router.get('/', (req, res) => {
     if (!req.session.admin) {
         res.redirect('/admin')
@@ -20,6 +23,9 @@ router.get('/', (req, res) => {
 })
 
 
+/* 
+* GET new post
+*/
 router.get('/add-post', (req, res) => {
     if (!req.session.admin) {
         res.redirect('/admin')
@@ -30,7 +36,11 @@ router.get('/add-post', (req, res) => {
     }
 })
 
-router.post('/do-post', (req, res) => {
+
+/* 
+* POST new post
+*/
+router.post('/add-post', (req, res) => {
     let post = new Post(req.body)
     post.save(function (err, post) {
         if (err) {
@@ -45,6 +55,9 @@ router.post('/do-post', (req, res) => {
     })
 })
 
+/* 
+* GET edit post
+*/
 router.get('/edit-post/:id', (req, res) => {
     if (!req.session.admin) {
         res.redirect('/admin')
@@ -60,12 +73,19 @@ router.get('/edit-post/:id', (req, res) => {
 
 })
 
+/* 
+* POST edit post
+*/
 router.post('/edit-post', (req, res) => {
     Post.updateOne({ "_id": ObjectId(req.body._id) }, { $set: { "title": req.body.title, "content": req.body.content, "category": req.body.category, "image": req.body.image } }, function (err, post) {
         res.send('Post Updated Successfully')
     })
 })
 
+
+/* 
+* POST upload image
+*/
 router.post('/upload-image', function (req, res) {
     const formData = new formidable.IncomingForm()
     formData.uploadDir = 'static/images/';
@@ -78,6 +98,10 @@ router.post('/upload-image', function (req, res) {
     });
 })
 
+
+/* 
+* POST update image
+*/
 router.post('/update-image', function (req, res) {
     const formData = new formidable.IncomingForm()
     formData.uploadDir = 'static/images/';
@@ -93,9 +117,13 @@ router.post('/update-image', function (req, res) {
     });
 })
 
+
+/* 
+* POST delete post
+*/
 router.post('/delete-post', function (req, res) {
     fs.unlink(req.body.image.replace("/", ""), function (err) {
-        Post.remove({ "_id": ObjectId(req.body._id) }, function (err) {
+        Post.findByIdAndRemove({ "_id": ObjectId(req.body._id) }, function (err) {
             res.send('Post Removed')
         })
     })

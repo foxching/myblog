@@ -4,6 +4,9 @@ const ObjectId = require('mongodb').ObjectID
 const Page = require('../models/page')
 
 
+/* 
+* GET pages
+*/
 router.get('/', (req, res) => {
     if (!req.session.admin) {
         res.redirect('/admin')
@@ -16,6 +19,9 @@ router.get('/', (req, res) => {
 })
 
 
+/* 
+* GET new page
+*/
 router.get('/add-page', (req, res) => {
     if (!req.session.admin) {
         res.redirect('/admin')
@@ -25,6 +31,10 @@ router.get('/add-page', (req, res) => {
 
 })
 
+
+/* 
+* POST new page
+*/
 router.post('/create-page', (req, res) => {
     let newPage = new Page({
         title: req.body.title,
@@ -43,12 +53,23 @@ router.post('/create-page', (req, res) => {
                 if (err) {
                     console.log(err);
                 }
+                Page.find({}).exec(function (err, pages) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        req.app.locals.pages = pages;
+                    }
+                });
                 res.send('Page added successfuly')
             })
         }
     })
 })
 
+
+/* 
+* GET edit page
+*/
 router.get('/edit-page/:id', (req, res) => {
     if (!req.session.admin) {
         res.redirect('/admin')
@@ -61,6 +82,10 @@ router.get('/edit-page/:id', (req, res) => {
     }
 })
 
+
+/* 
+* POST edit page
+*/
 router.post('/edit-page', (req, res) => {
     let title = req.body.title;
     let slug =
@@ -80,6 +105,13 @@ router.post('/edit-page', (req, res) => {
                 page.content = content
                 page.save(function (err) {
                     if (err) return console.log(err)
+                    Page.find({}).exec(function (err, pages) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            req.app.locals.pages = pages;
+                        }
+                    });
                     res.send("Page Updated Successfully")
                 })
             })
@@ -89,16 +121,27 @@ router.post('/edit-page', (req, res) => {
 
 })
 
+
+/* 
+* POST delete page
+*/
 router.post('/delete-page', (req, res) => {
     if (!req.session.admin) {
         res.redirect('/admin')
     } else {
-        Page.remove({ "_id": ObjectId(req.body._id) }, function (err) {
+        Page.findByIdAndRemove({ "_id": ObjectId(req.body._id) }, function (err) {
+            Page.find({}).exec(function (err, pages) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    req.app.locals.pages = pages;
+                }
+            });
             res.send('Page Removed')
+
         })
     }
 })
-
 
 
 

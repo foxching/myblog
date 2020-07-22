@@ -4,6 +4,9 @@ const ObjectId = require('mongodb').ObjectID
 const Category = require('../models/category')
 
 
+/* 
+* GET categories
+*/
 router.get('/', (req, res) => {
     if (!req.session.admin) {
         res.redirect('/admin')
@@ -15,7 +18,9 @@ router.get('/', (req, res) => {
 
 })
 
-
+/* 
+* GET new category
+*/
 router.get('/add-category', (req, res) => {
     if (!req.session.admin) {
         res.redirect('/admin')
@@ -25,6 +30,9 @@ router.get('/add-category', (req, res) => {
 
 })
 
+/* 
+* POST new category
+*/
 router.post('/add-category', (req, res) => {
     let newCategory = new Category({
         title: req.body.title,
@@ -39,13 +47,22 @@ router.post('/add-category', (req, res) => {
                 if (err) {
                     console.log(err);
                 }
+                Category.find(function (err, categories) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        req.app.locals.categories = categories;
+                    }
+                });
                 res.send('Category added successfuly')
             })
         }
     })
 })
 
-
+/* 
+* GET edit category
+*/
 router.get('/edit-category/:id', (req, res) => {
     if (!req.session.admin) {
         res.redirect('/admin')
@@ -57,8 +74,9 @@ router.get('/edit-category/:id', (req, res) => {
     }
 })
 
-
-
+/* 
+* POST edit category
+*/
 router.post('/edit-category', (req, res) => {
     let title = req.body.title;
     let slug = title.replace(/\s+/g, '=').toLowerCase();
@@ -73,6 +91,13 @@ router.post('/edit-category', (req, res) => {
                 category.slug = slug;
                 category.save(function (err) {
                     if (err) return console.log(err)
+                    Category.find(function (err, categories) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            req.app.locals.categories = categories;
+                        }
+                    });
                     res.send("Category Updated Successfully")
                 })
             })
@@ -82,23 +107,21 @@ router.post('/edit-category', (req, res) => {
 
 })
 
-router.get('/edit-category/:id', (req, res) => {
-    if (!req.session.admin) {
-        res.redirect('/admin')
-    } else {
-        Category.findById({ "_id": ObjectId(req.params.id) }, function (err, category) {
-            res.render('admin/edit-category', { category: category })
-        })
-
-    }
-})
-
-
+/* 
+* POST delete category
+*/
 router.post('/delete-category', (req, res) => {
     if (!req.session.admin) {
         res.redirect('/admin')
     } else {
-        Category.remove({ "_id": ObjectId(req.body._id) }, function (err) {
+        Category.findByIdAndRemove({ "_id": ObjectId(req.body._id) }, function (err) {
+            Category.find(function (err, categories) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    req.app.locals.categories = categories;
+                }
+            });
             res.send('Category Removed')
         })
     }
