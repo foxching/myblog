@@ -36,7 +36,7 @@
                                 <a href="/posts/<%= post._id %>" class="btn btn-primary btn-sm">View</a>
                                 <a href="/admin/posts/edit-post/<%= post.id %>" class="btn btn-warning btn-sm">Edit</a>
                                 <button class="btn btn-danger btn-sm"
-                                    onclick="doDelete('<%= post._id %>', '<%= post.image %>')">Delete</button>
+                                    onclick="doDelete('<%= post._id %>','<%= post.image %>')">Delete</button>
                             </td>
                         </tr>
                         <% }) %>
@@ -45,6 +45,7 @@
             </div>
 
             <script>
+                let socket = io();
                 function doDelete(postId, image) {
                     if (confirm('Are you sure want to delete?')) {
                         $.ajax({
@@ -54,9 +55,8 @@
                                 "_id": postId, "image": image
                             },
                             success: function (response) {
+                                socket.emit('delete_post', postId)
                                 window.location.href = "/admin/posts"
-                                // let socket = io();
-                                // socket.emit('delete_post', postId)
                             }
                         })
                     }

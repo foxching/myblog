@@ -64,6 +64,7 @@
                 </div>
             </div>
             <script>
+                let socket = io()
                 $(function () {
                     if ($('textarea#ta').length) {
                         CKEDITOR.replace('ta');
@@ -86,9 +87,10 @@
                             alert(response.text)
                             formData._id = response._id
                             formData.createdAt = response.createdAt
-                            let socket = io()
                             socket.emit("new_post", formData)
-                        }
+                            window.location.href = "/admin/posts"
+                        },
+
                     })
                     return false
                 }

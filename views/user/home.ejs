@@ -106,9 +106,11 @@
 
     let socket = io();
 
-    // socket.on("delete_post", (id) => {
-    //     document.getElementById("post-" + id).remove()
-    // })
+    socket.on("delete_post", (id) => {
+        document.getElementById("post-" + id).remove()
+    })
+
+
     socket.on("new_post", (formData) => {
         //console.log(formData)
         let html = "";

@@ -101,9 +101,9 @@ io.on("connection", (socket) => {
         io.emit("new_reply", replyData)
     })
 
-    // socket.on("delete_post", (id) => {
-    //     socket.broadcast.emit("delete_post", id)
-    // })
+    socket.on("delete_post", (id) => {
+        socket.broadcast.emit("delete_post", id)
+    })
 
 })
 
