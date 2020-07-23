@@ -34,13 +34,10 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ml-auto">
-                    <% pages.forEach(function(page){ %>
-                    <% if(page.slug =='home') { %>
-                    <li class="nav-item active"><a href="/" class="nav-link"><%= page.title %><span
+                    <li class="nav-item active"><a href="/" class="nav-link">Home<span
                                 class="sr-only">(current)</span></a></li>
-                    <% } else { %>
+                    <% pages.forEach(function(page){ %>
                     <li class="nav-item"><a href="/<%= page.slug%>" class="nav-link"><%= page.title %></a></li>
-                    <% } %>
                     <% }) %>
                 </ul>
             </div>

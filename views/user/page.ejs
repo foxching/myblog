@@ -1,0 +1,24 @@
+<%- include('header') %>
+<!-- Page Content -->
+<div class="container">
+    <div class="row">
+        <!-- Blog Content -->
+        <div class="col-md-8">
+            <div class="mt-5">
+                <% if(page.content !== null) { %>
+                <%- page.content %>
+                <% } %>
+            </div>
+
+        </div>
+
+        <!-- Sidebar Widgets Column -->
+        <%- include('sidebar') %>
+
+    </div>
+    <!-- /.row -->
+
+</div>
+<!-- /.container -->
+
+<%- include('footer') %>

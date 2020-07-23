@@ -57,8 +57,9 @@ app.use((req, res, next) => {
 });
 
 
-const indexRoutes = require('./routes/index')
-const adminRoutes = require('./routes/admin')
+const pages = require('./routes/pages')
+const admin = require('./routes/admin')
+const posts = require('./routes/posts')
 const admin_posts = require('./routes/admin_posts')
 const admin_pages = require('./routes/admin_pages')
 const admin_categories = require('./routes/admin_categories')
@@ -67,8 +68,9 @@ const admin_categories = require('./routes/admin_categories')
 app.use('/admin/posts', admin_posts)
 app.use('/admin/pages', admin_pages)
 app.use('/admin/categories', admin_categories)
-app.use('/admin', adminRoutes)
-app.use('/', indexRoutes)
+app.use('/admin', admin)
+app.use('/posts', posts)
+app.use('/', pages)
 
 //mongodb connection
 mongoose.connect('mongodb://localhost/myblog', { useNewUrlParser: true, useUnifiedTopology: true });

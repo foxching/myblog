@@ -3,9 +3,24 @@ const router = express.Router();
 const nodemailer = require('nodemailer')
 const ObjectId = require('mongodb').ObjectID
 const Post = require('../models/post')
+const Category = require('../models/category')
 const Setting = require('../models/setting')
 
+/* 
+* GET post by id
+*/
+router.get('/:id', (req, res) => {
+    console.log(req.params.id)
+    Post.findOne({ "_id": ObjectId(req.params.id) }, function (err, post) {
+        if (err) return console.log(err)
+        res.render('user/post', { post: post })
+    })
+})
 
+
+/* 
+* GET pagination posts
+*/
 router.get('/get-posts/:start/:limit', (req, res) => {
     let start = parseInt(req.params.start)
     let limit = parseInt(req.params.limit)
@@ -15,25 +30,24 @@ router.get('/get-posts/:start/:limit', (req, res) => {
     })
 })
 
+/* 
+* GET pagination posts per category
+*/
+router.get('/category/:slug/get-posts/:start/:limit', (req, res) => {
+    let start = parseInt(req.params.start)
+    let limit = parseInt(req.params.limit)
+    let categorySlug = req.params.slug
 
-router.get('/', (req, res) => {
-    Setting.findOne({}, function (err, setting) {
-        let postLimit = parseInt(setting.post_limit)
-        Post.find({}).sort({ "createdAt": "desc" }).limit(postLimit).exec(function (err, posts) {
-            res.render('user/home', { posts: posts, postLimit: postLimit })
-        })
+    Post.find({ category: categorySlug }).sort({ "_id": -1 }).skip(start).limit(limit).exec(function (err, posts) {
+        res.send(posts)
     })
 })
 
-router.get('/posts/:id', (req, res) => {
-    console.log(req.params.id)
-    Post.findOne({ "_id": ObjectId(req.params.id) }, function (err, post) {
-        if (err) return console.log(err)
-        res.render('user/post', { post: post })
-    })
-})
 
-router.post('/do-comment', function (req, res) {
+/* 
+* POST new comment
+*/
+router.post('/add-comment', function (req, res) {
     let comment_id = ObjectId()
     Post.updateOne(
         { "_id": new ObjectId(req.body.post_id) },
@@ -51,7 +65,10 @@ router.post('/do-comment', function (req, res) {
     );
 })
 
-router.post('/do-reply', (req, res) => {
+/* 
+* POST new reply
+*/
+router.post('/add-reply', (req, res) => {
     let reply_id = ObjectId()
     Post.updateOne(
         { "_id": new ObjectId(req.body.post_id), "comments._id": new ObjectId(req.body.comment_id) },
@@ -84,6 +101,20 @@ router.post('/do-reply', (req, res) => {
             }
         })
 })
+
+router.get('/category/:category', (req, res) => {
+    var categorySlug = req.params.category;
+    Category.findOne({ slug: categorySlug }, function (err, category) {
+        Setting.findOne({}, function (err, setting) {
+            let postLimit = parseInt(setting.post_limit)
+            Post.find({ category: categorySlug }).sort({ "createdAt": "desc" }).limit(postLimit).exec(function (err, posts) {
+                res.render('user/category', { posts: posts, postLimit: postLimit, category: categorySlug })
+            })
+        })
+    })
+})
+
+
 
 
 

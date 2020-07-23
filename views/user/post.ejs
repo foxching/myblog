@@ -125,7 +125,7 @@
             comment: form.comment.value
         }
         $.ajax({
-            url: '/do-comment',
+            url: '/posts/add-comment',
             method: "POST",
             data: formData,
             success: function (response) {
@@ -164,7 +164,7 @@
             comment_email: form.comment_email.value
         }
         $.ajax({
-            url: '/do-reply',
+            url: '/posts/add-reply',
             method: "POST",
             data: formData,
             success: function (response) {
