@@ -1,12 +1,18 @@
 <%- include('header') %>
 <!-- Page Content -->
 <div class="container">
-    <div class="row">
+    <div class="row ">
         <!-- Blog Content -->
-        <div class="col-md-8">
-            <div class="mt-5">
+        <div class="col-md-8 mt-3">
+            <h1 class="text-ca"><%- title %>
+                <small></small>
+            </h1>
+            <% if(content != "") { %>
+            <div class="card mb-4 p-2">
                 <%- content %>
             </div>
+            <% } %>
+
         </div>
         <!-- Sidebar Widgets Column -->
         <%- include('sidebar') %>

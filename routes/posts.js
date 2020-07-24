@@ -8,7 +8,7 @@ const Setting = require('../models/setting')
 
 
 router.get('/', function (req, res, next) {
-    //var perPage = 6
+
     var page = req.query.page || 1
     Setting.findOne({}, function (err, setting) {
         let postLimit = parseInt(setting.post_limit)
@@ -38,32 +38,6 @@ router.get('/:id', (req, res) => {
     Post.findOne({ "_id": ObjectId(req.params.id) }, function (err, post) {
         if (err) return console.log(err)
         res.render('user/post', { post: post })
-    })
-})
-
-
-/* 
-* GET pagination posts
-*/
-router.get('/get-posts/:start/:limit', (req, res) => {
-    let start = parseInt(req.params.start)
-    let limit = parseInt(req.params.limit)
-
-    Post.find({}).sort({ "_id": -1 }).skip(start).limit(limit).exec(function (err, posts) {
-        res.send(posts)
-    })
-})
-
-/* 
-* GET pagination posts per category
-*/
-router.get('/category/:slug/get-posts/:start/:limit', (req, res) => {
-    let start = parseInt(req.params.start)
-    let limit = parseInt(req.params.limit)
-    let categorySlug = req.params.slug
-
-    Post.find({ category: categorySlug }).sort({ "_id": -1 }).skip(start).limit(limit).exec(function (err, posts) {
-        res.send(posts)
     })
 })
 
@@ -129,11 +103,25 @@ router.post('/add-reply', (req, res) => {
 router.get('/category/:category', (req, res) => {
     var categorySlug = req.params.category;
     Category.findOne({ slug: categorySlug }, function (err, category) {
+        var page = req.query.page || 1
         Setting.findOne({}, function (err, setting) {
             let postLimit = parseInt(setting.post_limit)
-            Post.find({ category: categorySlug }).sort({ "createdAt": "desc" }).limit(postLimit).exec(function (err, posts) {
-                res.render('user/category', { posts: posts, postLimit: postLimit, category: categorySlug })
-            })
+            Post.find({ category: categorySlug })
+                .sort({ "createdAt": "desc" })
+                .skip((postLimit * page) - postLimit)
+                .limit(postLimit)
+                .exec(function (err, posts) {
+                    if (err) return console.log(err)
+                    Post.find({ category: categorySlug }).countDocuments().exec(function (err, count) {
+                        if (err) return console.log(err)
+                        res.render('user/category', {
+                            posts: posts,
+                            current: page,
+                            category: categorySlug,
+                            postPages: Math.ceil(count / postLimit),
+                        })
+                    })
+                })
         })
     })
 })
