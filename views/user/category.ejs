@@ -7,10 +7,11 @@
         <!-- Blog Entries Column -->
         <div class="col-md-8">
 
-            <h1 class="my-4"><%= category %>
+            <h1 class="my-4">Category: <%= category %>
                 <small></small>
             </h1>
 
+            <% if(posts.length > 0) { %>
             <!-- Blog Post -->
             <div id="posts">
                 <% posts.forEach((post) => { %>
@@ -42,6 +43,10 @@
                     <a class="page-link" href="#" onclick="getNext()">Newer &rarr;</a>
                 </li>
             </ul>
+            <% } else { %>
+            <h3 class="lead text-center mt-5">No Post found!</h3>
+            <% } %>
+
         </div>
 
         <!-- Sidebar Widgets Column -->
@@ -70,6 +75,7 @@
             }
         })
     }
+
     function getPrevious() {
         start = start - limit
         $.ajax({

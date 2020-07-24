@@ -5,13 +5,9 @@
         <!-- Blog Content -->
         <div class="col-md-8">
             <div class="mt-5">
-                <% if(page.content !== null) { %>
-                <%- page.content %>
-                <% } %>
+                <%- content %>
             </div>
-
         </div>
-
         <!-- Sidebar Widgets Column -->
         <%- include('sidebar') %>
 

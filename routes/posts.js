@@ -6,6 +6,30 @@ const Post = require('../models/post')
 const Category = require('../models/category')
 const Setting = require('../models/setting')
 
+
+router.get('/', function (req, res, next) {
+    //var perPage = 6
+    var page = req.query.page || 1
+    Setting.findOne({}, function (err, setting) {
+        let postLimit = parseInt(setting.post_limit)
+        Post.find({})
+            .sort({ "createdAt": "desc" })
+            .skip((postLimit * page) - postLimit)
+            .limit(postLimit)
+            .exec(function (err, posts) {
+                Post.countDocuments().exec(function (err, count) {
+                    if (err) return next(err)
+                    res.render('user/home', {
+                        posts: posts,
+                        current: page,
+                        postPages: Math.ceil(count / postLimit),
+                    })
+                })
+            })
+    })
+});
+
+
 /* 
 * GET post by id
 */

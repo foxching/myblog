@@ -5,33 +5,28 @@ const Setting = require('../models/setting')
 const Page = require('../models/page')
 
 
-/* 
-* GET pages per slug
-*/
-router.get('/:slug', (req, res) => {
-    Page.findOne({ slug: req.params.slug }, function (err, page) {
+
+/* GET home page. */
+router.get('/:slug', function (req, res, next) {
+    const slug = req.params.slug
+    Page.findOne({ slug: slug }, function (err, page) {
         if (err) return console.log(err)
-        if (page == null) {
+        if (!page) {
             res.redirect('/')
         } else {
-            res.render('user/page', { page: page })
+            res.render('user/index', { content: page.content })
         }
-
     })
-})
+});
 
-
-/* 
-* GET posts to home
-*/
-router.get('/', (req, res) => {
-    Setting.findOne({}, function (err, setting) {
-        let postLimit = parseInt(setting.post_limit)
-        Post.find({}).sort({ "createdAt": "desc" }).limit(postLimit).exec(function (err, posts) {
-            res.render('user/home', { posts: posts, postLimit: postLimit })
-        })
+/* GET home page. */
+router.get('/', function (req, res, next) {
+    Page.findOne({ slug: 'home' }, function (err, page) {
+        if (err) console.log(err)
+        res.render('user/index', { content: page.content })
     })
-})
+});
+
 
 
 
