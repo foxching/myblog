@@ -39,9 +39,9 @@ router.post('/create-page', (req, res) => {
     let newPage = new Page({
         title: req.body.title,
         slug:
-            req.body.slug.replace(/\s+/g, '=').toLowerCase() == ''
-                ? req.body.title.replace(/\s+/g, '=').toLowerCase()
-                : req.body.slug.replace(/\s+/g, '=').toLowerCase(),
+            req.body.slug.replace(/\s+/g, '-').toLowerCase() == ''
+                ? req.body.title.replace(/\s+/g, '-').toLowerCase()
+                : req.body.slug.replace(/\s+/g, '-').toLowerCase(),
         content: req.body.content,
         sorting: 100
     });
@@ -89,9 +89,9 @@ router.get('/edit-page/:id', (req, res) => {
 router.post('/edit-page', (req, res) => {
     let title = req.body.title;
     let slug =
-        req.body.slug.replace(/\s+/g, '=').toLowerCase() == ''
-            ? req.body.title.replace(/\s+/g, '=').toLowerCase()
-            : req.body.slug.replace(/\s+/g, '=').toLowerCase()
+        req.body.slug.replace(/\s+/g, '-').toLowerCase() == ''
+            ? req.body.title.replace(/\s+/g, '-').toLowerCase()
+            : req.body.slug.replace(/\s+/g, '-').toLowerCase()
     let content = req.body.content
     let id = req.body._id;
     Page.findOne({ slug: slug, _id: { $ne: id } }, function (err, category) {

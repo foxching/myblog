@@ -6,9 +6,10 @@ const Post = require('../models/post')
 const Category = require('../models/category')
 const Setting = require('../models/setting')
 
-
+/* 
+* GET all posts
+*/
 router.get('/', function (req, res, next) {
-
     var page = req.query.page || 1
     Setting.findOne({}, function (err, setting) {
         let postLimit = parseInt(setting.post_limit)
@@ -31,11 +32,10 @@ router.get('/', function (req, res, next) {
 
 
 /* 
-* GET post by id
+* GET post by slug
 */
-router.get('/:id', (req, res) => {
-    console.log(req.params.id)
-    Post.findOne({ "_id": ObjectId(req.params.id) }, function (err, post) {
+router.get('/:slug', (req, res) => {
+    Post.findOne({ slug: req.params.slug }, function (err, post) {
         if (err) return console.log(err)
         res.render('user/post', { post: post })
     })
@@ -100,6 +100,9 @@ router.post('/add-reply', (req, res) => {
         })
 })
 
+/* 
+* GET posts per category
+*/
 router.get('/category/:category', (req, res) => {
     var categorySlug = req.params.category;
     Category.findOne({ slug: categorySlug }, function (err, category) {

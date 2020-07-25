@@ -24,7 +24,7 @@
                     <div class="card-body">
                         <h2 class="card-title"><%= post.title %> </h2>
                         <p class="card-text"><%- post.content.substring(0, 200) + '...' %> </p>
-                        <a href="/posts/<%= post.id %>" class="btn btn-primary">Read More &rarr;</a>
+                        <a href="/posts/<%= post.slug %>" class="btn btn-primary">Read More &rarr;</a>
                     </div>
                     <div class="card-footer text-muted">
                         Posted on <%- format(post.createdAt, 'MMMM d yyyy') %> by

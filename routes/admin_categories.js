@@ -36,7 +36,7 @@ router.get('/add-category', (req, res) => {
 router.post('/add-category', (req, res) => {
     let newCategory = new Category({
         title: req.body.title,
-        slug: req.body.title.replace(/\s+/g, '=').toLowerCase(),
+        slug: req.body.title.replace(/\s+/g, '-').toLowerCase(),
 
     });
     Category.findOne({ slug: newCategory.slug }, function (err, category) {
@@ -79,7 +79,7 @@ router.get('/edit-category/:id', (req, res) => {
 */
 router.post('/edit-category', (req, res) => {
     let title = req.body.title;
-    let slug = title.replace(/\s+/g, '=').toLowerCase();
+    let slug = title.replace(/\s+/g, '-').toLowerCase();
     let id = req.body._id;
     Category.findOne({ slug: slug, _id: { $ne: id } }, function (err, category) {
         if (category) {

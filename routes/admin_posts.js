@@ -41,18 +41,30 @@ router.get('/add-post', (req, res) => {
 * POST new post
 */
 router.post('/add-post', (req, res) => {
-    let post = new Post(req.body)
-    post.save(function (err, post) {
-        if (err) {
-            console.log(err)
+    let newPost = new Post({
+        title: req.body.title,
+        slug: req.body.title.replace(/\s+/g, '-').toLowerCase(),
+        category: req.body.category,
+        content: req.body.content,
+        image: req.body.image,
+    })
+
+    Post.findOne({ slug: newPost.slug }, function (err, post) {
+        if (err) return console.log(err)
+        if (post) {
+            res.send({ text: "Post title already exists" })
         } else {
-            res.send({
-                text: "Posted Successfully",
-                _id: post._id,
-                createdAt: post.createdAt
+            newPost.save(function (err, post) {
+                if (err) return console.log(err)
+                res.send({
+                    text: "Posted Successfully",
+                    _id: post._id,
+                    createdAt: post.createdAt
+                })
             })
         }
     })
+
 })
 
 /* 
@@ -66,7 +78,7 @@ router.get('/edit-post/:id', (req, res) => {
             if (err) return console.log(err)
             Post.findById({ "_id": ObjectId(req.params.id) }, function (err, post) {
                 if (err) return console.log(err)
-                res.render('admin/edit-post', { post: post, categories: categories, category: post.category.replace(/\s+/g, '=').toLowerCase(), })
+                res.render('admin/edit-post', { post: post, categories: categories, category: post.category.replace(/\s+/g, '-').toLowerCase(), })
             })
         })
     }
@@ -77,9 +89,23 @@ router.get('/edit-post/:id', (req, res) => {
 * POST edit post
 */
 router.post('/edit-post', (req, res) => {
-    Post.updateOne({ "_id": ObjectId(req.body._id) }, { $set: { "title": req.body.title, "content": req.body.content, "category": req.body.category, "image": req.body.image } }, function (err, post) {
-        res.send('Post Updated Successfully')
+    let title = req.body.title;
+    let slug = req.body.title.replace(/\s+/g, '-').toLowerCase();
+    let category = req.body.category
+    let content = req.body.content
+    let image = req.body.image
+    let id = req.body._id;
+    Post.findOne({ slug: slug, _id: { $ne: id } }, function (err, post) {
+        if (post) {
+            res.send("Post Title Exists")
+        } else {
+            Post.updateOne({ "_id": ObjectId(id) }, { $set: { "title": title, "slug": slug, "content": content, "category": category, "image": image } }, function (err, post) {
+                res.send('Post Updated Successfully')
+            })
+        }
     })
+
+
 })
 
 
