@@ -5,20 +5,17 @@ const ObjectId = require('mongodb').ObjectID
 const formidable = require('formidable')
 const Post = require('../models/post')
 const Category = require('../models/category')
+const { ensureAuthenticated } = require('../config/auth');
 
 
 /* 
 * GET posts
 */
-router.get('/', (req, res) => {
-    if (!req.session.admin) {
-        res.redirect('/admin')
-    } else {
-        Post.find({}, function (err, posts) {
-            if (err) return console.log(err)
-            res.render('admin/posts', { posts: posts })
-        })
-    }
+router.get('/', ensureAuthenticated, (req, res) => {
+    Post.find({}, function (err, posts) {
+        if (err) return console.log(err)
+        res.render('admin/posts', { posts: posts })
+    })
 
 })
 
@@ -26,14 +23,10 @@ router.get('/', (req, res) => {
 /* 
 * GET new post
 */
-router.get('/add-post', (req, res) => {
-    if (!req.session.admin) {
-        res.redirect('/admin')
-    } else {
-        Category.find({}, function (err, categories) {
-            res.render('admin/add-post', { newPost: new Post(), categories: categories })
-        })
-    }
+router.get('/add-post', ensureAuthenticated, (req, res) => {
+    Category.find({}, function (err, categories) {
+        res.render('admin/add-post', { newPost: new Post(), categories: categories })
+    })
 })
 
 
@@ -70,18 +63,14 @@ router.post('/add-post', (req, res) => {
 /* 
 * GET edit post
 */
-router.get('/edit-post/:id', (req, res) => {
-    if (!req.session.admin) {
-        res.redirect('/admin')
-    } else {
-        Category.find(function (err, categories) {
+router.get('/edit-post/:id', ensureAuthenticated, (req, res) => {
+    Category.find(function (err, categories) {
+        if (err) return console.log(err)
+        Post.findById({ "_id": ObjectId(req.params.id) }, function (err, post) {
             if (err) return console.log(err)
-            Post.findById({ "_id": ObjectId(req.params.id) }, function (err, post) {
-                if (err) return console.log(err)
-                res.render('admin/edit-post', { post: post, categories: categories, category: post.category.replace(/\s+/g, '-').toLowerCase(), })
-            })
+            res.render('admin/edit-post', { post: post, categories: categories, category: post.category.replace(/\s+/g, '-').toLowerCase(), })
         })
-    }
+    })
 
 })
 

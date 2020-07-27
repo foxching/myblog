@@ -1,11 +1,16 @@
 const express = require('express')
 const mongoose = require('mongoose');
+const passport = require('passport');
 const { format } = require('date-fns');
-
+const flash = require('connect-flash');
 const session = require('express-session')
 const app = express()
 const http = require('http').createServer(app)
 const io = require('socket.io')(http)
+
+
+// Passport Config
+require('./config/passport')(passport);
 
 
 //view engine and static file
@@ -50,6 +55,22 @@ app.use(
         saveUninitialized: true
     })
 );
+
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Connect flash
+app.use(flash());
+
+// Global variables
+app.use(function (req, res, next) {
+    res.locals.success_msg = req.flash('success_msg');
+    res.locals.error_msg = req.flash('error_msg');
+    res.locals.error = req.flash('error');
+    res.locals.user = req.user || null;
+    next();
+});
 
 app.use((req, res, next) => {
     res.locals.format = format;

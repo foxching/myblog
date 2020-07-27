@@ -2,19 +2,16 @@ const express = require('express');
 const router = express.Router();
 const ObjectId = require('mongodb').ObjectID
 const Page = require('../models/page')
+const { ensureAuthenticated } = require('../config/auth');
 
 
 /* 
 * GET pages
 */
-router.get('/', (req, res) => {
-    if (!req.session.admin) {
-        res.redirect('/admin')
-    } else {
-        Page.find({}, function (err, pages) {
-            res.render('admin/pages', { pages: pages })
-        })
-    }
+router.get('/', ensureAuthenticated, (req, res) => {
+    Page.find({}, function (err, pages) {
+        res.render('admin/pages', { pages: pages })
+    })
 
 })
 
@@ -22,13 +19,8 @@ router.get('/', (req, res) => {
 /* 
 * GET new page
 */
-router.get('/add-page', (req, res) => {
-    if (!req.session.admin) {
-        res.redirect('/admin')
-    } else {
-        res.render('admin/add-page', { newPage: new Page() })
-    }
-
+router.get('/add-page', ensureAuthenticated, (req, res) => {
+    res.render('admin/add-page', { newPage: new Page() })
 })
 
 
@@ -70,16 +62,11 @@ router.post('/create-page', (req, res) => {
 /* 
 * GET edit page
 */
-router.get('/edit-page/:id', (req, res) => {
-    if (!req.session.admin) {
-        res.redirect('/admin')
-    } else {
-        Page.findById({ "_id": ObjectId(req.params.id) }, function (err, page) {
-            if (err) return console.log(err)
-            res.render('admin/edit-page', { page: page })
-        })
-
-    }
+router.get('/edit-page/:id', ensureAuthenticated, (req, res) => {
+    Page.findById({ "_id": ObjectId(req.params.id) }, function (err, page) {
+        if (err) return console.log(err)
+        res.render('admin/edit-page', { page: page })
+    })
 })
 
 
@@ -126,21 +113,17 @@ router.post('/edit-page', (req, res) => {
 * POST delete page
 */
 router.post('/delete-page', (req, res) => {
-    if (!req.session.admin) {
-        res.redirect('/admin')
-    } else {
-        Page.findByIdAndRemove({ "_id": ObjectId(req.body._id) }, function (err) {
-            Page.find({}).exec(function (err, pages) {
-                if (err) {
-                    console.log(err);
-                } else {
-                    req.app.locals.pages = pages;
-                }
-            });
-            res.send('Page Removed')
+    Page.findByIdAndRemove({ "_id": ObjectId(req.body._id) }, function (err) {
+        Page.find({}).exec(function (err, pages) {
+            if (err) {
+                console.log(err);
+            } else {
+                req.app.locals.pages = pages;
+            }
+        });
+        res.send('Page Removed')
 
-        })
-    }
+    })
 })
 
 

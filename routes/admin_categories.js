@@ -2,32 +2,23 @@ const express = require('express');
 const router = express.Router();
 const ObjectId = require('mongodb').ObjectID
 const Category = require('../models/category')
+const { ensureAuthenticated } = require('../config/auth');
 
 
 /* 
 * GET categories
 */
-router.get('/', (req, res) => {
-    if (!req.session.admin) {
-        res.redirect('/admin')
-    } else {
-        Category.find({}, function (err, categories) {
-            res.render('admin/categories', { categories: categories })
-        })
-    }
-
+router.get('/', ensureAuthenticated, (req, res) => {
+    Category.find({}, function (err, categories) {
+        res.render('admin/categories', { categories: categories })
+    })
 })
 
 /* 
 * GET new category
 */
-router.get('/add-category', (req, res) => {
-    if (!req.session.admin) {
-        res.redirect('/admin')
-    } else {
-        res.render('admin/add-category', { newCategory: new Category() })
-    }
-
+router.get('/add-category', ensureAuthenticated, (req, res) => {
+    res.render('admin/add-category', { newCategory: new Category() })
 })
 
 /* 
@@ -63,15 +54,10 @@ router.post('/add-category', (req, res) => {
 /* 
 * GET edit category
 */
-router.get('/edit-category/:id', (req, res) => {
-    if (!req.session.admin) {
-        res.redirect('/admin')
-    } else {
-        Category.findById({ "_id": ObjectId(req.params.id) }, function (err, category) {
-            res.render('admin/edit-category', { category: category })
-        })
-
-    }
+router.get('/edit-category/:id', ensureAuthenticated, (req, res) => {
+    Category.findById({ "_id": ObjectId(req.params.id) }, function (err, category) {
+        res.render('admin/edit-category', { category: category })
+    })
 })
 
 /* 
