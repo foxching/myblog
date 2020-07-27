@@ -26,9 +26,9 @@
                             <td><%- post.category %> </td>
                             <td>
                                 <% if(post.image == "") { %>
-                                <img src="http://placehold.it/750x300" style="width: 150px;">
+                                <img src="http://placehold.it/750x300" style="width: 150px; height:100px">
                                 <% } else { %>
-                                <img src="<%= post.image %>" style="width: 250px;">
+                                <img src="<%= post.image %>" style="width: 150px; height:100px">
                                 <% } %>
                             </td>
                             <td><%= post.comments.length %></td>
