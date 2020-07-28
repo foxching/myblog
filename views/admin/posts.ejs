@@ -18,7 +18,7 @@
                             <th>Title</th>
                             <th>Category</th>
                             <th>Post Image</th>
-                            <th>Comments</th>
+                            <th>Author</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -34,9 +34,9 @@
                                 <img src="<%= post.image %>" style="width: 150px; height:100px">
                                 <% } %>
                             </td>
-                            <td><%= post.comments.length %></td>
+                            <td><%= post.author.firstname %></td>
                             <td>
-                                <a href="/posts/<%= post._id %>" class="btn btn-primary btn-sm">View</a>
+                                <a href="/posts/<%= post.slug %>" class="btn btn-primary btn-sm">View</a>
                                 <a href="/admin/posts/edit-post/<%= post.id %>" class="btn btn-warning btn-sm">Edit</a>
                                 <button class="btn btn-danger btn-sm"
                                     onclick="doDelete('<%= post._id %>','<%= post.image %>')">Delete</button>

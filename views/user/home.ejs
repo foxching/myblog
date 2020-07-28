@@ -27,7 +27,7 @@
                     </div>
                     <div class="card-footer text-muted">
                         Posted on <%- format(post.createdAt, 'MMMM d yyyy') %> by
-                        <a href="#">Admin</a>
+                        <a href="#"><%= post.author.firstname %></a>
                     </div>
                 </div>
                 <% }) %>
@@ -94,11 +94,11 @@
         html += '<div class="card-body">';
         html += '<h2 class="card-title">' + formData.title + '</h2>';
         html += '<p class="card-text">' + formData.title + '</p>';
-        html += '<a href="posts/' + formData._id + '" class="btn btn-primary">Read More &rarr;</a>';
+        html += '<a href="/posts/' + formData.slug + '" class="btn btn-primary">Read More &rarr;</a>';
         html += '</div>';
         html += '<div class="card-footer text-muted">';
         html += 'Posted on ' + createdAt + ' by';
-        html += '<a href="#"> Admin </a>';
+        html += '<a href="#"> ' + formData.author + '</a>';
         html += '</div>';
         html += '</div>';
         $("#posts").prepend(html)

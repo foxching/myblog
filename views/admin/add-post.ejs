@@ -89,6 +89,8 @@
                             alert(response.text)
                             formData._id = response._id
                             formData.createdAt = response.createdAt
+                            formData.author = response.author
+                            formData.slug = response.slug
                             socket.emit("new_post", formData)
                             window.location.href = "/admin/posts"
                         },

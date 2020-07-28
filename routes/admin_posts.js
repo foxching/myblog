@@ -12,7 +12,8 @@ const { ensureAuthenticated } = require('../config/auth');
 * GET posts
 */
 router.get('/', ensureAuthenticated, (req, res) => {
-    Post.find({}, function (err, posts) {
+
+    Post.find({}).populate('author').exec(function (err, posts) {
         if (err) return console.log(err)
         res.render('admin/posts', { posts: posts })
     })
@@ -40,6 +41,7 @@ router.post('/add-post', (req, res) => {
         category: req.body.category,
         content: req.body.content,
         image: req.body.image,
+        author: req.user.id
     })
 
     Post.findOne({ slug: newPost.slug }, function (err, post) {
@@ -52,7 +54,9 @@ router.post('/add-post', (req, res) => {
                 res.send({
                     text: "Posted Successfully",
                     _id: post._id,
-                    createdAt: post.createdAt
+                    createdAt: post.createdAt,
+                    author: req.user.firstname,
+                    slug: post.slug
                 })
             })
         }

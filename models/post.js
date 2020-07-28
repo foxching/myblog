@@ -20,6 +20,11 @@ const postSchema = mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    author: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Admin'
+    },
     image: {
         type: String,
     },

@@ -17,6 +17,7 @@ router.get('/', function (req, res, next) {
             .sort({ "createdAt": "desc" })
             .skip((postLimit * page) - postLimit)
             .limit(postLimit)
+            .populate('author')
             .exec(function (err, posts) {
                 Post.countDocuments().exec(function (err, count) {
                     if (err) return next(err)
@@ -35,11 +36,13 @@ router.get('/', function (req, res, next) {
 * GET post by slug
 */
 router.get('/:slug', (req, res) => {
-    Post.findOne({ slug: req.params.slug }, function (err, post) {
+    Post.findOne({ slug: req.params.slug }).populate('author').exec(function (err, post) {
         if (err) return console.log(err)
+        console.log(post)
         res.render('user/post', { post: post })
     })
 })
+
 
 
 /* 
