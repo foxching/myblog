@@ -35,6 +35,7 @@ router.post('/create-page', (req, res) => {
                 ? req.body.title.replace(/\s+/g, '-').toLowerCase()
                 : req.body.slug.replace(/\s+/g, '-').toLowerCase(),
         content: req.body.content,
+        author: req.user.id,
         sorting: 100
     });
     Page.findOne({ slug: newPage.slug }, function (err, page) {
@@ -90,6 +91,8 @@ router.post('/edit-page', (req, res) => {
                 page.title = title;
                 page.slug = slug;
                 page.content = content
+                page.updatedBy = req.user.id
+                page.updatedAt = new Date()
                 page.save(function (err) {
                     if (err) return console.log(err)
                     Page.find({}).exec(function (err, pages) {

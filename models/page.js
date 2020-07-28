@@ -12,7 +12,24 @@ const pageSchema = mongoose.Schema({
     content: {
         type: String,
     },
-    sorting: { type: Number }
+    sorting: { type: Number },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now
+    },
+    author: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Admin'
+    },
+    updatedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Admin'
+    },
 
 });
 

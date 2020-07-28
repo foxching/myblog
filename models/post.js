@@ -16,7 +16,15 @@ const postSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    image: {
+        type: String,
+    },
+    comments: [],
     createdAt: {
+        type: Date,
+        default: Date.now
+    },
+    updatedAt: {
         type: Date,
         default: Date.now
     },
@@ -25,10 +33,11 @@ const postSchema = mongoose.Schema({
         required: true,
         ref: 'Admin'
     },
-    image: {
-        type: String,
+    updatedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Admin'
     },
-    comments: []
+
 });
 
 module.exports = mongoose.model('Post', postSchema);

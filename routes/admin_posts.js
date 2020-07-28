@@ -92,7 +92,12 @@ router.post('/edit-post', (req, res) => {
         if (post) {
             res.send("Post Title Exists")
         } else {
-            Post.updateOne({ "_id": ObjectId(id) }, { $set: { "title": title, "slug": slug, "content": content, "category": category, "image": image } }, function (err, post) {
+            Post.updateOne({ "_id": ObjectId(id) }, {
+                $set: {
+                    "title": title, "slug": slug, "content": content, "category": category, "image": image, "updatedAt": new Date(),
+                    "updatedBy": req.user.id
+                }
+            }, function (err, post) {
                 res.send('Post Updated Successfully')
             })
         }
