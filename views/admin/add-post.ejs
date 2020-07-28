@@ -3,11 +3,12 @@
 <div id="layoutSidenav_content">
     <main>
         <div class="container-fluid">
-            <h1 class="mt-4">New Post</h1>
+            <h1 class="mt-4">Add Post</h1>
             <ol class="breadcrumb mb-4">
                 <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-                <li class="breadcrumb-item active">New Post</li>
+                <li class="breadcrumb-item active">New</li>
             </ol>
+
             <form method="POST" onsubmit="return doPost(this)">
                 <div class="form-group">
                     <label for="title">Title:</label>
@@ -26,6 +27,7 @@
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
                     Upload Image
                 </button>
+                <br>
                 <div class="form-group">
                     <label for="content">Content:</label>
                     <textarea name="content" id="ta" class="form-control" rows="10" cols="30"

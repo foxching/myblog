@@ -97,20 +97,16 @@ router.post('/edit-category', (req, res) => {
 * POST delete category
 */
 router.post('/delete-category', (req, res) => {
-    if (!req.session.admin) {
-        res.redirect('/admin')
-    } else {
-        Category.findByIdAndRemove({ "_id": ObjectId(req.body._id) }, function (err) {
-            Category.find(function (err, categories) {
-                if (err) {
-                    console.log(err);
-                } else {
-                    req.app.locals.categories = categories;
-                }
-            });
-            res.send('Category Removed')
-        })
-    }
+    Category.findByIdAndRemove({ "_id": ObjectId(req.body._id) }, function (err) {
+        Category.find(function (err, categories) {
+            if (err) {
+                console.log(err);
+            } else {
+                req.app.locals.categories = categories;
+            }
+        });
+        res.send('Category Removed')
+    })
 })
 
 
