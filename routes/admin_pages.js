@@ -9,7 +9,8 @@ const { ensureAuthenticated } = require('../config/auth');
 * GET pages
 */
 router.get('/', ensureAuthenticated, (req, res) => {
-    Page.find({}, function (err, pages) {
+    Page.find({}).populate('author').exec(function (err, pages) {
+        if (err) return console.log(err)
         res.render('admin/pages', { pages: pages })
     })
 

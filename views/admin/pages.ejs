@@ -14,19 +14,22 @@
                 <thead>
                     <tr class="home">
                         <th>Title</th>
-                        <th>Edit</th>
-                        <th>Delete</th>
+                        <th>Author</th>
+                        <th colspan="2">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <% pages.forEach(function(page) { %>
                     <tr id="id_<%= page._id %>" class="<%= page.slug %>">
                         <td><%= page.title %></td>
-                        <td><a href="/admin/pages/edit-page/<%= page.id %>" class="btn btn-warning btn-sm">Edit</a></td>
+                        <td><%= page.author.firstname %> </td>
+
                         <% if(page.slug == 'home') { %>
-                        <td></td>
+                        <td><a href="/admin/pages/edit-page/<%= page.id %>" class="btn btn-warning btn-sm">Edit</a></td>
                         <% } else { %>
-                        <td><button class="btn btn-danger btn-sm" onclick="doDelete('<%= page._id %>')">Delete</button>
+                        <td>
+                            <a href="/admin/pages/edit-page/<%= page.id %>" class="btn btn-warning btn-sm">Edit</a>
+                            <button class="btn btn-danger btn-sm" onclick="doDelete('<%= page._id %>')">Delete</button>
                         </td>
                         <% } %>
                     </tr>

@@ -38,7 +38,6 @@ router.get('/', function (req, res, next) {
 router.get('/:slug', (req, res) => {
     Post.findOne({ slug: req.params.slug }).populate('author').exec(function (err, post) {
         if (err) return console.log(err)
-        console.log(post)
         res.render('user/post', { post: post })
     })
 })

@@ -84,11 +84,13 @@ const posts = require('./routes/posts')
 const admin_posts = require('./routes/admin_posts')
 const admin_pages = require('./routes/admin_pages')
 const admin_categories = require('./routes/admin_categories')
+const admin_users = require('./routes/admin_users')
 
 
 app.use('/admin/posts', admin_posts)
 app.use('/admin/pages', admin_pages)
 app.use('/admin/categories', admin_categories)
+app.use('/admin/users', admin_users)
 app.use('/admin', admin)
 app.use('/posts', posts)
 app.use('/', pages)

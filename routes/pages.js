@@ -22,10 +22,14 @@ router.get('/:slug', function (req, res, next) {
 /* GET home page. */
 router.get('/', function (req, res, next) {
     Page.findOne({ slug: 'home' }, function (err, page) {
-        if (err) console.log(err)
+        if (err) {
+            console.log(err)
+        } 
         res.render('user/index', { title: "Home", content: page.content })
-    })
 
+    })
+    
+    //res.send('ok')
 
 });
 
