@@ -112,6 +112,7 @@ router.get('/category/:category', (req, res) => {
         Setting.findOne({}, function (err, setting) {
             let postLimit = parseInt(setting.post_limit)
             Post.find({ category: categorySlug })
+                .populate('author')
                 .sort({ "createdAt": "desc" })
                 .skip((postLimit * page) - postLimit)
                 .limit(postLimit)

@@ -23,10 +23,11 @@
                     <% categories.forEach(function(cat) { %>
                     <tr>
                         <td><%= cat.title %></td>
-                        <td><%= cat.author.firstname %></td>
-                        <td><a href="/admin/categories/edit-category/<%= cat._id %>"
-                                class="btn btn-warning btn-sm">Edit</a></td>
-                        <td><button class="btn btn-danger btn-sm" onclick="doDelete('<%= cat._id %>')">Delete</button>
+                        <td><%= cat.author.username %></td>
+                        <td>
+                            <a href="/admin/categories/edit-category/<%= cat._id %>"
+                                class="btn btn-warning btn-sm">Edit</a>
+                            <button class="btn btn-danger btn-sm" onclick="doDelete('<%= cat._id %>')">Delete</button>
                         </td>
                     </tr>
                     <% }) %>

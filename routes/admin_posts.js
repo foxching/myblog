@@ -55,7 +55,7 @@ router.post('/add-post', (req, res) => {
                     text: "Posted Successfully",
                     _id: post._id,
                     createdAt: post.createdAt,
-                    author: req.user.firstname,
+                    author: req.user.username,
                     slug: post.slug
                 })
             })

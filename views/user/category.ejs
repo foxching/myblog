@@ -28,7 +28,7 @@
                     </div>
                     <div class="card-footer text-muted">
                         Posted on <%- format(post.createdAt, 'MMMM d yyyy') %> by
-                        <a href="#">Admin</a>
+                        <a href="#"><%= post.author.username %> </a>
                     </div>
                 </div>
                 <% }) %>
@@ -107,7 +107,7 @@
         html += '</div>';
         html += '<div class="card-footer text-muted">';
         html += 'Posted on ' + createdAt + ' by';
-        html += '<a href="#"> Admin </a>';
+        html += '<a href="#"> ' + formData.author + ' </a>';
         html += '</div>';
         html += '</div>';
         $("#posts").prepend(html)

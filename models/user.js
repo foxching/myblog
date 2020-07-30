@@ -2,13 +2,14 @@ const mongoose = require('mongoose');
 
 //AdminSchema
 const adminSchema = mongoose.Schema({
+    username: {
+        type: String,
+    },
     firstname: {
         type: String,
-        required: true
     },
     lastname: {
         type: String,
-        required: true
     },
     email: {
         type: String,
@@ -17,6 +18,9 @@ const adminSchema = mongoose.Schema({
     password: {
         type: String,
         required: true
+    },
+    bio: {
+        type: String
     },
     date: {
         type: Date,

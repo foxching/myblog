@@ -37,10 +37,10 @@ router.get('/register', forwardAuthenticated, (req, res) => {
 * POST admin register form
 */
 router.post('/register', (req, res) => {
-    const { firstname, lastname, email, password, password2 } = req.body;
+    const { username, email, password, password2 } = req.body;
     let errors = [];
 
-    if (!firstname || !lastname || !email || !password || !password2) {
+    if (!username || !email || !password || !password2) {
         errors.push({ msg: 'Please enter all fields' });
     }
 
@@ -55,8 +55,7 @@ router.post('/register', (req, res) => {
     if (errors.length > 0) {
         res.render('admin/register', {
             errors,
-            firstname,
-            lastname,
+            username,
             email,
             password,
             password2
@@ -67,20 +66,17 @@ router.post('/register', (req, res) => {
                 errors.push({ msg: 'Email already exists' });
                 res.render('admin/register', {
                     errors,
-                    firstname,
-                    lastname,
+                    username,
                     email,
                     password,
                     password2
                 });
             } else {
                 const newUser = new Admin({
-                    firstname,
-                    lastname,
+                    username,
                     email,
                     password
                 });
-
                 bcrypt.genSalt(10, (err, salt) => {
                     bcrypt.hash(newUser.password, salt, (err, hash) => {
                         if (err) throw err;
