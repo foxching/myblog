@@ -24,7 +24,7 @@ const adminSchema = mongoose.Schema({
     },
     role: {
         type: String,
-        default: "Administrator"
+        default: "Subscriber"
     }
 
 });
