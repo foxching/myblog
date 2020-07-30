@@ -1,11 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { ensureAuthenticated } = require('../config/auth');
+const bcrypt = require('bcryptjs')
 const ObjectId = require('mongodb').ObjectID
 const Admin = require('../models/user')
-const Post = require('../models/post')
+const { ensureAuthenticated } = require('../config/auth');
+const { displayRoles } = require('../util/helper')
 
-
+/* 
+* GET all users
+*/
 router.get('/', ensureAuthenticated, (req, res) => {
     Admin.aggregate([
         {
@@ -21,27 +24,67 @@ router.get('/', ensureAuthenticated, (req, res) => {
     })
 })
 
+/* 
+* GET new user
+*/
+router.get('/add-user', ensureAuthenticated, (req, res) => {
+    res.render('admin/add-user', { newUser: new Admin(), roles: displayRoles() })
+})
+
+/* 
+* POST admin add user
+*/
+router.post('/add-user', (req, res) => {
+    const { username, email, firstname, lastname, role, password } = req.body;
+
+    if (password.length < 6) {
+        res.send("Password must be atleast six character")
+    } else {
+        Admin.findOne({ email: email }, function (err, user) {
+            if (user) {
+                res.send("Email already exists")
+            } else {
+                const newUser = new Admin({
+                    username,
+                    firstname,
+                    lastname,
+                    email,
+                    role,
+                    password
+                });
+                bcrypt.genSalt(10, (err, salt) => {
+                    bcrypt.hash(newUser.password, salt, (err, hash) => {
+                        if (err) throw err;
+                        newUser.password = hash;
+                        newUser
+                            .save(function (err, user) {
+                                if (err) return console.log(err)
+                                res.send('User added successfully')
+                            })
+                    });
+                });
+            }
+        })
+    }
+
+
+
+})
+
+/* 
+* GET edit user
+*/
+
 router.get('/edit-user/:id', ensureAuthenticated, (req, res) => {
     const userId = req.params.id
-    const roles = [
-        {
-            "slug": "administrator", "title": "Administrator"
-        },
-        {
-            "slug": "editor", "title": "Editor"
-        },
-        {
-            "slug": "subscriber", "title": "Subscriber"
-        }
-    ]
     Admin.findOne({ "_id": userId }, function (err, user) {
         if (err) return console.log(err)
-        res.render('admin/edit-user', { user: user, roles: roles, userRole: user.role.replace(/\s+/g, '-').toLowerCase() })
+        res.render('admin/edit-user', { user: user, roles: displayRoles(), userRole: user.role.replace(/\s+/g, '-').toLowerCase() })
     })
 })
 
 /* 
-* POST edit post
+* POST edit user
 */
 router.post('/edit-user', (req, res) => {
     let email = req.body.email

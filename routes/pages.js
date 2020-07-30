@@ -28,6 +28,7 @@ router.get('/', function (req, res, next) {
         res.render('user/index', { title: "Home", content: page.content })
 
     })
+    //res.send('ok')
 
 });
 
