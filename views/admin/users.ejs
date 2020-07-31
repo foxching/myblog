@@ -27,11 +27,33 @@
                         <td><%= user.role %></td>
                         <td><%= user.userPosts.length %> </td>
                         <td>
+                            <% if(user.role === "administrator"){ %>
                             <a href="/admin/users/edit-user/<%= user._id %>" class="btn btn-warning btn-sm">Edit</a>
-                            <button class="btn btn-danger btn-sm" onclick="doDelete('<%= user._id %>')">Delete</button>
+                            <% } else { %>
+                            <a href="/admin/users/edit-user/<%= user._id %>" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="/admin/users/delete-user/<%= user._id %>" class="btn btn-danger btn-sm">Delete</a>
+                            <% } %>
                         </td>
                     </tr>
                     <% }) %>
                 </tbody>
             </table>
+
+            <!-- <script>
+                function doDelete(userId) {
+                    if (confirm('Are you sure want to delete?')) {
+                        $.ajax({
+                            url: '/admin/users/delete-user',
+                            method: "POST",
+                            data: {
+                                "_id": userId
+                            },
+                            success: function (response) {
+                                window.location.href = "/admin/users"
+                            }
+                        })
+                    }
+                }
+            </script> -->
+
             <%- include('footer') %>

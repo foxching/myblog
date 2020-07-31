@@ -69,7 +69,9 @@
                         data: formData,
                         success: function (response) {
                             alert(response)
-                            window.location.href = "/admin/users"
+                            if (response == "success") {
+                                window.location.href = "/admin/users"
+                            }
                         },
 
                     })

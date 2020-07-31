@@ -77,7 +77,7 @@ router.post('/add-user', (req, res) => {
 
 router.get('/edit-user/:id', ensureAuthenticated, (req, res) => {
     const userId = req.params.id
-    Admin.findOne({ "_id": userId }, function (err, user) {
+    Admin.findOne({ "_id": ObjectId(userId) }, function (err, user) {
         if (err) return console.log(err)
         res.render('admin/edit-user', { user: user, roles: displayRoles(), userRole: user.role.replace(/\s+/g, '-').toLowerCase() })
     })
@@ -108,6 +108,24 @@ router.post('/edit-user', (req, res) => {
     })
 
 
+})
+
+/* 
+* GET delete user
+*/
+
+router.get('/delete-user/:id', ensureAuthenticated, (req, res) => {
+    Admin.findOne({ "_id": req.params.id }, function (err, user) {
+        if (err) return console.log(err)
+        res.render('admin/notice', { user, user })
+    })
+})
+
+/* 
+* POST delete user
+*/
+router.post('/delete-user', (req, res) => {
+    res.send(req.body.option)
 })
 
 
