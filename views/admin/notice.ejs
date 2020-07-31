@@ -15,6 +15,7 @@
             <form action="POST" onsubmit="return doDeleteUser(this)">
                 <p>What should be done with content owned by this user?</p>
                 <div class="form-check">
+                    <input type="hidden" name="userId" value="<%= user.id %>">
                     <label class="form-check-label" for="radio1">
                         <input type="radio" class="form-check-input" id="radio1" name="optradio" value="option1"
                             checked>Delete All Content
@@ -31,9 +32,11 @@
             </form>
 
             <script>
+                let userId = "<%= user.id %>"
                 function doDeleteUser(form) {
                     const formData = {
                         option: form.optradio.value,
+                        userId: form.userId.value
                     }
                     $.ajax({
                         url: '/admin/users/delete-user',
@@ -41,6 +44,7 @@
                         data: formData,
                         success: function (response) {
                             alert(response)
+                            window.location.href = "/admin/users"
                         }
                     })
                     return false

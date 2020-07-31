@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs')
 const ObjectId = require('mongodb').ObjectID
 const Admin = require('../models/user')
+const Post = require('../models/post')
 const { ensureAuthenticated } = require('../config/auth');
 const { displayRoles } = require('../util/helper')
 
@@ -125,7 +126,20 @@ router.get('/delete-user/:id', ensureAuthenticated, (req, res) => {
 * POST delete user
 */
 router.post('/delete-user', (req, res) => {
-    res.send(req.body.option)
+    let choice = req.body.option
+
+    if (choice == "option1") {
+        Admin.findByIdAndRemove({ "_id": ObjectId(req.body.userId) }, function (err, user) {
+            if (err) return console.log(err)
+            Post.deleteMany({ "author": ObjectId(req.body.userId) }, function (err) {
+                if (err) return console.log(err)
+                res.send('User and all Posts removed')
+            })
+        })
+    }
+
+
+
 })
 
 
