@@ -30,7 +30,6 @@ router.post('/add-category', (req, res) => {
     let newCategory = new Category({
         title: req.body.title,
         slug: req.body.title.replace(/\s+/g, '-').toLowerCase(),
-        author: req.user.id
     });
     Category.findOne({ slug: newCategory.slug }, function (err, category) {
         if (category) {
@@ -78,7 +77,6 @@ router.post('/edit-category', (req, res) => {
                 category.title = title;
                 category.slug = slug;
                 category.updatedAt = new Date()
-                category.updatedBy = req.user.id
                 category.save(function (err) {
                     if (err) return console.log(err)
                     Category.find(function (err, categories) {

@@ -16,16 +16,7 @@ const categorySchema = mongoose.Schema({
     updatedAt: {
         type: Date,
         default: Date.now
-    },
-    author: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: 'Admin'
-    },
-    updatedBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Admin'
-    },
+    }
 
 });
 

@@ -15,7 +15,6 @@
                 <thead>
                     <tr>
                         <th>Title</th>
-                        <th>Author</th>
                         <th colspan="3">Actions</th>
                     </tr>
                 </thead>
@@ -23,7 +22,6 @@
                     <% categories.forEach(function(cat) { %>
                     <tr>
                         <td><%= cat.title %></td>
-                        <td><%= cat.author.username %></td>
                         <td>
                             <a href="/admin/categories/edit-category/<%= cat._id %>"
                                 class="btn btn-warning btn-sm">Edit</a>

@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs')
 const ObjectId = require('mongodb').ObjectID
 const Admin = require('../models/user')
 const Post = require('../models/post')
+const Page = require('../models/page')
 const { ensureAuthenticated } = require('../config/auth');
 const { displayRoles } = require('../util/helper')
 
@@ -133,7 +134,18 @@ router.post('/delete-user', (req, res) => {
             if (err) return console.log(err)
             Post.deleteMany({ "author": ObjectId(req.body.userId) }, function (err) {
                 if (err) return console.log(err)
-                res.send({ status: "success", msg: "User Removed successfully" })
+                Page.deleteMany({ "author": ObjectId(req.body.userId) }, function (err, page) {
+                    if (err) return console.log(err)
+                    Page.find({}).exec(function (err, pages) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            req.app.locals.pages = pages;
+                        }
+                    });
+                    res.send({ status: "success", msg: "User Removed successfully" })
+                })
+
             })
         })
     }
