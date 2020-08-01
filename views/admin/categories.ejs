@@ -44,9 +44,12 @@
                                 "_id": catId,
                             },
                             success: function (response) {
-                                window.location.href = "/admin/categories"
-                                // let socket = io();
-                                // socket.emit('delete_post', postId)
+                                if (response.status === "success") {
+                                    alert(response.msg)
+                                    window.location.href = "/admin/categories"
+                                } else if (response.status === "error") {
+                                    alert(response.msg)
+                                }
                             }
                         })
                     }

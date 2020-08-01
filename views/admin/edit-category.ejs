@@ -27,8 +27,12 @@
                         method: "POST",
                         data: formData,
                         success: function (response) {
-                            alert(response)
-                            window.location.href = "/admin/categories"
+                            if (response.status === "success") {
+                                alert(response.msg)
+                                window.location.href = "/admin/categories"
+                            } else if (response.status === "error") {
+                                alert(response.msg)
+                            }
                         }
                     })
                     return false

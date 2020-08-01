@@ -47,12 +47,13 @@ router.post('/add-post', (req, res) => {
     Post.findOne({ slug: newPost.slug }, function (err, post) {
         if (err) return console.log(err)
         if (post) {
-            res.send({ text: "Post title already exists" })
+            res.send({ status: "error", msg: "Post title already exists" })
         } else {
             newPost.save(function (err, post) {
                 if (err) return console.log(err)
                 res.send({
-                    text: "Posted Successfully",
+                    status: "success",
+                    msg: "Posted Successfully",
                     _id: post._id,
                     createdAt: post.createdAt,
                     author: req.user.username,
@@ -90,7 +91,7 @@ router.post('/edit-post', (req, res) => {
     let id = req.body._id;
     Post.findOne({ slug: slug, _id: { $ne: id } }, function (err, post) {
         if (post) {
-            res.send("Post Title Exists")
+            res.send({ status: "error", msg: "Post title already exists" })
         } else {
             Post.updateOne({ "_id": ObjectId(id) }, {
                 $set: {
@@ -98,7 +99,7 @@ router.post('/edit-post', (req, res) => {
                     "updatedBy": req.user.id
                 }
             }, function (err, post) {
-                res.send('Post Updated Successfully')
+                res.send({ status: "success", msg: "Post updated successfully" })
             })
         }
     })
@@ -148,7 +149,7 @@ router.post('/update-image', function (req, res) {
 router.post('/delete-post', function (req, res) {
     fs.unlink(req.body.image.replace("/", ""), function (err) {
         Post.findByIdAndRemove({ "_id": ObjectId(req.body._id) }, function (err) {
-            res.send('Post Removed')
+            res.send({ status: "success", msg: "Post removed successfully" })
         })
     })
 })

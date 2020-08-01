@@ -41,7 +41,7 @@ router.post('/create-page', (req, res) => {
     });
     Page.findOne({ slug: newPage.slug }, function (err, page) {
         if (page) {
-            res.send('Page title already exists')
+            res.send({ status: "error", msg: "Page title already exists" })
         } else {
             newPage.save(function (err) {
                 if (err) {
@@ -54,7 +54,7 @@ router.post('/create-page', (req, res) => {
                         req.app.locals.pages = pages;
                     }
                 });
-                res.send('Page added successfuly')
+                res.send({ status: "success", msg: "Page added successfuly" })
             })
         }
     })
@@ -83,9 +83,9 @@ router.post('/edit-page', (req, res) => {
             : req.body.slug.replace(/\s+/g, '-').toLowerCase()
     let content = req.body.content
     let id = req.body._id;
-    Page.findOne({ slug: slug, _id: { $ne: id } }, function (err, category) {
-        if (category) {
-            res.send("Page Title Exists")
+    Page.findOne({ slug: slug, _id: { $ne: id } }, function (err, page) {
+        if (page) {
+            res.send({ status: "error", msg: "Page title already exists" })
         } else {
             Page.findById(id, function (err, page) {
                 if (err) return console.log(err)
@@ -103,7 +103,7 @@ router.post('/edit-page', (req, res) => {
                             req.app.locals.pages = pages;
                         }
                     });
-                    res.send("Page Updated Successfully")
+                    res.send({ status: "success", msg: "Page updated successfuly" })
                 })
             })
         }
@@ -125,8 +125,7 @@ router.post('/delete-page', (req, res) => {
                 req.app.locals.pages = pages;
             }
         });
-        res.send('Page Removed')
-
+        res.send({ status: "success", msg: "Page removed successfuly" })
     })
 })
 

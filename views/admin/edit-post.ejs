@@ -91,8 +91,12 @@
                         method: "POST",
                         data: formData,
                         success: function (response) {
-                            alert(response)
-                            window.location.href = "/admin/posts"
+                            if (response.status === "success") {
+                                alert(response.msg)
+                                window.location.href = "/admin/posts"
+                            } else if (response.status === "error") {
+                                alert(response.msg)
+                            }
                         }
                     })
                     return false

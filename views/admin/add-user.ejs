@@ -68,12 +68,13 @@
                         method: "POST",
                         data: formData,
                         success: function (response) {
-                            alert(response)
-                            if (response == "success") {
+                            if (response.status === "success") {
+                                alert(response.msg)
                                 window.location.href = "/admin/users"
+                            } else if (response.status === "error") {
+                                alert(response.msg)
                             }
                         },
-
                     })
                     return false
                 }

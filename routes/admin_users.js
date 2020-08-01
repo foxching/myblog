@@ -39,11 +39,11 @@ router.post('/add-user', (req, res) => {
     const { username, email, firstname, lastname, role, password } = req.body;
 
     if (password.length < 6) {
-        res.send("Password must be atleast six character")
+        res.send({ status: "error", msg: "Password must be atleast 6 character" })
     } else {
         Admin.findOne({ email: email }, function (err, user) {
             if (user) {
-                res.send("Email already exists")
+                res.send({ status: "error", msg: "Email Add already exists" })
             } else {
                 const newUser = new Admin({
                     username,
@@ -60,7 +60,7 @@ router.post('/add-user', (req, res) => {
                         newUser
                             .save(function (err, user) {
                                 if (err) return console.log(err)
-                                res.send('User added successfully')
+                                res.send({ status: "success", msg: "User added successfully" })
                             })
                     });
                 });
@@ -96,14 +96,14 @@ router.post('/edit-user', (req, res) => {
     let userId = req.body._id;
     Admin.findOne({ email: email, _id: { $ne: userId } }, function (err, user) {
         if (user) {
-            res.send("Email Already exists")
+            res.send({ status: "error", msg: "Email Add already exists" })
         } else {
             Admin.updateOne({ "_id": ObjectId(userId) }, {
                 $set: {
                     "email": email, "firstname": firstname, "lastname": lastname, "role": role, "bio": bio
                 }
             }, function (err, user) {
-                res.send('Profile Updated Successfully')
+                res.send({ status: "success", msg: "Profile updated successfully" })
             })
         }
     })
@@ -133,7 +133,7 @@ router.post('/delete-user', (req, res) => {
             if (err) return console.log(err)
             Post.deleteMany({ "author": ObjectId(req.body.userId) }, function (err) {
                 if (err) return console.log(err)
-                res.send('User and all Posts removed')
+                res.send({ status: "success", msg: "User Removed successfully" })
             })
         })
     }

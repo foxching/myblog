@@ -48,9 +48,12 @@
                                 "_id": pageId,
                             },
                             success: function (response) {
-                                window.location.href = "/admin/pages"
-                                // let socket = io();
-                                // socket.emit('delete_post', postId)
+                                if (response.status === "success") {
+                                    alert(response.msg)
+                                    window.location.href = "/admin/pages"
+                                } else if (response.status === "error") {
+                                    alert(response.msg)
+                                }
                             }
                         })
                     }

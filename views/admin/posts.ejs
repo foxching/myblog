@@ -58,8 +58,13 @@
                                 "_id": postId, "image": image
                             },
                             success: function (response) {
-                                socket.emit('delete_post', postId)
-                                window.location.href = "/admin/posts"
+                                if (response.status === "success") {
+                                    alert(response.msg)
+                                    socket.emit('delete_post', postId)
+                                    window.location.href = "/admin/posts"
+                                } else if (response.status === "error") {
+                                    alert(response.msg)
+                                }
                             }
                         })
                     }

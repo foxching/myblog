@@ -34,7 +34,7 @@ router.post('/add-category', (req, res) => {
     });
     Category.findOne({ slug: newCategory.slug }, function (err, category) {
         if (category) {
-            res.send('Category title already exists')
+            res.send({ status: "error", msg: "Category title already exists" })
         } else {
             newCategory.save(function (err) {
                 if (err) {
@@ -47,7 +47,7 @@ router.post('/add-category', (req, res) => {
                         req.app.locals.categories = categories;
                     }
                 });
-                res.send('Category added successfuly')
+                res.send({ status: "success", msg: "Category added successfuly" })
             })
         }
     })
@@ -71,7 +71,7 @@ router.post('/edit-category', (req, res) => {
     let id = req.body._id;
     Category.findOne({ slug: slug, _id: { $ne: id } }, function (err, category) {
         if (category) {
-            res.send("Category Title Exists")
+            res.send({ status: "error", msg: "Category title already exists" })
         } else {
             Category.findById(id, function (err, category) {
                 if (err) return console.log(err)
@@ -88,7 +88,7 @@ router.post('/edit-category', (req, res) => {
                             req.app.locals.categories = categories;
                         }
                     });
-                    res.send("Category Updated Successfully")
+                    res.send({ status: "success", msg: "Category updated successfuly" })
                 })
             })
         }
@@ -109,7 +109,7 @@ router.post('/delete-category', (req, res) => {
                 req.app.locals.categories = categories;
             }
         });
-        res.send('Category Removed')
+        res.send({ status: "success", msg: "Category removed successfuly" })
     })
 })
 
