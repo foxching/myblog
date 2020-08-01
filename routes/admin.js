@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const bcrypt = require('bcryptjs')
+const ObjectId = require('mongodb').ObjectID
 const Setting = require('../models/setting')
 const Admin = require('../models/user')
 
@@ -95,6 +96,38 @@ router.post('/register', (req, res) => {
             }
         })
     }
+})
+
+/* 
+* GET edit profile
+*/
+router.get('/profile/edit/:id', ensureAuthenticated, (req, res) => {
+    Admin.findOne({ "_id": req.params.id }, function (err, user) {
+        if (err) return console.log(err)
+        res.render('admin/profile', { user: user })
+    })
+})
+
+router.post('/profile/edit/', ensureAuthenticated, (req, res) => {
+    let email = req.body.email
+    let firstname = req.body.firstname;
+    let lastname = req.body.lastname;
+
+    let bio = req.body.bio
+    let userId = req.body._id;
+    Admin.findOne({ email: email, _id: { $ne: userId } }, function (err, user) {
+        if (user) {
+            res.send({ status: "error", msg: "Email Add already exists" })
+        } else {
+            Admin.updateOne({ "_id": ObjectId(userId) }, {
+                $set: {
+                    "email": email, "firstname": firstname, "lastname": lastname, "bio": bio
+                }
+            }, function (err, user) {
+                res.send({ status: "success", msg: "Your profile updated successfully" })
+            })
+        }
+    })
 })
 
 
