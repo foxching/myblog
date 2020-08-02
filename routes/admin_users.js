@@ -117,18 +117,24 @@ router.post('/edit-user', (req, res) => {
 */
 
 router.get('/delete-user/:id', ensureAuthenticated, (req, res) => {
-    Admin.findOne({ "_id": req.params.id }, function (err, user) {
+    Admin.find({}, function (err, users) {
         if (err) return console.log(err)
-        res.render('admin/notice', { user, user })
+        Admin.findOne({ "_id": req.params.id }, function (err, userInfo) {
+            if (err) return console.log(err)
+            res.render('admin/notice', { users: users, userInfo, userInfo })
+        })
     })
+
+
 })
 
 /* 
-* POST delete user
+* POST delete user with options
 */
 router.post('/delete-user', (req, res) => {
     let choice = req.body.option
 
+    console.log(req.body)
     if (choice == "option1") {
         Admin.findByIdAndRemove({ "_id": ObjectId(req.body.userId) }, function (err, user) {
             if (err) return console.log(err)
@@ -144,6 +150,25 @@ router.post('/delete-user', (req, res) => {
                         }
                     });
                     res.send({ status: "success", msg: "User Removed successfully" })
+                })
+
+            })
+        })
+    } else {
+        Admin.findByIdAndRemove({ "_id": ObjectId(req.body.userId) }, function (err, user) {
+            if (err) return console.log(err)
+            Post.updateMany({ "author": ObjectId(req.body.userId) }, { "author": ObjectId(req.body.user) }, function (err) {
+                if (err) return console.log(err)
+                Page.updateMany({ "author": ObjectId(req.body.userId) }, { "author": ObjectId(req.body.user) }, function (err, page) {
+                    if (err) return console.log(err)
+                    Page.find({}).exec(function (err, pages) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            req.app.locals.pages = pages;
+                        }
+                    });
+                    res.send({ status: "success", msg: "User Removed and all Contents assigned" })
                 })
 
             })
