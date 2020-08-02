@@ -2,13 +2,13 @@ const express = require('express');
 const router = express.Router();
 const ObjectId = require('mongodb').ObjectID
 const Category = require('../models/category')
-const { ensureAuthenticated } = require('../config/auth');
+const { ensureAuthenticated, ensureRights } = require('../config/auth');
 
 
 /* 
 * GET categories
 */
-router.get('/', ensureAuthenticated, (req, res) => {
+router.get('/', ensureAuthenticated, ensureRights, (req, res) => {
 
     Category.find({}).populate('author').exec(function (err, categories) {
         if (err) return console.log(err)
@@ -19,7 +19,7 @@ router.get('/', ensureAuthenticated, (req, res) => {
 /* 
 * GET new category
 */
-router.get('/add-category', ensureAuthenticated, (req, res) => {
+router.get('/add-category', ensureAuthenticated, ensureRights, (req, res) => {
     res.render('admin/add-category', { newCategory: new Category() })
 })
 
@@ -55,7 +55,7 @@ router.post('/add-category', (req, res) => {
 /* 
 * GET edit category
 */
-router.get('/edit-category/:id', ensureAuthenticated, (req, res) => {
+router.get('/edit-category/:id', ensureAuthenticated, ensureRights, (req, res) => {
     Category.findById({ "_id": ObjectId(req.params.id) }, function (err, category) {
         res.render('admin/edit-category', { category: category })
     })

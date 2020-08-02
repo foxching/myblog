@@ -5,13 +5,13 @@ const ObjectId = require('mongodb').ObjectID
 const Admin = require('../models/user')
 const Post = require('../models/post')
 const Page = require('../models/page')
-const { ensureAuthenticated } = require('../config/auth');
+const { ensureAuthenticated, ensureAdministrator } = require('../config/auth');
 const { displayRoles } = require('../util/helper')
 
 /* 
 * GET all users
 */
-router.get('/', ensureAuthenticated, (req, res) => {
+router.get('/', ensureAuthenticated, ensureAdministrator, (req, res) => {
     Admin.aggregate([
         {
             $lookup: {
@@ -29,7 +29,7 @@ router.get('/', ensureAuthenticated, (req, res) => {
 /* 
 * GET new user
 */
-router.get('/add-user', ensureAuthenticated, (req, res) => {
+router.get('/add-user', ensureAuthenticated, ensureAdministrator, (req, res) => {
     res.render('admin/add-user', { newUser: new Admin(), roles: displayRoles() })
 })
 
@@ -77,7 +77,7 @@ router.post('/add-user', (req, res) => {
 * GET edit user
 */
 
-router.get('/edit-user/:id', ensureAuthenticated, (req, res) => {
+router.get('/edit-user/:id', ensureAuthenticated, ensureAdministrator, (req, res) => {
     const userId = req.params.id
     Admin.findOne({ "_id": ObjectId(userId) }, function (err, user) {
         if (err) return console.log(err)
@@ -116,7 +116,7 @@ router.post('/edit-user', (req, res) => {
 * GET delete user
 */
 
-router.get('/delete-user/:id', ensureAuthenticated, (req, res) => {
+router.get('/delete-user/:id', ensureAuthenticated, ensureAdministrator, (req, res) => {
     Admin.find({}, function (err, users) {
         if (err) return console.log(err)
         Admin.findOne({ "_id": req.params.id }, function (err, userInfo) {

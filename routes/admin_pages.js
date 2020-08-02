@@ -2,13 +2,13 @@ const express = require('express');
 const router = express.Router();
 const ObjectId = require('mongodb').ObjectID
 const Page = require('../models/page')
-const { ensureAuthenticated } = require('../config/auth');
+const { ensureAuthenticated, ensureRights } = require('../config/auth');
 
 
 /* 
 * GET pages
 */
-router.get('/', ensureAuthenticated, (req, res) => {
+router.get('/', ensureAuthenticated, ensureRights, (req, res) => {
     Page.find({}).populate('author').exec(function (err, pages) {
         if (err) return console.log(err)
         res.render('admin/pages', { pages: pages })
@@ -20,7 +20,7 @@ router.get('/', ensureAuthenticated, (req, res) => {
 /* 
 * GET new page
 */
-router.get('/add-page', ensureAuthenticated, (req, res) => {
+router.get('/add-page', ensureAuthenticated, ensureRights, (req, res) => {
     res.render('admin/add-page', { newPage: new Page() })
 })
 
@@ -64,7 +64,7 @@ router.post('/create-page', (req, res) => {
 /* 
 * GET edit page
 */
-router.get('/edit-page/:id', ensureAuthenticated, (req, res) => {
+router.get('/edit-page/:id', ensureAuthenticated, ensureRights, (req, res) => {
     Page.findById({ "_id": ObjectId(req.params.id) }, function (err, page) {
         if (err) return console.log(err)
         res.render('admin/edit-page', { page: page })

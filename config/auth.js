@@ -11,5 +11,23 @@ module.exports = {
             return next();
         }
         res.redirect('/admin/dashboard');
-    }
+    },
+    ensureRights: function (req, res, next) {
+        if (req.user.role == 'administrator' || req.user.role == 'editor') {
+            return next();
+        }
+        res.redirect('/admin/error');
+    },
+    ensureAdministrator: function (req, res, next) {
+        if (req.user.role == 'administrator') {
+            return next();
+        }
+        res.redirect('/admin/error');
+    },
+    ensureOwnProfile: function (req, res, next) {
+        if (req.user.id == req.params.id) {
+            return next();
+        }
+        res.redirect('/admin/error');
+    },
 };

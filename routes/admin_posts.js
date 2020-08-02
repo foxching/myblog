@@ -5,13 +5,13 @@ const ObjectId = require('mongodb').ObjectID
 const formidable = require('formidable')
 const Post = require('../models/post')
 const Category = require('../models/category')
-const { ensureAuthenticated } = require('../config/auth');
+const { ensureAuthenticated, ensureRights } = require('../config/auth');
 
 
 /* 
 * GET posts
 */
-router.get('/', ensureAuthenticated, (req, res) => {
+router.get('/', ensureAuthenticated, ensureRights, (req, res) => {
 
     Post.find({}).populate('author').exec(function (err, posts) {
         if (err) return console.log(err)
@@ -24,7 +24,7 @@ router.get('/', ensureAuthenticated, (req, res) => {
 /* 
 * GET new post
 */
-router.get('/add-post', ensureAuthenticated, (req, res) => {
+router.get('/add-post', ensureAuthenticated, ensureRights, (req, res) => {
     Category.find({}, function (err, categories) {
         res.render('admin/add-post', { newPost: new Post(), categories: categories })
     })
@@ -68,7 +68,7 @@ router.post('/add-post', (req, res) => {
 /* 
 * GET edit post
 */
-router.get('/edit-post/:id', ensureAuthenticated, (req, res) => {
+router.get('/edit-post/:id', ensureAuthenticated, ensureRights, (req, res) => {
     Category.find(function (err, categories) {
         if (err) return console.log(err)
         Post.findById({ "_id": ObjectId(req.params.id) }, function (err, post) {

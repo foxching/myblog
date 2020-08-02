@@ -6,7 +6,7 @@ const ObjectId = require('mongodb').ObjectID
 const Setting = require('../models/setting')
 const Admin = require('../models/user')
 
-const { ensureAuthenticated, forwardAuthenticated } = require('../config/auth');
+const { ensureAuthenticated, forwardAuthenticated, ensureAdministrator, ensureOwnProfile } = require('../config/auth');
 
 /* 
 * GET admin login form
@@ -101,7 +101,7 @@ router.post('/register', (req, res) => {
 /* 
 * GET edit profile
 */
-router.get('/profile/edit/:id', ensureAuthenticated, (req, res) => {
+router.get('/profile/edit/:id', ensureAuthenticated, ensureOwnProfile, (req, res) => {
     Admin.findOne({ "_id": req.params.id }, function (err, user) {
         if (err) return console.log(err)
         res.render('admin/profile', { user: user })
@@ -141,7 +141,7 @@ router.get('/dashboard', ensureAuthenticated, (req, res) => {
 /* 
 * GET admin settings
 */
-router.get('/settings', ensureAuthenticated, (req, res) => {
+router.get('/settings', ensureAuthenticated, ensureAdministrator, (req, res) => {
     Setting.findOne({}, function (err, setting) {
         res.render('admin/settings', { setting: setting.post_limit })
     })
@@ -157,14 +157,19 @@ router.post('/settings', (req, res) => {
     })
 })
 
-/* 
-* GET admin redirect logout
-*/
-router.get('/logout', (req, res) => {
-    req.logout();
-    req.flash('success_msg', 'You are logged out');
-    res.redirect('/admin');
-})
+router.get('/error', ensureAuthenticated, (req, res) => {
+    res.render('admin/error')
+}),
+
+
+    /* 
+    * GET admin redirect logout
+    */
+    router.get('/logout', (req, res) => {
+        req.logout();
+        req.flash('success_msg', 'You are logged out');
+        res.redirect('/admin');
+    })
 
 
 
