@@ -1,40 +1,38 @@
-<%- include('header') %>
-<div id="layoutSidenav_content">
-    <main>
-        <div class="container-fluid">
-            <h1 class="mt-4">Add Category</h1>
-            <ol class="breadcrumb mb-4">
-                <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-                <li class="breadcrumb-item active">New</li>
-            </ol>
-            <form method="POST" onsubmit="return doCreateCategory(this)">
-                <div class="form-group">
-                    <label for="title">Category</label>
-                    <input name="title" class="form-control" value="<%= newCategory.title %>" placeholder="Title.."
-                        required>
-                </div>
-                <input type="submit" class="btn btn-info" value="Submit">
-            </form>
-            <script>
+<%- include('../layouts/adminheader.ejs') %>
 
-                function doCreateCategory(form) {
-                    const formData = {
-                        title: form.title.value,
-                    }
-                    $.ajax({
-                        url: '/admin/categories/add-category',
-                        method: "POST",
-                        data: formData,
-                        success: function (response) {
-                            if (response.status === "success") {
-                                alert(response.msg)
-                                window.location.href = "/admin/categories"
-                            } else if (response.status === "error") {
-                                alert(response.msg)
-                            }
-                        }
-                    })
-                    return false
+<h1 class="mt-4">Add Category</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+    <li class="breadcrumb-item active">New</li>
+</ol>
+<form method="POST" onsubmit="return doCreateCategory(this)">
+    <div class="form-group">
+        <label for="title">Category</label>
+        <input name="title" class="form-control" value="<%= newCategory.title %>" placeholder="Title.." required>
+    </div>
+    <input type="submit" class="btn btn-info" value="Submit">
+</form>
+<script>
+
+    function doCreateCategory(form) {
+        const formData = {
+            title: form.title.value,
+        }
+        $.ajax({
+            url: '/admin/categories/add-category',
+            method: "POST",
+            data: formData,
+            success: function (response) {
+                if (response.status === "success") {
+                    alert(response.msg)
+                    window.location.href = "/admin/categories"
+                } else if (response.status === "error") {
+                    alert(response.msg)
                 }
-            </script>
-            <%- include('footer') %>
+            }
+        })
+        return false
+    }
+</script>
+
+<%- include('../layouts/adminfooter.ejs') %>

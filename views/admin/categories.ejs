@@ -1,57 +1,53 @@
-<%- include('header') %>
+<%- include('../layouts/adminheader.ejs') %>
 
-<div id="layoutSidenav_content">
-    <main>
-        <div class="container-fluid">
-            <h1 class="mt-4">All Categories<a href="/admin/categories/add-category"
-                    class="btn btn-outline-primary m-1">Add
-                    Category</a>
-            </h1>
-            <ol class="breadcrumb mb-4">
-                <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-                <li class="breadcrumb-item active">Categories</li>
-            </ol>
-            <table class="table table-bordered align-middle">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th colspan="3">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% categories.forEach(function(cat) { %>
-                    <tr>
-                        <td><%= cat.title %></td>
-                        <td>
-                            <a href="/admin/categories/edit-category/<%= cat._id %>"
-                                class="btn btn-warning btn-sm">Edit</a>
-                            <button class="btn btn-danger btn-sm" onclick="doDelete('<%= cat._id %>')">Delete</button>
-                        </td>
-                    </tr>
-                    <% }) %>
-                </tbody>
-            </table>
 
-            <script>
-                function doDelete(catId) {
-                    if (confirm('Are you sure want to delete?')) {
-                        $.ajax({
-                            url: '/admin/categories/delete-category',
-                            method: "POST",
-                            data: {
-                                "_id": catId,
-                            },
-                            success: function (response) {
-                                if (response.status === "success") {
-                                    alert(response.msg)
-                                    window.location.href = "/admin/categories"
-                                } else if (response.status === "error") {
-                                    alert(response.msg)
-                                }
-                            }
-                        })
+<h1 class="mt-4">All Categories<a href="/admin/categories/add-category" class="btn btn-outline-primary m-1">Add
+        Category</a>
+</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+    <li class="breadcrumb-item active">Categories</li>
+</ol>
+<table class="table table-bordered align-middle">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th colspan="3">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% categories.forEach(function(cat) { %>
+        <tr>
+            <td><%= cat.title %></td>
+            <td>
+                <a href="/admin/categories/edit-category/<%= cat._id %>" class="btn btn-warning btn-sm">Edit</a>
+                <button class="btn btn-danger btn-sm" onclick="doDelete('<%= cat._id %>')">Delete</button>
+            </td>
+        </tr>
+        <% }) %>
+    </tbody>
+</table>
+
+<script>
+    function doDelete(catId) {
+        if (confirm('Are you sure want to delete?')) {
+            $.ajax({
+                url: '/admin/categories/delete-category',
+                method: "POST",
+                data: {
+                    "_id": catId,
+                },
+                success: function (response) {
+                    if (response.status === "success") {
+                        alert(response.msg)
+                        window.location.href = "/admin/categories"
+                    } else if (response.status === "error") {
+                        alert(response.msg)
                     }
                 }
-            </script>
+            })
+        }
+    }
+</script>
 
-            <%- include('footer') %>
+<%- include('../layouts/adminfooter.ejs') %>

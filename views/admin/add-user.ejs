@@ -1,82 +1,80 @@
-<%- include('header') %>
+<%- include('../layouts/adminheader.ejs') %>
 
-<div id="layoutSidenav_content">
-    <main>
-        <div class="container-fluid">
-            <h1 class="mt-4">Add User</h1>
-            <ol class="breadcrumb mb-4">
-                <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-                <li class="breadcrumb-item active">New</li>
-            </ol>
 
-            <form method="POST" onsubmit="return doAddUser(this)">
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input name="username" class="form-control"
-                        value="<%= typeof newUser.username != 'undefined' ? newUser.username : '' %>" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input name="email" class="form-control"
-                        value="<%= typeof newUser.email != 'undefined' ? newUser.email : '' %>" required>
-                </div>
-                <div class="form-row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="small mb-1" for="inputFirstName">First Name</label>
-                            <input class="form-control py-4" name="firstname" id="inputFirstName" type="text"
-                                value="<%= typeof newUser.firstname != 'undefined' ? newUser.firstname : '' %>" />
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="small mb-1" for="inputLastName">Last Name</label>
-                            <input class="form-control py-4" name="lastname" id="inputLastName" type="text"
-                                value="<%= typeof newUser.lastname != 'undefined' ? newUser.lastname : '' %>" />
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="category">Role:</label>
-                    <select class="form-control" name="role">
-                        <% roles.forEach(function(role) { %>
-                        <option value="<%= role.slug %>"><%= role.title %></option>
-                        <% }) %>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="small mb-1" for="inputPassword">Password</label>
-                    <input class="form-control py-4" name="password" id="inputPassword" type="password"
-                        value="<%= typeof newUser.password != 'undefined' ? newUser.password : '' %>" required />
-                </div>
+<h1 class="mt-4">Add User</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+    <li class="breadcrumb-item active">New</li>
+</ol>
 
-                <input type="submit" class="btn btn-info" value="Submit">
-            </form>
+<form method="POST" onsubmit="return doAddUser(this)">
+    <div class="form-group">
+        <label for="username">Username</label>
+        <input name="username" class="form-control"
+            value="<%= typeof newUser.username != 'undefined' ? newUser.username : '' %>" required>
+    </div>
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input name="email" class="form-control" value="<%= typeof newUser.email != 'undefined' ? newUser.email : '' %>"
+            required>
+    </div>
+    <div class="form-row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="small mb-1" for="inputFirstName">First Name</label>
+                <input class="form-control py-4" name="firstname" id="inputFirstName" type="text"
+                    value="<%= typeof newUser.firstname != 'undefined' ? newUser.firstname : '' %>" />
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="small mb-1" for="inputLastName">Last Name</label>
+                <input class="form-control py-4" name="lastname" id="inputLastName" type="text"
+                    value="<%= typeof newUser.lastname != 'undefined' ? newUser.lastname : '' %>" />
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="category">Role:</label>
+        <select class="form-control" name="role">
+            <% roles.forEach(function(role) { %>
+            <option value="<%= role.slug %>"><%= role.title %></option>
+            <% }) %>
+        </select>
+    </div>
+    <div class="form-group">
+        <label class="small mb-1" for="inputPassword">Password</label>
+        <input class="form-control py-4" name="password" id="inputPassword" type="password"
+            value="<%= typeof newUser.password != 'undefined' ? newUser.password : '' %>" required />
+    </div>
 
-            <script>
-                function doAddUser(form) {
-                    const formData = {
-                        username: form.username.value,
-                        email: form.email.value,
-                        firstname: form.firstname.value,
-                        lastname: form.lastname.value,
-                        role: form.role.value,
-                        password: form.password.value
-                    }
-                    $.ajax({
-                        url: '/admin/users/add-user',
-                        method: "POST",
-                        data: formData,
-                        success: function (response) {
-                            if (response.status === "success") {
-                                alert(response.msg)
-                                window.location.href = "/admin/users"
-                            } else if (response.status === "error") {
-                                alert(response.msg)
-                            }
-                        },
-                    })
-                    return false
+    <input type="submit" class="btn btn-info" value="Submit">
+</form>
+
+<script>
+    function doAddUser(form) {
+        const formData = {
+            username: form.username.value,
+            email: form.email.value,
+            firstname: form.firstname.value,
+            lastname: form.lastname.value,
+            role: form.role.value,
+            password: form.password.value
+        }
+        $.ajax({
+            url: '/admin/users/add-user',
+            method: "POST",
+            data: formData,
+            success: function (response) {
+                if (response.status === "success") {
+                    alert(response.msg)
+                    window.location.href = "/admin/users"
+                } else if (response.status === "error") {
+                    alert(response.msg)
                 }
-            </script>
-            <%- include('footer') %>
+            },
+        })
+        return false
+    }
+</script>
+<%- include('../layouts/adminfooter.ejs') %>

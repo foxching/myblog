@@ -1,88 +1,86 @@
-<%- include('header') %>
+<%- include('../layouts/adminheader.ejs') %>
 
-<div id="layoutSidenav_content">
-    <main>
-        <div class="container-fluid">
-            <h1 class="mt-4">Edit Profile</h1>
-            <ol class="breadcrumb mb-4">
-                <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-                <li class="breadcrumb-item active">Edit</li>
-            </ol>
-            <div class="card border mb-3">
-                <div class="card-header">
-                    <h5 class="text-left">Personal Information</h5>
-                </div>
-                <div class="card-body">
-                    <form method="POST" onsubmit="return doEditProfile(this)">
-                        <div class="form-group">
-                            <label class="small mb-1" for="inputUsername">Username</label>
-                            <input class="form-control py-4" name="username" id="inputUsername" type="text"
-                                value="<%= typeof user.username != 'undefined' ? user.username : '' %>"
-                                placeholder="Enter your Username" disabled />
-                        </div>
-                        <div class="form-group">
-                            <label class="small mb-1" for="inputEmailAddress">Email</label>
-                            <input class="form-control py-4" name="email" id="inputEmailAddress" type="email"
-                                value="<%= typeof user.email != 'undefined' ? user.email : '' %>"
-                                aria-describedby="emailHelp" placeholder="Enter email address" />
-                        </div>
-                        <div class="form-row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="small mb-1" for="inputFirstName">First Name</label>
-                                    <input class="form-control py-4" name="firstname" id="inputFirstName" type="text"
-                                        value="<%= typeof user.firstname != 'undefined' ? user.firstname : '' %>" />
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="small mb-1" for="inputLastName">Last Name</label>
-                                    <input class="form-control py-4" name="lastname" id="inputLastName" type="text"
-                                        value="<%= typeof user.lastname != 'undefined' ? user.lastname : '' %>" />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="content">Bio</label>
-                            <textarea name="bio" class="form-control" rows="5"
-                                cols="20"><%= typeof user.bio != 'undefined' ? user.bio : '' %></textarea>
-                        </div>
 
-                        <div class="form-group mt-4 mb-0">
-                            <input type="submit" class="btn btn-primary" value="Update Profile">
-                        </div>
-                    </form>
-                </div>
-
+<h1 class="mt-4">Edit Profile</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+    <li class="breadcrumb-item active">Edit</li>
+</ol>
+<div class="card border mb-3">
+    <div class="card-header">
+        <h5 class="text-left">Personal Information</h5>
+    </div>
+    <div class="card-body">
+        <form method="POST" onsubmit="return doEditProfile(this)">
+            <div class="form-group">
+                <label class="small mb-1" for="inputUsername">Username</label>
+                <input class="form-control py-4" name="username" id="inputUsername" type="text"
+                    value="<%= typeof user.username != 'undefined' ? user.username : '' %>"
+                    placeholder="Enter your Username" disabled />
             </div>
-            <script>
+            <div class="form-group">
+                <label class="small mb-1" for="inputEmailAddress">Email</label>
+                <input class="form-control py-4" name="email" id="inputEmailAddress" type="email"
+                    value="<%= typeof user.email != 'undefined' ? user.email : '' %>" aria-describedby="emailHelp"
+                    placeholder="Enter email address" />
+            </div>
+            <div class="form-row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="small mb-1" for="inputFirstName">First Name</label>
+                        <input class="form-control py-4" name="firstname" id="inputFirstName" type="text"
+                            value="<%= typeof user.firstname != 'undefined' ? user.firstname : '' %>" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="small mb-1" for="inputLastName">Last Name</label>
+                        <input class="form-control py-4" name="lastname" id="inputLastName" type="text"
+                            value="<%= typeof user.lastname != 'undefined' ? user.lastname : '' %>" />
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="content">Bio</label>
+                <textarea name="bio" class="form-control" rows="5"
+                    cols="20"><%= typeof user.bio != 'undefined' ? user.bio : '' %></textarea>
+            </div>
 
-                let userId = '<%= user.id %>'
+            <div class="form-group mt-4 mb-0">
+                <input type="submit" class="btn btn-primary" value="Update Profile">
+            </div>
+        </form>
+    </div>
 
-                function doEditProfile(form) {
-                    const formData = {
-                        email: form.email.value,
-                        firstname: form.firstname.value,
-                        lastname: form.lastname.value,
-                        bio: form.bio.value,
-                        _id: userId
-                    }
-                    $.ajax({
-                        url: '/admin/profile/edit',
-                        method: "POST",
-                        data: formData,
-                        success: function (response) {
-                            if (response.status === "success") {
-                                alert(response.msg)
-                                window.location.reload()
-                            } else if (response.status === "error") {
-                                alert(response.msg)
-                            }
-                        }
-                    })
-                    return false
+</div>
+<script>
+
+    let userId = '<%= user.id %>'
+
+    function doEditProfile(form) {
+        const formData = {
+            email: form.email.value,
+            firstname: form.firstname.value,
+            lastname: form.lastname.value,
+            bio: form.bio.value,
+            _id: userId
+        }
+        $.ajax({
+            url: '/admin/profile/edit',
+            method: "POST",
+            data: formData,
+            success: function (response) {
+                if (response.status === "success") {
+                    alert(response.msg)
+                    window.location.reload()
+                } else if (response.status === "error") {
+                    alert(response.msg)
                 }
+            }
+        })
+        return false
+    }
 
-            </script>
+</script>
 
-            <%- include('footer') %>
+<%- include('../layouts/adminfooter.ejs') %>

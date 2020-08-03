@@ -1,75 +1,72 @@
-<%- include('header') %>
+<%- include('../layouts/adminheader.ejs') %>
 
-<div id="layoutSidenav_content">
-    <main>
-        <div class="container-fluid">
-            <h1 class="mt-4">All Posts<a href="/admin/posts/add-post" class="btn btn-outline-primary m-1">Add Post</a>
-            </h1>
+<h1 class="mt-4">All Posts<a href="/admin/posts/add-post" class="btn btn-outline-primary m-1">Add Post</a>
+</h1>
 
-            <ol class="breadcrumb mb-4">
-                <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-                <li class="breadcrumb-item active">Posts</li>
-            </ol>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+    <li class="breadcrumb-item active">Posts</li>
+</ol>
 
-            <div class=" table-responsive-md">
-                <table class="table table-striped table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Category</th>
-                            <th>Post Image</th>
-                            <th>Author</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% posts.forEach(function(post){ %>
-                        <tr id="post-<%= post._id %>">
-                            <td><%= post.title %> </td>
-                            <td><%- post.category %> </td>
-                            <td>
-                                <% if(post.image == "") { %>
-                                <img src="http://placehold.it/750x300" style="width: 150px; height:100px">
-                                <% } else { %>
-                                <img src="<%= post.image %>" style="width: 150px; height:100px">
-                                <% } %>
-                            </td>
-                            <td><%= post.author.username %></td>
-                            <td>
-                                <a href="/posts/<%= post.slug %>" class="btn btn-primary btn-sm">View</a>
-                                <a href="/admin/posts/edit-post/<%= post.id %>" class="btn btn-warning btn-sm">Edit</a>
-                                <button class="btn btn-danger btn-sm"
-                                    onclick="doDelete('<%= post._id %>','<%= post.image %>')">Delete</button>
-                            </td>
-                        </tr>
-                        <% }) %>
-                    </tbody>
-                </table>
-            </div>
+<div class=" table-responsive-md">
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Post Image</th>
+                <th>Author</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% posts.forEach(function(post){ %>
+            <tr id="post-<%= post._id %>">
+                <td><%= post.title %> </td>
+                <td><%- post.category %> </td>
+                <td>
+                    <% if(post.image == "") { %>
+                    <img src="http://placehold.it/750x300" style="width: 150px; height:100px">
+                    <% } else { %>
+                    <img src="<%= post.image %>" style="width: 150px; height:100px">
+                    <% } %>
+                </td>
+                <td><%= post.author.username %></td>
+                <td>
+                    <a href="/posts/<%= post.slug %>" class="btn btn-primary btn-sm">View</a>
+                    <a href="/admin/posts/edit-post/<%= post.id %>" class="btn btn-warning btn-sm">Edit</a>
+                    <button class="btn btn-danger btn-sm"
+                        onclick="doDelete('<%= post._id %>','<%= post.image %>')">Delete</button>
+                </td>
+            </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>
 
-            <script>
-                let socket = io();
-                function doDelete(postId, image) {
-                    if (confirm('Are you sure want to delete?')) {
-                        $.ajax({
-                            url: '/admin/posts/delete-post',
-                            method: "POST",
-                            data: {
-                                "_id": postId, "image": image
-                            },
-                            success: function (response) {
-                                if (response.status === "success") {
-                                    alert(response.msg)
-                                    socket.emit('delete_post', postId)
-                                    window.location.href = "/admin/posts"
-                                } else if (response.status === "error") {
-                                    alert(response.msg)
-                                }
-                            }
-                        })
+<script>
+    let socket = io();
+    function doDelete(postId, image) {
+        if (confirm('Are you sure want to delete?')) {
+            $.ajax({
+                url: '/admin/posts/delete-post',
+                method: "POST",
+                data: {
+                    "_id": postId, "image": image
+                },
+                success: function (response) {
+                    if (response.status === "success") {
+                        alert(response.msg)
+                        socket.emit('delete_post', postId)
+                        window.location.href = "/admin/posts"
+                    } else if (response.status === "error") {
+                        alert(response.msg)
                     }
                 }
-            </script>
+            })
+        }
+    }
+</script>
 
 
-            <%- include('footer') %>
+<%- include('../layouts/adminfooter.ejs') %>
