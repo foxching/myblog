@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs')
 const ObjectId = require('mongodb').ObjectID
+const generator = require('generate-password');
 const Admin = require('../models/user')
 const Post = require('../models/post')
 const Page = require('../models/page')
@@ -176,8 +177,36 @@ router.post('/delete-user', (req, res) => {
     }
 })
 
-router.get('/create-pass', (req, res) => {
-    res.send('Pass')
+/* 
+* GET generate pass
+*/
+router.get('/create-pass', ensureAuthenticated, ensureAdministrator, (req, res) => {
+    const password = generator.generate({
+        length: 10,
+        numbers: true
+    });
+    res.send(password)
+})
+
+router.post('/update-pass', (req, res) => {
+    let userId = req.body._id;
+    let newPassword = req.body.newPassword
+
+    Admin.findOne({ "_id": ObjectId(userId) }, function (err, user) {
+        if (err) return console.log(err)
+        bcrypt.genSalt(10, (err, salt) => {
+            bcrypt.hash(newPassword, salt, (err, hash) => {
+                if (err) throw err;
+                user.password = hash;
+                user
+                    .save(function (err, user) {
+                        if (err) return console.log(err)
+                        res.send({ status: "success", msg: "Password updated successfully" })
+                    })
+            });
+        });
+
+    })
 })
 
 

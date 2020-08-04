@@ -5,12 +5,22 @@
     <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
     <li class="breadcrumb-item active">Edit</li>
 </ol>
-<div class="card border mb-3">
-    <div class="card-header">
-        <h5 class="text-left">User Information</h5>
-    </div>
-    <div class="card-body">
-        <form method="POST" onsubmit="return doEditUser(this)">
+<!-- Nav tabs -->
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link active" data-toggle="tab" href="#userinfo">Public Profile</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#password">Account Security</a>
+    </li>
+
+</ul>
+
+<!-- Tab panes -->
+
+<div class="tab-content py-3">
+    <div class="tab-pane container active" id="userinfo">
+        <form role="form" method="POST" onsubmit="return doEditUser(this)" id="userinfo">
             <div class="form-group">
                 <label class="small mb-1" for="inputUsername">Username</label>
                 <input class="form-control" name="username" id="inputUsername" type="text"
@@ -22,13 +32,6 @@
                 <input class="form-control " name="email" id="inputEmailAddress" type="email"
                     value="<%= typeof user.email != 'undefined' ? user.email : '' %>" aria-describedby="emailHelp"
                     placeholder="Enter email address" />
-            </div>
-
-            <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <button class="btn btn-info" type="button" onclick="doCreatePass()">New Password</button>
-                </div>
-                <input type="text" class="form-control" id="passwordnew">
             </div>
 
             <div class="form-row">
@@ -64,14 +67,26 @@
             </div>
 
             <div class="form-group mt-4 mb-0">
-                <input type="submit" class="btn btn-primary" value="Update Profile">
+                <input type="submit" class="btn btn-primary" value="Update">
             </div>
         </form>
     </div>
-
+    <div class="tab-pane container fade" id="password">
+        <form role="form" method="post" onsubmit="return updatePass(this)" id="password" onclick="">
+            <div class="form-group">
+                <label class="small mb-1">New Password</label>
+                <input class="form-control " name="newPassword" id="newPassword" type=text />
+            </div>
+            <div class="form-group mt-4 mb-0">
+                <button type="button" class="btn btn-success" onclick="createPass()">Generate</button>
+                <button type="submit" class="btn btn-primary">Update</button>
+            </div>
+        </form>
+    </div>
 </div>
-<script>
 
+
+<script>
     let userId = '<%= user.id %>'
 
     function doEditUser(form) {
@@ -99,16 +114,34 @@
         return false
     }
 
-    function doCreatePass() {
+    function createPass() {
         $.ajax({
             url: '/admin/users/create-pass',
             method: "GET",
             success: function (response) {
-                document.getElementById("passwordnew").value = response;
+                document.getElementById("newPassword").value = response;
             }
         })
         return false
     }
+
+    function updatePass(form) {
+        $.ajax({
+            url: '/admin/users/update-pass',
+            method: "POST",
+            data: { newPassword: form.newPassword.value, _id: userId },
+            success: function (response) {
+                if (response.status === "success") {
+                    alert(response.msg)
+                    window.location.href = "/admin/users"
+                } else if (response.status === "error") {
+                    alert(response.msg)
+                }
+            }
+        })
+        return false
+    }
+
 
 </script>
 
