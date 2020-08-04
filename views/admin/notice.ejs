@@ -47,25 +47,28 @@
 <script>
 
     function doDeleteUser(form) {
-        const formData = {
-            option: form.optradio.value,
-            userId: form.userId.value,
-            user: form.user.value
-        }
-        $.ajax({
-            url: '/admin/users/delete-user',
-            method: "POST",
-            data: formData,
-            success: function (response) {
-                if (response.status === "success") {
-                    alert(response.msg)
-                    window.location.href = "/admin/users"
-                } else if (response.status === "error") {
-                    alert(response.msg)
-                }
+        if (confirm('Are you sure want to delete?')) {
+            const formData = {
+                option: form.optradio.value,
+                userId: form.userId.value,
+                user: form.user.value
             }
-        })
-        return false
+            $.ajax({
+                url: '/admin/users/delete-user',
+                method: "POST",
+                data: formData,
+                success: function (response) {
+                    if (response.status === "success") {
+                        alert(response.msg)
+                        window.location.href = "/admin/users"
+                    } else if (response.status === "error") {
+                        alert(response.msg)
+                    }
+                }
+            })
+            return false
+        }
+
     }
 
 </script>

@@ -13,28 +13,36 @@
         <form method="POST" onsubmit="return doEditUser(this)">
             <div class="form-group">
                 <label class="small mb-1" for="inputUsername">Username</label>
-                <input class="form-control py-4" name="username" id="inputUsername" type="text"
+                <input class="form-control" name="username" id="inputUsername" type="text"
                     value="<%= typeof user.username != 'undefined' ? user.username : '' %>"
                     placeholder="Enter your Username" disabled />
             </div>
             <div class="form-group">
                 <label class="small mb-1" for="inputEmailAddress">Email</label>
-                <input class="form-control py-4" name="email" id="inputEmailAddress" type="email"
+                <input class="form-control " name="email" id="inputEmailAddress" type="email"
                     value="<%= typeof user.email != 'undefined' ? user.email : '' %>" aria-describedby="emailHelp"
                     placeholder="Enter email address" />
             </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <button class="btn btn-info" type="button" onclick="doCreatePass()">New Password</button>
+                </div>
+                <input type="text" class="form-control" id="passwordnew">
+            </div>
+
             <div class="form-row">
                 <div class="col-md-6">
                     <div class="form-group">
                         <label class="small mb-1" for="inputFirstName">First Name</label>
-                        <input class="form-control py-4" name="firstname" id="inputFirstName" type="text"
+                        <input class="form-control" name="firstname" id="inputFirstName" type="text"
                             value="<%= typeof user.firstname != 'undefined' ? user.firstname : '' %>" />
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label class="small mb-1" for="inputLastName">Last Name</label>
-                        <input class="form-control py-4" name="lastname" id="inputLastName" type="text"
+                        <input class="form-control" name="lastname" id="inputLastName" type="text"
                             value="<%= typeof user.lastname != 'undefined' ? user.lastname : '' %>" />
                     </div>
                 </div>
@@ -86,6 +94,17 @@
                 } else if (response.status === "error") {
                     alert(response.msg)
                 }
+            }
+        })
+        return false
+    }
+
+    function doCreatePass() {
+        $.ajax({
+            url: '/admin/users/create-pass',
+            method: "GET",
+            success: function (response) {
+                document.getElementById("passwordnew").value = response;
             }
         })
         return false

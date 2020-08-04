@@ -174,9 +174,10 @@ router.post('/delete-user', (req, res) => {
             })
         })
     }
+})
 
-
-
+router.get('/create-pass', (req, res) => {
+    res.send('Pass')
 })
 
 

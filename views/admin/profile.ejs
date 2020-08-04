@@ -14,6 +14,7 @@
         <form method="POST" onsubmit="return doEditProfile(this)">
             <div class="form-group">
                 <label class="small mb-1" for="inputUsername">Username</label>
+                <input type="hidden" name="userId" value="<%= user.id %>">
                 <input class="form-control py-4" name="username" id="inputUsername" type="text"
                     value="<%= typeof user.username != 'undefined' ? user.username : '' %>"
                     placeholder="Enter your Username" disabled />
@@ -28,6 +29,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label class="small mb-1" for="inputFirstName">First Name</label>
+
                         <input class="form-control py-4" name="firstname" id="inputFirstName" type="text"
                             value="<%= typeof user.firstname != 'undefined' ? user.firstname : '' %>" />
                     </div>
@@ -54,16 +56,13 @@
 
 </div>
 <script>
-
-    let userId = '<%= user.id %>'
-
     function doEditProfile(form) {
         const formData = {
             email: form.email.value,
             firstname: form.firstname.value,
             lastname: form.lastname.value,
             bio: form.bio.value,
-            _id: userId
+            _id: form.userid.value
         }
         $.ajax({
             url: '/admin/profile/edit',
