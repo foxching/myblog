@@ -1,17 +1,26 @@
 <%- include('../layouts/adminheader.ejs') %>
 
-
-<h1 class="mt-4">Edit Profile</h1>
+<h1 class="mt-4">Update Profile</h1>
 <ol class="breadcrumb mb-4">
     <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
     <li class="breadcrumb-item active">Edit</li>
 </ol>
-<div class="card border mb-3">
-    <div class="card-header">
-        <h5 class="text-left">Personal Information</h5>
-    </div>
-    <div class="card-body">
-        <form method="POST" onsubmit="return doEditProfile(this)">
+<!-- Nav tabs -->
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link active" data-toggle="tab" href="#userinfoupdate">Personal Information</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#updatepass">Account Security</a>
+    </li>
+
+</ul>
+
+<!-- Tab panes -->
+
+<div class="tab-content py-3">
+    <div class="tab-pane container active" id="userinfoupdate">
+        <form role="form" method="POST" onsubmit="return doEditProfile(this)" id="userinfoupdate">
             <div class="form-group">
                 <label class="small mb-1" for="inputUsername">Username</label>
                 <input type="hidden" name="userId" value="<%= user.id %>">
@@ -53,16 +62,38 @@
             </div>
         </form>
     </div>
-
+    <div class="tab-pane container fade" id="updatepass">
+        <form role="form" method="post" onsubmit="return updatePass(this)" id="updatepass">
+            <div class="form-group">
+                <label class="small mb-1">Old Password</label>
+                <input class="form-control " name="oldPassword" id="newPassword" type=text />
+            </div>
+            <div class="form-group">
+                <label class="small mb-1">New Password</label>
+                <input class="form-control " name="newPassword" id="newPassword" type=text />
+            </div>
+            <div class="form-group">
+                <label class="small mb-1">Confirm Password</label>
+                <input class="form-control " name="confirmPassword" id="newPassword" type=text />
+            </div>
+            <div class="form-group mt-4 mb-0">
+                <button type="submit" class="btn btn-primary">Update Password</button>
+            </div>
+        </form>
+    </div>
 </div>
+
 <script>
+
+    let userId = '<%= user.id %>'
+
     function doEditProfile(form) {
         const formData = {
             email: form.email.value,
             firstname: form.firstname.value,
             lastname: form.lastname.value,
             bio: form.bio.value,
-            _id: form.userid.value
+            _id: userId
         }
         $.ajax({
             url: '/admin/profile/edit',
@@ -72,6 +103,28 @@
                 if (response.status === "success") {
                     alert(response.msg)
                     window.location.reload()
+                } else if (response.status === "error") {
+                    alert(response.msg)
+                }
+            }
+        })
+        return false
+    }
+
+    function updatePass(form) {
+        $.ajax({
+            url: '/admin/profile/update-pass',
+            method: "POST",
+            data: {
+                oldPassword: form.oldPassword.value,
+                newPassword: form.newPassword.value,
+                confirmPassword: form.confirmPassword.value,
+                _id: userId,
+            },
+            success: function (response) {
+                if (response.status === "success") {
+                    alert(response.msg)
+                    window.location.href = "/admin/users"
                 } else if (response.status === "error") {
                     alert(response.msg)
                 }
