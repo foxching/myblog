@@ -10,21 +10,26 @@ const Setting = require('../models/setting')
 * GET all posts
 */
 router.get('/', function (req, res, next) {
-    var page = req.query.page || 1
+    const searchOptions = {};
+    if (req.query.title != null && req.query.title != '') {
+        searchOptions.title = new RegExp(req.query.title, 'i');
+    }
+    const page = req.query.page || 1
     Setting.findOne({}, function (err, setting) {
         let postLimit = parseInt(setting.post_limit)
-        Post.find({})
+        Post.find(searchOptions)
             .sort({ "createdAt": "desc" })
             .skip((postLimit * page) - postLimit)
             .limit(postLimit)
             .populate('author')
             .exec(function (err, posts) {
-                Post.countDocuments().exec(function (err, count) {
+                Post.countDocuments(searchOptions).exec(function (err, count) {
                     if (err) return next(err)
                     res.render('user/home', {
                         posts: posts,
                         current: page,
                         postPages: Math.ceil(count / postLimit),
+                        searchOptions: req.query
                     })
                 })
             })
@@ -36,9 +41,13 @@ router.get('/', function (req, res, next) {
 * GET post by slug
 */
 router.get('/:slug', (req, res) => {
+    const searchOptions = {};
+    if (req.query.name != null && req.query.name != '') {
+        searchOptions.name = new RegExp(req.query.name, 'i');
+    }
     Post.findOne({ slug: req.params.slug }).populate('author').exec(function (err, post) {
         if (err) return console.log(err)
-        res.render('user/post', { post: post })
+        res.render('user/post', { post: post, searchOptions: req.query })
     })
 })
 
@@ -106,6 +115,10 @@ router.post('/add-reply', (req, res) => {
 * GET posts per category
 */
 router.get('/category/:category', (req, res) => {
+    const searchOptions = {};
+    if (req.query.name != null && req.query.name != '') {
+        searchOptions.name = new RegExp(req.query.name, 'i');
+    }
     var categorySlug = req.params.category;
     Category.findOne({ slug: categorySlug }, function (err, category) {
         var page = req.query.page || 1
@@ -125,6 +138,8 @@ router.get('/category/:category', (req, res) => {
                             current: page,
                             category: categorySlug,
                             postPages: Math.ceil(count / postLimit),
+                            searchOptions: req.query
+
                         })
                     })
                 })
