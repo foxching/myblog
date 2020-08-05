@@ -192,21 +192,27 @@ router.post('/update-pass', (req, res) => {
     let userId = req.body._id;
     let newPassword = req.body.newPassword
 
-    Admin.findOne({ "_id": ObjectId(userId) }, function (err, user) {
-        if (err) return console.log(err)
-        bcrypt.genSalt(10, (err, salt) => {
-            bcrypt.hash(newPassword, salt, (err, hash) => {
-                if (err) throw err;
-                user.password = hash;
-                user
-                    .save(function (err, user) {
-                        if (err) return console.log(err)
-                        res.send({ status: "success", msg: "Password updated successfully" })
-                    })
+    if (newPassword == "") {
+        res.send({ status: "error", msg: "Please generate a new password!" })
+    } else {
+        Admin.findOne({ "_id": ObjectId(userId) }, function (err, user) {
+            if (err) return console.log(err)
+            bcrypt.genSalt(10, (err, salt) => {
+                bcrypt.hash(newPassword, salt, (err, hash) => {
+                    if (err) throw err;
+                    user.password = hash;
+                    user
+                        .save(function (err, user) {
+                            if (err) return console.log(err)
+                            res.send({ status: "success", msg: "Password updated successfully" })
+                        })
+                });
             });
-        });
 
-    })
+        })
+    }
+
+
 })
 
 
