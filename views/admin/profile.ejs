@@ -66,15 +66,15 @@
         <form role="form" method="post" onsubmit="return updatePass(this)" id="updatepass">
             <div class="form-group">
                 <label class="small mb-1">Old Password</label>
-                <input class="form-control " name="oldPassword" id="newPassword" type=text />
+                <input class="form-control " name="oldPassword" id="oldPassword" type="password" required />
             </div>
             <div class="form-group">
                 <label class="small mb-1">New Password</label>
-                <input class="form-control " name="newPassword" id="newPassword" type=text />
+                <input class="form-control " name="newPassword" id="newPassword" type="password" required />
             </div>
             <div class="form-group">
                 <label class="small mb-1">Confirm Password</label>
-                <input class="form-control " name="confirmPassword" id="newPassword" type=text />
+                <input class="form-control " name="confirmPassword" id="confirmPassword" type="password" required />
             </div>
             <div class="form-group mt-4 mb-0">
                 <button type="submit" class="btn btn-primary">Update Password</button>
@@ -124,7 +124,9 @@
             success: function (response) {
                 if (response.status === "success") {
                     alert(response.msg)
-                    window.location.href = "/admin/users"
+                    form.oldPassword.value = ''
+                    form.newPassword.value = ''
+                    form.confirmPassword.value = ''
                 } else if (response.status === "error") {
                     alert(response.msg)
                 }

@@ -1,7 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const Post = require('../models/post')
-const Setting = require('../models/setting')
 const Page = require('../models/page')
 
 

@@ -130,6 +130,45 @@ router.post('/profile/edit/', ensureAuthenticated, (req, res) => {
     })
 })
 
+router.post('/profile/update-pass', (req, res) => {
+    let oldPass = req.body.oldPassword
+    let newPass = req.body.newPassword;
+    let confirmPass = req.body.confirmPassword;
+    let userId = req.body._id
+
+    console.log(req.body)
+
+    Admin.findOne({ "_id": ObjectId(userId) }, function (err, user) {
+        if (err) return console.log(err)
+        if (!user) {
+            res.send({ status: "error", msg: "User not found" })
+        }
+        bcrypt.compare(oldPass, user.password, (err, isMatch) => {
+            if (err) throw err;
+            if (!isMatch) {
+                res.send({ status: "error", msg: "Old Password is incorrect" })
+            } else {
+                if (newPass != confirmPass) {
+                    res.send({ status: "error", msg: "Passwords dont match" })
+                } else {
+                    bcrypt.genSalt(10, (err, salt) => {
+                        bcrypt.hash(newPass, salt, (err, hash) => {
+                            if (err) throw err;
+                            user.password = hash;
+                            user
+                                .save(function (err, user) {
+                                    if (err) return console.log(err)
+                                    res.send({ status: "success", msg: "Password updated successfully" })
+                                })
+                        });
+                    });
+                }
+            }
+        });
+    })
+
+})
+
 
 /* 
 * GET admin dashboard
