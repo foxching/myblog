@@ -25,11 +25,14 @@ router.get('/', function (req, res, next) {
             .exec(function (err, posts) {
                 Post.countDocuments(searchOptions).exec(function (err, count) {
                     if (err) return next(err)
+                    console.log(req.query.title)
                     res.render('user/home', {
                         posts: posts,
                         current: page,
                         postPages: Math.ceil(count / postLimit),
-                        searchOptions: req.query
+                        searchOptions: req.query,
+                        //query: Object.keys(req.query).length === 0
+                        title: req.query.title
                     })
                 })
             })
