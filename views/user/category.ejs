@@ -7,7 +7,7 @@
         <!-- Blog Entries Column -->
         <div class="col-md-8">
 
-            <h1 class="my-4">Category:( <%= category %> )
+            <h1 class="my-4"><%= category ? "Category" : "Author" %>(<%= category ? category : author %>)
                 <small></small>
             </h1>
 
@@ -28,7 +28,7 @@
                     </div>
                     <div class="card-footer text-muted">
                         Posted on <%- format(post.createdAt, 'MMMM d yyyy') %> by
-                        <a href="#"><%= post.author.username %> </a>
+                        <a href="/posts/author/<%= post.author.username %>"><%= post.author.username %> </a>
                     </div>
                 </div>
                 <% }) %>
@@ -39,7 +39,7 @@
             <ul class="pagination justify-content-center mb-4">
                 <% if (Number(current) - 1 > 0) { %>
                 <li class="page-item"><a class="page-link"
-                        href="/posts/category/<%= category %>/?page=<%= Number(current) - 1 %>">Prev</a>
+                        href="/posts<%= category ? "/category/" :"/author/" %><%= category ? category : author %>/?page=<%= Number(current) - 1 %>">Prev</a>
                 </li>
                 <% } else { %>
                 <li class="page-item disabled"><a class="page-link">Prev</a></li>
@@ -53,7 +53,8 @@
                 <li class=" page-item active"><a class="page-link"><%= i %></a></li>
                 <% } else { %>
                 <li class="page-item"><a class="page-link"
-                        href="/posts/category/<%= category %>/?page=<%= i %>"><%= i %></a></li>
+                        href="/posts<%= category ? "/category/" :"/author/" %><%= category ? category : author %>/?page=<%= i %>"><%= i %></a>
+                </li>
                 <% } %>
                 <% if (i == Number(current) + 4 && i < postPages) { %>
                 <li class=" page-item disabled"><a class="page-link">...</a></li>
@@ -61,7 +62,7 @@
                 <% } %>
                 <% if (Number(current) + 1 <= postPages) { %>
                 <li class="page-item"><a class="page-link"
-                        href="/posts/category/<%= category %>/?page=<%= Number(current) + 1 %>">Next</a>
+                        href="/posts<%= category ? "/category/" :"/author/" %><%= category ? category : author %>/?page=<%= Number(current) + 1 %>">Next</a>
                 </li>
                 <% } else { %>
                 <li class="page-item disabled"><a class="page-link">Next</a></li>

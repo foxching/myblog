@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const nodemailer = require('nodemailer')
 const ObjectId = require('mongodb').ObjectID
+const Admin = require('../models/user')
 const Post = require('../models/post')
 const Category = require('../models/category')
 const Setting = require('../models/setting')
@@ -140,15 +141,53 @@ router.get('/category/:category', (req, res) => {
                             posts: posts,
                             current: page,
                             category: categorySlug,
+                            author: "",
                             postPages: Math.ceil(count / postLimit),
                             searchOptions: req.query
-
                         })
                     })
                 })
         })
     })
 })
+
+/* 
+* GET posts per author
+*/
+router.get('/author/:username', (req, res) => {
+    const searchOptions = {};
+    if (req.query.name != null && req.query.name != '') {
+        searchOptions.name = new RegExp(req.query.name, 'i');
+    }
+    var authorSlug = req.params.username;
+    Admin.findOne({ "username": authorSlug }, function (err, user) {
+        var page = req.query.page || 1
+        Setting.findOne({}, function (err, setting) {
+            let postLimit = parseInt(setting.post_limit)
+            Post.find({ author: user.id })
+                .populate('author')
+                .sort({ "createdAt": "desc" })
+                .skip((postLimit * page) - postLimit)
+                .limit(postLimit)
+                .exec(function (err, posts) {
+                    if (err) return console.log(err)
+                    Post.find({ author: user.id }).countDocuments().exec(function (err, count) {
+                        if (err) return console.log(err)
+                        res.render('user/category', {
+                            posts: posts,
+                            current: page,
+                            category: "",
+                            author: authorSlug,
+                            postPages: Math.ceil(count / postLimit),
+                            searchOptions: req.query
+                        })
+                    })
+                })
+        })
+    })
+})
+
+
 
 
 
