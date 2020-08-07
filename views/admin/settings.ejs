@@ -1,19 +1,25 @@
+<!-- header -->
 <%- include('../layouts/adminheader.ejs') %>
 
+<!-- Settings Column -->
+<main>
+    <div class="container-fluid">
+        <h1 class="mt-4">Settings</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item active">Settings</li>
+        </ol>
+        <!-- Settings form -->
+        <form method="POST" action="/admin/settings">
+            <div class="form-group">
+                <label>Post Limit</label>
+                <input name="post_limit" class="form-control" value="<%= setting %>">
+            </div>
 
-<h1 class="mt-4">Settings</h1>
-<ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-    <li class="breadcrumb-item active">Settings</li>
-</ol>
-<form method="POST" action="/admin/settings">
-    <div class="form-group">
-        <label>Post Limit</label>
-        <input name="post_limit" class="form-control" value="<%= setting %>">
+            <input type="submit" class="btn btn-info" value="Save Settings">
+        </form>
     </div>
+</main>
 
-    <input type="submit" class="btn btn-info" value="Save Settings">
-</form>
-
-
+<!-- footer -->
 <%- include('../layouts/adminfooter.ejs') %>

@@ -26,8 +26,7 @@ router.get('/', function (req, res, next) {
             .exec(function (err, posts) {
                 Post.countDocuments(searchOptions).exec(function (err, count) {
                     if (err) return next(err)
-                    console.log(req.query.title)
-                    res.render('user/home', {
+                    res.render('user/posts', {
                         posts: posts,
                         current: page,
                         postPages: Math.ceil(count / postLimit),

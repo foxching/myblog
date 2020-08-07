@@ -1,51 +1,60 @@
+<!-- header -->
 <%- include('../layouts/adminheader.ejs') %>
 
-<h1 class="mt-4">Delete User</h1>
-<ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-    <li class="breadcrumb-item active">Delete</li>
-</ol>
-<br>
-<p>You have specified this user for deletion</p>
-<p>User ID:<b> <%= userInfo.username %> </b></p>
-<br>
-<form action="POST" onsubmit="return doDeleteUser(this)">
-    <p>What should be done with content owned by this user?</p>
-    <div class="form-check">
-        <input type="hidden" name="userId" value="<%= userInfo.id %>">
-        <label class="form-check-label" for="radio1">
-            <input type="radio" class="form-check-input" id="radio1" name="optradio" value="option1" checked>Delete All
-            Content
-        </label>
-    </div>
-    <div class="form-row justify-content-start">
-        <div class="col-md-2">
+<!-- Delete Notice Column -->
+<main>
+    <div class="container-fluid">
+        <h1 class="mt-4">Delete User</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item active">Delete</li>
+        </ol>
+        <br>
+        <p>You have specified this user for deletion</p>
+        <p>User ID:<b> <%= userInfo.username %> </b></p>
+        <br>
+        <!-- Delete Notice Form -->
+        <form action="POST" onsubmit="return doDeleteUser(this)">
+            <p>What should be done with content owned by this user?</p>
             <div class="form-check">
-                <label class="form-check-label" for="radio2">
-                    <input type="radio" class="form-check-input" id="radio2" name="optradio" value="option2">Pass
-                    all content to: <label for="category"></label>
+                <input type="hidden" name="userId" value="<%= userInfo.id %>">
+                <label class="form-check-label" for="radio1">
+                    <input type="radio" class="form-check-input" id="radio1" name="optradio" value="option1"
+                        checked>Delete All
+                    Content
                 </label>
             </div>
-        </div>
-        <div class="col-md-2">
-            <div class="form-group">
-                <select class="form-control" name="user">
-                    <% users.forEach(function(user) { %>
-                    <% if(user.id != userInfo.id) { %>
-                    <option value="<%= user.id %>"><%= user.username %></option>
-                    <% } %>
-                    <% }) %>
-                </select>
+            <div class="form-row justify-content-start">
+                <div class="col-md-2">
+                    <div class="form-check">
+                        <label class="form-check-label" for="radio2">
+                            <input type="radio" class="form-check-input" id="radio2" name="optradio"
+                                value="option2">Pass
+                            all content to: <label for="category"></label>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <select class="form-control" name="user">
+                            <% users.forEach(function(user) { %>
+                            <% if(user.id != userInfo.id) { %>
+                            <option value="<%= user.id %>"><%= user.username %></option>
+                            <% } %>
+                            <% }) %>
+                        </select>
+                    </div>
+                </div>
             </div>
-        </div>
+            <br>
+            <input type="submit" class="btn btn-primary" value="Confirm Deletion"></input>
+        </form>
     </div>
+</main>
 
-    <br>
-    <input type="submit" class="btn btn-primary" value="Confirm Deletion"></input>
-</form>
-
+<!-- AJAX to delete user -->
 <script>
-
+    //send delete user to server
     function doDeleteUser(form) {
         if (confirm('Are you sure want to delete?')) {
             const formData = {
@@ -70,7 +79,7 @@
         }
 
     }
-
 </script>
 
+<!-- footer-->
 <%- include('../layouts/adminfooter.ejs') %>

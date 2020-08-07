@@ -1,43 +1,51 @@
+<!-- header -->
 <%- include('../layouts/adminheader.ejs') %>
 
+<!-- Show All Pages Column -->
+<main>
+    <div class="container-fluid">
+        <h1 class="mt-4">All Pages<a href="/admin/pages/add-page" class="btn btn-outline-primary m-1">Add
+                Page</a>
+        </h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item active">All Pages</li>
+        </ol>
+        <!-- Pages Table -->
+        <table class="table table-striped sorting">
+            <thead>
+                <tr class="home">
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th colspan="2">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% pages.forEach(function(page) { %>
+                <tr id="id_<%= page._id %>" class="<%= page.slug %>">
+                    <td><%= page.title %></td>
+                    <td><%= page.author.username %> </td>
 
-<h1 class="mt-4">All Pages<a href="/admin/pages/add-page" class="btn btn-outline-primary m-1">Add
-        Page</a>
-</h1>
-<ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-    <li class="breadcrumb-item active">All Pages</li>
-</ol>
-<table class="table table-striped sorting">
-    <thead>
-        <tr class="home">
-            <th>Title</th>
-            <th>Author</th>
-            <th colspan="2">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <% pages.forEach(function(page) { %>
-        <tr id="id_<%= page._id %>" class="<%= page.slug %>">
-            <td><%= page.title %></td>
-            <td><%= page.author.username %> </td>
+                    <% if(page.slug == 'home') { %>
+                    <td><a href="/admin/pages/edit-page/<%= page.id %>" class="btn btn-warning btn-sm">Edit</a></td>
+                    <% } else { %>
+                    <td>
+                        <a href="/admin/pages/edit-page/<%= page.id %>" class="btn btn-warning btn-sm">Edit</a>
+                        <button class="btn btn-danger btn-sm" onclick="doDeletePage('<%= page._id %>')">Delete</button>
+                    </td>
+                    <% } %>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</main>
 
-            <% if(page.slug == 'home') { %>
-            <td><a href="/admin/pages/edit-page/<%= page.id %>" class="btn btn-warning btn-sm">Edit</a></td>
-            <% } else { %>
-            <td>
-                <a href="/admin/pages/edit-page/<%= page.id %>" class="btn btn-warning btn-sm">Edit</a>
-                <button class="btn btn-danger btn-sm" onclick="doDelete('<%= page._id %>')">Delete</button>
-            </td>
-            <% } %>
-        </tr>
-        <% }) %>
-    </tbody>
-</table>
 
+<!-- AJAX to delete page -->
 <script>
-
-    function doDelete(pageId) {
+    //send delete page to server
+    function doDeletePage(pageId) {
         if (confirm('Are you sure want to delete?')) {
             $.ajax({
                 url: '/admin/pages/delete-page',
@@ -59,4 +67,5 @@
     }
 </script>
 
+<!-- footer -->
 <%- include('../layouts/adminfooter.ejs') %>

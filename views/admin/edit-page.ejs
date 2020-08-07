@@ -1,30 +1,39 @@
+<!-- header -->
 <%- include('../layouts/adminheader.ejs') %>
 
-<h1 class="mt-4">Edit Page</h1>
-<ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-    <li class="breadcrumb-item active">Edit</li>
-</ol>
-<form method="POST" onsubmit="return doEditPage(this)">
-    <div class="form-group">
-        <label for="title">Title</label>
-        <input name="title" class="form-control" value="<%= page.title %>" placeholder="Title.." required>
-    </div>
-    <div class="form-group">
-        <label for="title">Slug</label>
-        <input name="slug" class="form-control" value="<%= page.slug %>" placeholder="Slug..">
-    </div>
 
-    <div class="form-group">
-        <label for="content">Content</label>
-        <textarea name="content" id="ta" class="form-control" rows="10" cols="30"
-            required><%= page.content %></textarea>
+<!-- Edit Page Column -->
+<main>
+    <div class="container-fluid">
+        <h1 class="mt-4">Edit Page</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item active">Edit</li>
+        </ol>
+
+        <!-- Edit Page form -->
+        <form method="POST" onsubmit="return doEditPage(this)">
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input name="title" class="form-control" value="<%= page.title %>" placeholder="Title.." required>
+            </div>
+            <div class="form-group">
+                <label for="title">Slug</label>
+                <input name="slug" class="form-control" value="<%= page.slug %>" placeholder="Slug..">
+            </div>
+
+            <div class="form-group">
+                <label for="content">Content</label>
+                <textarea name="content" id="ta" class="form-control" rows="10" cols="30"
+                    required><%= page.content %></textarea>
+            </div>
+            <input type="submit" class="btn btn-info" value="Submit">
+        </form>
     </div>
-    <input type="submit" class="btn btn-info" value="Submit">
-</form>
-
-
+</main>
+<!-- AJAX to edit page -->
 <script>
+    //CKEditor
     $(function () {
         if ($('textarea#ta').length) {
             CKEDITOR.replace('ta');
@@ -34,6 +43,7 @@
 
     let pageId = '<%= page.id %>'
 
+    //send edit page to server
     function doEditPage(form) {
         const formData = {
             title: form.title.value,
@@ -58,4 +68,6 @@
         return false
     }
 </script>
+
+<!-- footer -->
 <%- include('../layouts/adminfooter.ejs') %>

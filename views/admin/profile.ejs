@@ -1,92 +1,103 @@
+<!-- header -->
 <%- include('../layouts/adminheader.ejs') %>
 
-<h1 class="mt-4">Update Profile</h1>
-<ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-    <li class="breadcrumb-item active">Edit</li>
-</ol>
-<!-- Nav tabs -->
-<ul class="nav nav-tabs">
-    <li class="nav-item">
-        <a class="nav-link active" data-toggle="tab" href="#userinfoupdate">Personal Information</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" data-toggle="tab" href="#updatepass">Account Security</a>
-    </li>
+<!-- Profile Column -->
+<main>
+    <div class="container-fluid">
+        <h1 class="mt-4">Update Profile</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item active">Edit</li>
+        </ol>
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#userinfoupdate">Personal Information</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#updatepass">Account Security</a>
+            </li>
 
-</ul>
+        </ul>
 
-<!-- Tab panes -->
-
-<div class="tab-content py-3">
-    <div class="tab-pane container active" id="userinfoupdate">
-        <form role="form" method="POST" onsubmit="return doEditProfile(this)" id="userinfoupdate">
-            <div class="form-group">
-                <label class="small mb-1" for="inputUsername">Username</label>
-                <input type="hidden" name="userId" value="<%= user.id %>">
-                <input class="form-control py-4" name="username" id="inputUsername" type="text"
-                    value="<%= typeof user.username != 'undefined' ? user.username : '' %>"
-                    placeholder="Enter your Username" disabled />
-            </div>
-            <div class="form-group">
-                <label class="small mb-1" for="inputEmailAddress">Email</label>
-                <input class="form-control py-4" name="email" id="inputEmailAddress" type="email"
-                    value="<%= typeof user.email != 'undefined' ? user.email : '' %>" aria-describedby="emailHelp"
-                    placeholder="Enter email address" />
-            </div>
-            <div class="form-row">
-                <div class="col-md-6">
+        <!-- Tab panes -->
+        <div class="tab-content py-3">
+            <!-- User Profile Pane -->
+            <div class="tab-pane container active" id="userinfoupdate">
+                <form role="form" method="POST" onsubmit="return doEditProfile(this)" id="userinfoupdate">
                     <div class="form-group">
-                        <label class="small mb-1" for="inputFirstName">First Name</label>
-
-                        <input class="form-control py-4" name="firstname" id="inputFirstName" type="text"
-                            value="<%= typeof user.firstname != 'undefined' ? user.firstname : '' %>" />
+                        <label class="small mb-1" for="inputUsername">Username</label>
+                        <input type="hidden" name="userId" value="<%= user.id %>">
+                        <input class="form-control py-4" name="username" id="inputUsername" type="text"
+                            value="<%= typeof user.username != 'undefined' ? user.username : '' %>"
+                            placeholder="Enter your Username" disabled />
                     </div>
-                </div>
-                <div class="col-md-6">
                     <div class="form-group">
-                        <label class="small mb-1" for="inputLastName">Last Name</label>
-                        <input class="form-control py-4" name="lastname" id="inputLastName" type="text"
-                            value="<%= typeof user.lastname != 'undefined' ? user.lastname : '' %>" />
+                        <label class="small mb-1" for="inputEmailAddress">Email</label>
+                        <input class="form-control py-4" name="email" id="inputEmailAddress" type="email"
+                            value="<%= typeof user.email != 'undefined' ? user.email : '' %>"
+                            aria-describedby="emailHelp" placeholder="Enter email address" />
                     </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="content">Bio</label>
-                <textarea name="bio" class="form-control" rows="5"
-                    cols="20"><%= typeof user.bio != 'undefined' ? user.bio : '' %></textarea>
-            </div>
+                    <div class="form-row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="small mb-1" for="inputFirstName">First Name</label>
 
-            <div class="form-group mt-4 mb-0">
-                <input type="submit" class="btn btn-primary" value="Update Profile">
-            </div>
-        </form>
-    </div>
-    <div class="tab-pane container fade" id="updatepass">
-        <form role="form" method="post" onsubmit="return updatePass(this)" id="updatepass">
-            <div class="form-group">
-                <label class="small mb-1">Old Password</label>
-                <input class="form-control " name="oldPassword" id="oldPassword" type="password" required />
-            </div>
-            <div class="form-group">
-                <label class="small mb-1">New Password</label>
-                <input class="form-control " name="newPassword" id="newPassword" type="password" required />
-            </div>
-            <div class="form-group">
-                <label class="small mb-1">Confirm Password</label>
-                <input class="form-control " name="confirmPassword" id="confirmPassword" type="password" required />
-            </div>
-            <div class="form-group mt-4 mb-0">
-                <button type="submit" class="btn btn-primary">Update Password</button>
-            </div>
-        </form>
-    </div>
-</div>
+                                <input class="form-control py-4" name="firstname" id="inputFirstName" type="text"
+                                    value="<%= typeof user.firstname != 'undefined' ? user.firstname : '' %>" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="small mb-1" for="inputLastName">Last Name</label>
+                                <input class="form-control py-4" name="lastname" id="inputLastName" type="text"
+                                    value="<%= typeof user.lastname != 'undefined' ? user.lastname : '' %>" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="content">Bio</label>
+                        <textarea name="bio" class="form-control" rows="5"
+                            cols="20"><%= typeof user.bio != 'undefined' ? user.bio : '' %></textarea>
+                    </div>
 
+                    <div class="form-group mt-4 mb-0">
+                        <input type="submit" class="btn btn-primary" value="Update Profile">
+                    </div>
+                </form>
+            </div>
+            <div class="tab-pane container fade" id="updatepass">
+                <!-- User Password Pane -->
+                <form role="form" method="post" onsubmit="return updatePass(this)" id="updatepass">
+                    <div class="form-group">
+                        <label class="small mb-1">Old Password</label>
+                        <input class="form-control " name="oldPassword" id="oldPassword" type="password" required />
+                    </div>
+                    <div class="form-group">
+                        <label class="small mb-1">New Password</label>
+                        <input class="form-control " name="newPassword" id="newPassword" type="password" required />
+                    </div>
+                    <div class="form-group">
+                        <label class="small mb-1">Confirm Password</label>
+                        <input class="form-control " name="confirmPassword" id="confirmPassword" type="password"
+                            required />
+                    </div>
+                    <div class="form-group mt-4 mb-0">
+                        <button type="submit" class="btn btn-primary">Update Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+<!-- AJAX functions to edit profile and update user password -->
 <script>
-
+    //global id variale
     let userId = '<%= user.id %>'
 
+    //send edit profile to server
     function doEditProfile(form) {
         const formData = {
             email: form.email.value,
@@ -111,6 +122,7 @@
         return false
     }
 
+    //send update password to server
     function updatePass(form) {
         $.ajax({
             url: '/admin/profile/update-pass',
@@ -134,7 +146,7 @@
         })
         return false
     }
-
 </script>
 
+<!-- footer -->
 <%- include('../layouts/adminfooter.ejs') %>

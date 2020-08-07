@@ -1,12 +1,11 @@
+<!-- header start -->
 <%- include('../layouts/header.ejs') %>
+
 <!-- Page Content -->
 <div class="container">
-
     <div class="row">
-
         <!-- Blog Entries Column -->
         <div class="col-md-8">
-
             <h1 class="my-4">All Posts
                 <small></small>
             </h1>
@@ -32,6 +31,7 @@
                 </div>
                 <% }) %>
             </div>
+            <!-- Paganation -->
             <% if (postPages > 0) { %>
             <ul class="pagination justify-content-center mb-4">
                 <% if (Number(current) - 1 > 0 ) { %>
@@ -67,6 +67,8 @@
                 <% } %>
             </ul>
             <% } %>
+            <!-- /end Pagination -->
+
             <% } else { %>
             <h3 class="lead text-center mt-5">No Post found!</h3>
             <% } %>
@@ -75,14 +77,12 @@
 
         <!-- Sidebar Widgets Column -->
         <%- include('../layouts/sidebar.ejs') %>
-
-
     </div>
     <!-- /.row -->
-
 </div>
 <!-- /.container -->
 
+<!-- SOCKET IO script -->
 <script>
 
     let socket = io();
@@ -110,9 +110,9 @@
         html += '</div>';
         html += '</div>';
         $("#posts").prepend(html)
-
     })
 
 </script>
 
+<!-- footer -->
 <%- include('../layouts/footer.ejs') %>

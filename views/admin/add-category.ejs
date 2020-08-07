@@ -1,18 +1,25 @@
+<!-- header -->
 <%- include('../layouts/adminheader.ejs') %>
 
-<h1 class="mt-4">Add Category</h1>
-<ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-    <li class="breadcrumb-item active">New</li>
-</ol>
-<form method="POST" onsubmit="return doCreateCategory(this)">
-    <div class="form-group">
-        <label for="title">Category</label>
-        <input name="title" class="form-control" value="<%= newCategory.title %>" placeholder="Title.." required>
+<!-- Add Category Column -->
+<main>
+    <div class="container-fluid">
+        <h1 class="mt-4">Add Category</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item active">New</li>
+        </ol>
+        <form method="POST" onsubmit="return doCreateCategory(this)">
+            <div class="form-group">
+                <label for="title">Category</label>
+                <input name="title" class="form-control" value="<%= newCategory.title %>" placeholder="Title.."
+                    required>
+            </div>
+            <input type="submit" class="btn btn-info" value="Submit">
+        </form>
     </div>
-    <input type="submit" class="btn btn-info" value="Submit">
-</form>
-
+</main>
+<!-- AJAX to create category -->
 <script>
     function doCreateCategory(form) {
         const formData = {
@@ -35,4 +42,5 @@
     }
 </script>
 
+<!-- footer -->
 <%- include('../layouts/adminfooter.ejs') %>

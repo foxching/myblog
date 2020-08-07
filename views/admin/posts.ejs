@@ -1,52 +1,60 @@
+<!-- header -->
 <%- include('../layouts/adminheader.ejs') %>
 
-<h1 class="mt-4">All Posts<a href="/admin/posts/add-post" class="btn btn-outline-primary m-1">Add Post</a>
-</h1>
+<!-- Show All Posts Column -->
+<main>
+    <div class="container-fluid">
+        <h1 class="mt-4">All Posts<a href="/admin/posts/add-post" class="btn btn-outline-primary m-1">Add Post</a>
+        </h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item active">Posts</li>
+        </ol>
+        <!-- Posts Table -->
+        <div class=" table-responsive-md">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Post Image</th>
+                        <th>Author</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% posts.forEach(function(post){ %>
+                    <tr id="post-<%= post._id %>">
+                        <td><%= post.title %> </td>
+                        <td><%- post.category %> </td>
+                        <td>
+                            <% if(post.image == "") { %>
+                            <img src="http://placehold.it/750x300" style="width: 150px; height:100px">
+                            <% } else { %>
+                            <img src="<%= post.image %>" style="width: 150px; height:100px">
+                            <% } %>
+                        </td>
+                        <td><%= post.author.username %></td>
+                        <td>
+                            <a href="/posts/<%= post.slug %>" class="btn btn-primary btn-sm">View</a>
+                            <a href="/admin/posts/edit-post/<%= post.id %>" class="btn btn-warning btn-sm">Edit</a>
+                            <button class="btn btn-danger btn-sm"
+                                onclick="doDeletePost('<%= post._id %>','<%= post.image %>')">Delete</button>
+                        </td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
 
-<ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-    <li class="breadcrumb-item active">Posts</li>
-</ol>
-
-<div class=" table-responsive-md">
-    <table class="table table-striped table-bordered">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Category</th>
-                <th>Post Image</th>
-                <th>Author</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% posts.forEach(function(post){ %>
-            <tr id="post-<%= post._id %>">
-                <td><%= post.title %> </td>
-                <td><%- post.category %> </td>
-                <td>
-                    <% if(post.image == "") { %>
-                    <img src="http://placehold.it/750x300" style="width: 150px; height:100px">
-                    <% } else { %>
-                    <img src="<%= post.image %>" style="width: 150px; height:100px">
-                    <% } %>
-                </td>
-                <td><%= post.author.username %></td>
-                <td>
-                    <a href="/posts/<%= post.slug %>" class="btn btn-primary btn-sm">View</a>
-                    <a href="/admin/posts/edit-post/<%= post.id %>" class="btn btn-warning btn-sm">Edit</a>
-                    <button class="btn btn-danger btn-sm"
-                        onclick="doDelete('<%= post._id %>','<%= post.image %>')">Delete</button>
-                </td>
-            </tr>
-            <% }) %>
-        </tbody>
-    </table>
-</div>
-
+<!-- AJAX to delete post -->
 <script>
+    //socket variable
     let socket = io();
-    function doDelete(postId, image) {
+    //send delete post to server
+    function doDeletePost(postId, image) {
         if (confirm('Are you sure want to delete?')) {
             $.ajax({
                 url: '/admin/posts/delete-post',
@@ -68,5 +76,5 @@
     }
 </script>
 
-
+<!-- footer -->
 <%- include('../layouts/adminfooter.ejs') %>

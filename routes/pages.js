@@ -16,7 +16,7 @@ router.get('/:slug', function (req, res, next) {
         if (!page) {
             res.redirect('/')
         } else {
-            res.render('user/index', { title: page.title, content: page.content, searchOptions: req.query })
+            res.render('index', { title: page.title, content: page.content, searchOptions: req.query })
         }
     })
 });
@@ -31,7 +31,7 @@ router.get('/', function (req, res, next) {
         if (err) {
             console.log(err)
         }
-        res.render('user/index', { title: "Home", content: page.content, searchOptions: req.query })
+        res.render('index', { title: "Home", content: page.content, searchOptions: req.query })
 
     })
     //res.send('ok')

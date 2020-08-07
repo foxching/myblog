@@ -1,94 +1,101 @@
+<!-- header -->
 <%- include('../layouts/adminheader.ejs') %>
 
-<h1 class="mt-4">Edit User</h1>
-<ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-    <li class="breadcrumb-item active">Edit</li>
-</ol>
-<!-- Nav tabs -->
-<ul class="nav nav-tabs">
-    <li class="nav-item">
-        <a class="nav-link active" data-toggle="tab" href="#userinfo">Public Profile</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" data-toggle="tab" href="#password">Account Security</a>
-    </li>
+<!-- Edit User Column -->
+<main>
+    <div class="container-fluid">
+        <h1 class="mt-4">Edit User</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item active">Edit</li>
+        </ol>
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#userinfo">Public Profile</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#password">Account Security</a>
+            </li>
 
-</ul>
+        </ul>
 
-<!-- Tab panes -->
-
-<div class="tab-content py-3">
-    <div class="tab-pane container active" id="userinfo">
-        <form role="form" method="POST" onsubmit="return doEditUser(this)" id="userinfo">
-            <div class="form-group">
-                <label class="small mb-1" for="inputUsername">Username</label>
-                <input class="form-control" name="username" id="inputUsername" type="text"
-                    value="<%= typeof user.username != 'undefined' ? user.username : '' %>"
-                    placeholder="Enter your Username" disabled />
-            </div>
-            <div class="form-group">
-                <label class="small mb-1" for="inputEmailAddress">Email</label>
-                <input class="form-control " name="email" id="inputEmailAddress" type="email"
-                    value="<%= typeof user.email != 'undefined' ? user.email : '' %>" aria-describedby="emailHelp"
-                    placeholder="Enter email address" />
-            </div>
-
-            <div class="form-row">
-                <div class="col-md-6">
+        <!-- Tab panes -->
+        <div class="tab-content py-3">
+            <div class="tab-pane container active" id="userinfo">
+                <form role="form" method="POST" onsubmit="return doEditUser(this)" id="userinfo">
                     <div class="form-group">
-                        <label class="small mb-1" for="inputFirstName">First Name</label>
-                        <input class="form-control" name="firstname" id="inputFirstName" type="text"
-                            value="<%= typeof user.firstname != 'undefined' ? user.firstname : '' %>" />
+                        <label class="small mb-1" for="inputUsername">Username</label>
+                        <input class="form-control" name="username" id="inputUsername" type="text"
+                            value="<%= typeof user.username != 'undefined' ? user.username : '' %>"
+                            placeholder="Enter your Username" disabled />
                     </div>
-                </div>
-                <div class="col-md-6">
                     <div class="form-group">
-                        <label class="small mb-1" for="inputLastName">Last Name</label>
-                        <input class="form-control" name="lastname" id="inputLastName" type="text"
-                            value="<%= typeof user.lastname != 'undefined' ? user.lastname : '' %>" />
+                        <label class="small mb-1" for="inputEmailAddress">Email</label>
+                        <input class="form-control " name="email" id="inputEmailAddress" type="email"
+                            value="<%= typeof user.email != 'undefined' ? user.email : '' %>"
+                            aria-describedby="emailHelp" placeholder="Enter email address" />
                     </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="category">Role</label>
-                <select class="form-control" name="role">
-                    <% roles.forEach(function(role) { %>
-                    <option value="<%= role.slug %>" <% if(role.slug === userRole ) { %> selected="selected" <% } %>>
-                        <%= role.title %>
-                    </option>
-                    <% }) %>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="content">Bio</label>
-                <textarea name="bio" class="form-control" rows="5"
-                    cols="20"><%= typeof user.bio != 'undefined' ? user.bio : '' %></textarea>
-            </div>
 
-            <div class="form-group mt-4 mb-0">
-                <input type="submit" class="btn btn-primary" value="Update">
+                    <div class="form-row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="small mb-1" for="inputFirstName">First Name</label>
+                                <input class="form-control" name="firstname" id="inputFirstName" type="text"
+                                    value="<%= typeof user.firstname != 'undefined' ? user.firstname : '' %>" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="small mb-1" for="inputLastName">Last Name</label>
+                                <input class="form-control" name="lastname" id="inputLastName" type="text"
+                                    value="<%= typeof user.lastname != 'undefined' ? user.lastname : '' %>" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Role</label>
+                        <select class="form-control" name="role">
+                            <% roles.forEach(function(role) { %>
+                            <option value="<%= role.slug %>" <% if(role.slug === userRole ) { %> selected="selected"
+                                <% } %>>
+                                <%= role.title %>
+                            </option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="content">Bio</label>
+                        <textarea name="bio" class="form-control" rows="5"
+                            cols="20"><%= typeof user.bio != 'undefined' ? user.bio : '' %></textarea>
+                    </div>
+
+                    <div class="form-group mt-4 mb-0">
+                        <input type="submit" class="btn btn-primary" value="Update">
+                    </div>
+                </form>
             </div>
-        </form>
+            <div class="tab-pane container fade" id="password">
+                <form role="form" method="post" onsubmit="return updatePass(this)" id="password" onclick="">
+                    <div class="form-group">
+                        <label class="small mb-1">New Password</label>
+                        <input class="form-control " name="newPassword" id="newPassword" type=text />
+                    </div>
+                    <div class="form-group mt-4 mb-0">
+                        <button type="button" class="btn btn-success" onclick="createPass()">Generate</button>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-    <div class="tab-pane container fade" id="password">
-        <form role="form" method="post" onsubmit="return updatePass(this)" id="password" onclick="">
-            <div class="form-group">
-                <label class="small mb-1">New Password</label>
-                <input class="form-control " name="newPassword" id="newPassword" type=text />
-            </div>
-            <div class="form-group mt-4 mb-0">
-                <button type="button" class="btn btn-success" onclick="createPass()">Generate</button>
-                <button type="submit" class="btn btn-primary">Update</button>
-            </div>
-        </form>
-    </div>
-</div>
+</main>
 
-
+<!-- AJAX to edit user info -->
 <script>
     let userId = '<%= user.id %>'
 
+    //send edit user to server
     function doEditUser(form) {
         const formData = {
             email: form.email.value,
@@ -114,6 +121,7 @@
         return false
     }
 
+    //request new random password 
     function createPass() {
         $.ajax({
             url: '/admin/users/create-pass',
@@ -125,6 +133,7 @@
         return false
     }
 
+    //send update user password to server
     function updatePass(form) {
         $.ajax({
             url: '/admin/users/update-pass',
@@ -141,8 +150,7 @@
         })
         return false
     }
-
-
 </script>
 
+<!-- footer -->
 <%- include('../layouts/adminfooter.ejs') %>

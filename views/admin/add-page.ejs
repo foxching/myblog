@@ -1,37 +1,44 @@
+<!-- header -->
 <%- include('../layouts/adminheader.ejs') %>
 
-<h1 class="mt-4">Add Page</h1>
-<ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-    <li class="breadcrumb-item active">New</li>
-</ol>
-<form method="POST" onsubmit="return doCreatePage(this)">
-    <div class="form-group">
-        <label for="title">Title</label>
-        <input name="title" class="form-control" value="<%= newPage.title %>" placeholder="Title.." required>
-    </div>
-    <div class="form-group">
-        <label for="title">Slug</label>
-        <input name="slug" class="form-control" value="<%= newPage.slug %>" placeholder="Slug..">
-    </div>
+<!-- Add Page Column -->
+<main>
+    <div class="container-fluid">
+        <h1 class="mt-4">Add Page</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item active">New</li>
+        </ol>
+        <form method="POST" onsubmit="return doCreatePage(this)">
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input name="title" class="form-control" value="<%= newPage.title %>" placeholder="Title.." required>
+            </div>
+            <div class="form-group">
+                <label for="title">Slug</label>
+                <input name="slug" class="form-control" value="<%= newPage.slug %>" placeholder="Slug..">
+            </div>
 
-    <div class="form-group">
-        <label for="content">Content</label>
-        <textarea name="content" id="ta" class="form-control" rows="10" cols="30"
-            required><%= newPage.content %></textarea>
+            <div class="form-group">
+                <label for="content">Content</label>
+                <textarea name="content" id="ta" class="form-control" rows="10" cols="30"
+                    required><%= newPage.content %></textarea>
+            </div>
+            <input type="submit" class="btn btn-info" value="Submit">
+        </form>
     </div>
-    <input type="submit" class="btn btn-info" value="Submit">
-</form>
+</main>
 
-
+<!-- AJAX to create page -->
 <script>
+
+    //CKEditor function
     $(function () {
         if ($('textarea#ta').length) {
             CKEDITOR.replace('ta');
         }
-
     });
-
+    //send new page to server
     function doCreatePage(form) {
         const formData = {
             title: form.title.value,
@@ -54,4 +61,6 @@
         return false
     }
 </script>
+
+<!-- footer -->
 <%- include('../layouts/adminfooter.ejs') %>

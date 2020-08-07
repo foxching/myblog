@@ -1,4 +1,6 @@
+<!-- header -->
 <%- include('../layouts/header.ejs') %>
+
 <!-- Page Content -->
 <div class="container">
 
@@ -115,8 +117,10 @@
 </div>
 <!-- /.container -->
 
+<!-- Socket functions and JS  -->
 <script>
     let socket = io();
+    //send comment to server
     function doComment(form) {
         let formData = {
             post_id: form.post_id.value,
@@ -138,6 +142,8 @@
         })
         return false
     }
+
+    //socket func()
     socket.on('new_comment', (commentData) => {
         //console.log(commentData)
         if (commentData.post_id != $("#post_id").val()) {
@@ -155,6 +161,7 @@
 
     })
 
+    //send reply to server
     function doReply(form) {
         let formData = {
             post_id: form.post_id.value,
@@ -178,6 +185,7 @@
         return false
     }
 
+    //socket func()
     socket.on('new_reply', (replyData) => {
         //console.log(replyData)
         let html = ""
@@ -193,5 +201,5 @@
 
 </script>
 
-
+<!-- footer -->
 <%- include('../layouts/footer.ejs') %>

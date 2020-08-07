@@ -1,4 +1,6 @@
+<!-- header -->
 <%- include('../layouts/header.ejs') %>
+
 <!-- Page Content -->
 <div class="container">
 
@@ -86,6 +88,7 @@
 </div>
 <!-- /.container -->
 
+<!-- Socket script -->
 <script>
     let socket = io();
 
@@ -93,6 +96,7 @@
         document.getElementById("post-" + id).remove()
     })
 
+    //socket func()
     socket.on("new_post", (formData) => {
         //console.log(formData)
         let html = "";
@@ -114,7 +118,7 @@
         $("#posts").prepend(html)
 
     })
-
 </script>
 
+<!--footer -->
 <%- include('../layouts/footer.ejs') %>
