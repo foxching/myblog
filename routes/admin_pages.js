@@ -8,11 +8,13 @@ const { ensureAuthenticated, ensureRights } = require('../config/auth');
 /* 
 * GET pages
 */
-router.get('/', ensureAuthenticated, ensureRights, (req, res) => {
-    Page.find({}).populate('author').exec(function (err, pages) {
-        if (err) return console.log(err)
+router.get('/', ensureAuthenticated, ensureRights, async (req, res) => {
+    try {
+        const pages = await Page.find({}).populate('author').exec()
         res.render('admin/pages', { pages: pages })
-    })
+    } catch (error) {
+        console.log(error)
+    }
 
 })
 
@@ -28,7 +30,7 @@ router.get('/add-page', ensureAuthenticated, ensureRights, (req, res) => {
 /* 
 * POST new page
 */
-router.post('/create-page', (req, res) => {
+router.post('/create-page', async (req, res) => {
     let newPage = new Page({
         title: req.body.title,
         slug:
@@ -39,43 +41,40 @@ router.post('/create-page', (req, res) => {
         author: req.user.id,
         sorting: 100
     });
-    Page.findOne({ slug: newPage.slug }, function (err, page) {
+
+    try {
+        const page = await Page.findOne({ slug: newPage.slug })
         if (page) {
             res.send({ status: "error", msg: "Page title already exists" })
         } else {
-            newPage.save(function (err) {
-                if (err) {
-                    console.log(err);
-                }
-                Page.find({}).exec(function (err, pages) {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        req.app.locals.pages = pages;
-                    }
-                });
-                res.send({ status: "success", msg: "Page added successfuly" })
-            })
+            await newPage.save()
+            const pages = await Page.find({})
+            req.app.locals.pages = pages;
+            res.send({ status: "success", msg: "Page added successfuly" })
         }
-    })
+    } catch (error) {
+
+    }
 })
 
 
 /* 
 * GET edit page
 */
-router.get('/edit-page/:id', ensureAuthenticated, ensureRights, (req, res) => {
-    Page.findById({ "_id": ObjectId(req.params.id) }, function (err, page) {
-        if (err) return console.log(err)
+router.get('/edit-page/:id', ensureAuthenticated, ensureRights, async (req, res) => {
+    try {
+        const page = await Page.findById({ "_id": ObjectId(req.params.id) })
         res.render('admin/edit-page', { page: page })
-    })
+    } catch (error) {
+        console.log(error)
+    }
 })
 
 
 /* 
 * POST edit page
 */
-router.post('/edit-page', (req, res) => {
+router.post('/edit-page', async (req, res) => {
     let title = req.body.title;
     let slug =
         req.body.slug.replace(/\s+/g, '-').toLowerCase() == ''
@@ -83,32 +82,26 @@ router.post('/edit-page', (req, res) => {
             : req.body.slug.replace(/\s+/g, '-').toLowerCase()
     let content = req.body.content
     let id = req.body._id;
-    Page.findOne({ slug: slug, _id: { $ne: id } }, function (err, page) {
+
+    try {
+        const page = await Page.findOne({ slug: slug, _id: { $ne: id } })
         if (page) {
             res.send({ status: "error", msg: "Page title already exists" })
         } else {
-            Page.findById(id, function (err, page) {
-                if (err) return console.log(err)
-                page.title = title;
-                page.slug = slug;
-                page.content = content
-                page.updatedBy = req.user.id
-                page.updatedAt = new Date()
-                page.save(function (err) {
-                    if (err) return console.log(err)
-                    Page.find({}).exec(function (err, pages) {
-                        if (err) {
-                            console.log(err);
-                        } else {
-                            req.app.locals.pages = pages;
-                        }
-                    });
-                    res.send({ status: "success", msg: "Page updated successfuly" })
-                })
-            })
+            const page = await Page.findById(id)
+            page.title = title;
+            page.slug = slug;
+            page.content = content
+            page.updatedBy = req.user.id
+            page.updatedAt = new Date()
+            await page.save()
+            const pages = await Page.find({})
+            req.app.locals.pages = pages;
+            res.send({ status: "success", msg: "Page updated successfuly" })
         }
-
-    })
+    } catch (error) {
+        console.log(error)
+    }
 
 })
 
@@ -116,17 +109,16 @@ router.post('/edit-page', (req, res) => {
 /* 
 * POST delete page
 */
-router.post('/delete-page', (req, res) => {
-    Page.findByIdAndRemove({ "_id": ObjectId(req.body._id) }, function (err) {
-        Page.find({}).exec(function (err, pages) {
-            if (err) {
-                console.log(err);
-            } else {
-                req.app.locals.pages = pages;
-            }
-        });
+router.post('/delete-page', async (req, res) => {
+    const id = req.body._id
+    try {
+        await Page.findByIdAndRemove({ "_id": ObjectId(id) })
+        const pages = await Page.find({})
+        req.app.locals.pages = pages;
         res.send({ status: "success", msg: "Page removed successfuly" })
-    })
+    } catch (error) {
+        console.log(error)
+    }
 })
 
 

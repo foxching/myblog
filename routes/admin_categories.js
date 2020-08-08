@@ -8,12 +8,13 @@ const { ensureAuthenticated, ensureRights } = require('../config/auth');
 /* 
 * GET categories
 */
-router.get('/', ensureAuthenticated, ensureRights, (req, res) => {
-
-    Category.find({}).populate('author').exec(function (err, categories) {
-        if (err) return console.log(err)
+router.get('/', ensureAuthenticated, ensureRights, async (req, res) => {
+    try {
+        const categories = await Category.find({}).populate('author').exec()
         res.render('admin/categories', { categories: categories })
-    })
+    } catch (error) {
+        console.log(error)
+    }
 })
 
 /* 
@@ -26,89 +27,82 @@ router.get('/add-category', ensureAuthenticated, ensureRights, (req, res) => {
 /* 
 * POST new category
 */
-router.post('/add-category', (req, res) => {
+router.post('/add-category', async (req, res) => {
     let newCategory = new Category({
         title: req.body.title,
         slug: req.body.title.replace(/\s+/g, '-').toLowerCase(),
     });
-    Category.findOne({ slug: newCategory.slug }, function (err, category) {
+    try {
+        const category = await Category.findOne({ "slug": newCategory.slug })
         if (category) {
             res.send({ status: "error", msg: "Category title already exists" })
         } else {
-            newCategory.save(function (err) {
-                if (err) {
-                    console.log(err);
-                }
-                Category.find(function (err, categories) {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        req.app.locals.categories = categories;
-                    }
-                });
-                res.send({ status: "success", msg: "Category added successfuly" })
-            })
+            await newCategory.save()
+            const categories = await Category.find()
+            req.app.locals.categories = categories
+            res.send({ status: "success", msg: "Category added successfuly" })
         }
-    })
+    } catch (error) {
+        console.log(error)
+    }
 })
 
 /* 
 * GET edit category
 */
-router.get('/edit-category/:id', ensureAuthenticated, ensureRights, (req, res) => {
-    Category.findById({ "_id": ObjectId(req.params.id) }, function (err, category) {
+router.get('/edit-category/:id', ensureAuthenticated, ensureRights, async (req, res) => {
+    const id = req.params.id
+    try {
+        const category = await Category.findById({ "_id": ObjectId(id) })
         res.render('admin/edit-category', { category: category })
-    })
+    } catch (error) {
+        console.log(error)
+    }
+
 })
 
 /* 
 * POST edit category
 */
-router.post('/edit-category', (req, res) => {
+router.post('/edit-category', async (req, res) => {
     let title = req.body.title;
     let slug = title.replace(/\s+/g, '-').toLowerCase();
     let id = req.body._id;
-    Category.findOne({ slug: slug, _id: { $ne: id } }, function (err, category) {
+
+    try {
+        const category = await Category.findOne({ "slug": slug, "_id": { $ne: id } })
         if (category) {
             res.send({ status: "error", msg: "Category title already exists" })
         } else {
-            Category.findById(id, function (err, category) {
-                if (err) return console.log(err)
-                category.title = title;
-                category.slug = slug;
-                category.updatedAt = new Date()
-                category.save(function (err) {
-                    if (err) return console.log(err)
-                    Category.find(function (err, categories) {
-                        if (err) {
-                            console.log(err);
-                        } else {
-                            req.app.locals.categories = categories;
-                        }
-                    });
-                    res.send({ status: "success", msg: "Category updated successfuly" })
-                })
-            })
-        }
+            let category = await Category.findById(id)
+            category.title = title;
+            category.slug = slug;
+            category.updatedAt = new Date()
+            await category.save()
+            const categories = await Category.find()
+            req.app.locals.categories = categories
+            res.send({ status: "success", msg: "Category updated successfuly" })
 
-    })
+        }
+    } catch (error) {
+        console.log(error)
+    }
 
 })
 
 /* 
 * POST delete category
 */
-router.post('/delete-category', (req, res) => {
-    Category.findByIdAndRemove({ "_id": ObjectId(req.body._id) }, function (err) {
-        Category.find(function (err, categories) {
-            if (err) {
-                console.log(err);
-            } else {
-                req.app.locals.categories = categories;
-            }
-        });
+router.post('/delete-category', async (req, res) => {
+    const id = req.body._id
+    try {
+        await Category.findOneAndRemove({ "_id": ObjectId(id) })
+        const categories = await Category.find()
+        req.app.locals.categories = categories
         res.send({ status: "success", msg: "Category removed successfuly" })
-    })
+    } catch (error) {
+        console.log(error)
+    }
 })
 
 

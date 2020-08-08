@@ -26,7 +26,7 @@ app.use(express.urlencoded({ extended: false }));
 const Page = require('./models/page');
 
 //pages variables
-Page.find({}).exec(function (err, pages) {
+Page.find({}).exec((err, pages) => {
     if (err) {
         console.log(err);
     } else {
@@ -37,7 +37,7 @@ Page.find({}).exec(function (err, pages) {
 //Category Model
 var Category = require('./models/category');
 
-Category.find(function (err, categories) {
+Category.find((err, categories) => {
     if (err) {
         console.log(err);
     } else {
@@ -64,7 +64,7 @@ app.use(passport.session());
 app.use(flash());
 
 // Global variables
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
     res.locals.success_msg = req.flash('success_msg');
     res.locals.error_msg = req.flash('error_msg');
     res.locals.error = req.flash('error');
@@ -96,7 +96,7 @@ app.use('/posts', posts)
 app.use('/', pages)
 
 //mongodb connection
-mongoose.connect('mongodb://localhost/myblog', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb://localhost/myblog', { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
 let db = mongoose.connection;
 
 db.once('open', function () {

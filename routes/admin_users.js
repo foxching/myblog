@@ -12,8 +12,10 @@ const { displayRoles } = require('../util/helper')
 /* 
 * GET all users
 */
-router.get('/', ensureAuthenticated, ensureAdministrator, (req, res) => {
-    Admin.aggregate([
+router.get('/', ensureAuthenticated, ensureAdministrator, async (req, res) => {
+
+     try {
+        const users = await  Admin.aggregate([
         {
             $lookup: {
                 from: 'posts',
@@ -22,9 +24,11 @@ router.get('/', ensureAuthenticated, ensureAdministrator, (req, res) => {
                 as: "userPosts"
             }
         }
-    ], function (err, users) {
-        res.render('admin/users', { users: users })
-    })
+    ])
+    res.render('admin/users', { users: users })
+    } catch (error) {
+        console.log(error)
+    }
 })
 
 /* 
@@ -70,45 +74,43 @@ router.post('/add-user', (req, res) => {
         })
     }
 
-
-
 })
 
 /* 
 * GET edit user
 */
 
-router.get('/edit-user/:id', ensureAuthenticated, ensureAdministrator, (req, res) => {
+router.get('/edit-user/:id', ensureAuthenticated, ensureAdministrator, async (req, res) => {
     const userId = req.params.id
-    Admin.findOne({ "_id": ObjectId(userId) }, function (err, user) {
-        if (err) return console.log(err)
+    try {
+        const user = await Admin.findOne({ "_id": ObjectId(userId) })
         res.render('admin/edit-user', { user: user, roles: displayRoles(), userRole: user.role.replace(/\s+/g, '-').toLowerCase() })
-    })
+    } catch (error) {
+        console.log(error)
+    }
 })
 
 /* 
 * POST edit user
 */
-router.post('/edit-user', (req, res) => {
-    let email = req.body.email
-    let firstname = req.body.firstname;
-    let lastname = req.body.lastname;
-    let role = req.body.role
-    let bio = req.body.bio
-    let userId = req.body._id;
-    Admin.findOne({ email: email, _id: { $ne: userId } }, function (err, user) {
-        if (user) {
+router.post('/edit-user', async (req, res) => {
+    const { email, firstname, lastname, role, bio } = req.body;
+    const id = req.body._id
+    try {
+        const user = await Admin.findOne({ email: email, _id: { $ne: id } })
+        if(user){
             res.send({ status: "error", msg: "Email Add already exists" })
-        } else {
-            Admin.updateOne({ "_id": ObjectId(userId) }, {
+        }else {
+            await  Admin.updateOne({ "_id": ObjectId(id) }, {
                 $set: {
                     "email": email, "firstname": firstname, "lastname": lastname, "role": role, "bio": bio
                 }
-            }, function (err, user) {
-                res.send({ status: "success", msg: "Profile updated successfully" })
             })
+            res.send({ status: "success", msg: "Profile updated successfully" })
         }
-    })
+    } catch (error) {
+        console.log(error)
+    }
 
 
 })
@@ -117,14 +119,14 @@ router.post('/edit-user', (req, res) => {
 * GET delete user
 */
 
-router.get('/delete-user/:id', ensureAuthenticated, ensureAdministrator, (req, res) => {
-    Admin.find({}, function (err, users) {
-        if (err) return console.log(err)
-        Admin.findOne({ "_id": req.params.id }, function (err, userInfo) {
-            if (err) return console.log(err)
-            res.render('admin/notice', { users: users, userInfo, userInfo })
-        })
-    })
+router.get('/delete-user/:id', ensureAuthenticated, ensureAdministrator, async (req, res) => {
+    try {
+        const users = await Admin.find({})
+        const userInfo = await Admin.findOne({ "_id": req.params.id })
+        res.render('admin/notice', { users: users, userInfo, userInfo })
+    } catch (error) {
+        console.log(error)
+    }
 
 
 })
@@ -188,7 +190,7 @@ router.get('/create-pass', ensureAuthenticated, ensureAdministrator, (req, res) 
     res.send(password)
 })
 
-router.post('/update-pass', (req, res) => {
+router.post('/update-pass',  (req, res) => {
     let userId = req.body._id;
     let newPassword = req.body.newPassword
 
