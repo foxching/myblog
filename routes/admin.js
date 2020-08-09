@@ -8,6 +8,7 @@ const Admin = require('../models/user')
 
 const { ensureAuthenticated, forwardAuthenticated, ensureAdministrator, ensureOwnProfile } = require('../config/auth');
 
+
 /* 
 * GET admin login form
 */
@@ -62,7 +63,7 @@ router.post('/register', (req, res) => {
             password2
         });
     } else {
-        Admin.findOne({ email: email }, function (err, user) {
+        Admin.findOne({ email: email }, (err, user) => {
             if (user) {
                 errors.push({ msg: 'Email already exists' });
                 res.render('admin/register', {
@@ -83,7 +84,7 @@ router.post('/register', (req, res) => {
                         if (err) throw err;
                         newUser.password = hash;
                         newUser
-                            .save(function (err, user) {
+                            .save((err, user) => {
                                 if (err) return console.log(err)
                                 req.flash(
                                     'success_msg',
@@ -101,44 +102,55 @@ router.post('/register', (req, res) => {
 /* 
 * GET edit profile
 */
-router.get('/profile/edit/:id', ensureAuthenticated, ensureOwnProfile, (req, res) => {
-    Admin.findOne({ "_id": req.params.id }, function (err, user) {
-        if (err) return console.log(err)
+router.get('/profile/edit/:id', ensureAuthenticated, ensureOwnProfile, async (req, res) => {
+
+    try {
+        const user = await Admin.findOne({ "_id": req.params.id })
         res.render('admin/profile', { user: user })
-    })
+    } catch (error) {
+        console.log(error)
+    }
+
 })
 
-router.post('/profile/edit/', ensureAuthenticated, (req, res) => {
+/* 
+* POST edit profile
+*/
+
+router.post('/profile/edit/', ensureAuthenticated, async (req, res) => {
     let email = req.body.email
     let firstname = req.body.firstname;
     let lastname = req.body.lastname;
-
     let bio = req.body.bio
     let userId = req.body._id;
-    Admin.findOne({ email: email, _id: { $ne: userId } }, function (err, user) {
+
+    try {
+        const user = await Admin.findOne({ email: email, _id: { $ne: userId } })
         if (user) {
             res.send({ status: "error", msg: "Email Add already exists" })
         } else {
-            Admin.updateOne({ "_id": ObjectId(userId) }, {
+            await Admin.updateOne({ "_id": ObjectId(userId) }, {
                 $set: {
                     "email": email, "firstname": firstname, "lastname": lastname, "bio": bio
                 }
-            }, function (err, user) {
-                res.send({ status: "success", msg: "Your profile updated successfully" })
             })
+            res.send({ status: "success", msg: "Your profile updated successfully" })
         }
-    })
+    } catch (error) {
+        console.log(error)
+    }
 })
 
+/* 
+* POST update password
+*/
 router.post('/profile/update-pass', (req, res) => {
     let oldPass = req.body.oldPassword
     let newPass = req.body.newPassword;
     let confirmPass = req.body.confirmPassword;
     let userId = req.body._id
 
-    console.log(req.body)
-
-    Admin.findOne({ "_id": ObjectId(userId) }, function (err, user) {
+    Admin.findOne({ "_id": ObjectId(userId) }, (err, user) => {
         if (err) return console.log(err)
         if (!user) {
             res.send({ status: "error", msg: "User not found" })
@@ -156,7 +168,7 @@ router.post('/profile/update-pass', (req, res) => {
                             if (err) throw err;
                             user.password = hash;
                             user
-                                .save(function (err, user) {
+                                .save((err, user) => {
                                     if (err) return console.log(err)
                                     res.send({ status: "success", msg: "Password updated successfully" })
                                 })
@@ -180,35 +192,47 @@ router.get('/dashboard', ensureAuthenticated, (req, res) => {
 /* 
 * GET admin settings
 */
-router.get('/settings', ensureAuthenticated, ensureAdministrator, (req, res) => {
-    Setting.findOne({}, function (err, setting) {
+router.get('/settings', ensureAuthenticated, ensureAdministrator, async (req, res) => {
+
+    try {
+        const setting = await Setting.findOne({})
         res.render('admin/settings', { setting: setting.post_limit })
-    })
+    } catch (error) {
+        console.log(error)
+    }
 })
 
 
 /* 
 * POST update admin settings
 */
-router.post('/settings', (req, res) => {
-    Setting.updateOne({}, { "post_limit": req.body.post_limit }, { upsert: true }, function (err, document) {
+router.post('/settings', async (req, res) => {
+
+    try {
+        await Setting.updateOne({}, { "post_limit": req.body.post_limit }, { upsert: true })
         res.redirect('/admin/settings')
-    })
+    } catch (error) {
+        console.log(error)
+    }
 })
 
+/* 
+* GET admin error routes
+*/
 router.get('/error', ensureAuthenticated, (req, res) => {
     res.render('admin/error')
-}),
+})
 
 
-    /* 
-    * GET admin redirect logout
-    */
-    router.get('/logout', (req, res) => {
-        req.logout();
-        req.flash('success_msg', 'You are logged out');
-        res.redirect('/admin');
-    })
+
+/* 
+* GET admin redirect logout
+*/
+router.get('/logout', (req, res) => {
+    req.logout();
+    req.flash('success_msg', 'You are logged out');
+    res.redirect('/admin');
+})
 
 
 

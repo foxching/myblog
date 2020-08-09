@@ -5,40 +5,27 @@ const Page = require('../models/page')
 
 
 /* GET page slug. */
-router.get('/:slug', function (req, res, next) {
-    const searchOptions = {};
-    if (req.query.name != null && req.query.name != '') {
-        searchOptions.name = new RegExp(req.query.name, 'i');
-    }
+router.get('/:slug', async (req, res, next) => {
     const slug = req.params.slug
-    Page.findOne({ slug: slug }, function (err, page) {
-        if (err) return console.log(err)
-        if (!page) {
-            res.redirect('/')
-        } else {
-            res.render('index', { title: page.title, content: page.content, searchOptions: req.query })
-        }
-    })
+    try {
+        const page = await Page.findOne({ slug: slug })
+        if (!page) return res.redirect('/')
+        res.render('index', { title: page.title, content: page.content, searchOptions: req.query })
+    } catch (error) {
+        console.log(error)
+    }
 });
 
 /* GET home page. */
-router.get('/', function (req, res, next) {
-    const searchOptions = {};
-    if (req.query.name != null && req.query.name != '') {
-        searchOptions.name = new RegExp(req.query.name, 'i');
-    }
-    Page.findOne({ slug: 'home' }, function (err, page) {
-        if (err) {
-            console.log(err)
-        }
+router.get('/', async (req, res, next) => {
+    try {
+        const page = await Page.findOne({ slug: 'home' })
         res.render('index', { title: "Home", content: page.content, searchOptions: req.query })
-
-    })
-    //res.send('ok')
+    } catch (error) {
+        console.log(error)
+    }
 
 });
-
-
 
 
 
