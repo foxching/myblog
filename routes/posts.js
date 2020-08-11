@@ -10,7 +10,7 @@ const Setting = require('../models/setting')
 /* 
 * GET all posts
 */
-router.get('/', async function (req, res, next) {
+router.get('/', async (req, res, next) => {
     const searchOptions = {};
     if (req.query.title != null && req.query.title != '') {
         searchOptions.title = new RegExp(req.query.title, 'i');
@@ -76,7 +76,7 @@ router.post('/add-comment', async (req, res) => {
 })
 
 /* 
-* POST new reply
+* POST new reply with send email features
 */
 router.post('/add-reply', (req, res) => {
     let reply_id = ObjectId()
@@ -154,7 +154,7 @@ router.get('/author/:username', async (req, res) => {
         const user = await Admin.findOne({ "username": authorSlug })
         let setting = await Setting.findOne({})
         let postLimit = parseInt(setting.post_limit)
-        const page = req.query.page || 1
+        let page = req.query.page || 1
         const posts = await Post.find({ author: user.id })
             .populate('author')
             .sort({ "createdAt": "desc" })

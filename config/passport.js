@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 // Load User model
 const Admin = require('../models/user');
 
-module.exports = function (passport) {
+module.exports = (passport) => {
     passport.use(
         new LocalStrategy({ usernameField: 'email' }, (email, password, done) => {
             // Match user
@@ -28,12 +28,12 @@ module.exports = function (passport) {
         })
     );
 
-    passport.serializeUser(function (user, done) {
+    passport.serializeUser((user, done) => {
         done(null, user.id);
     });
 
-    passport.deserializeUser(function (id, done) {
-        Admin.findById(id, function (err, user) {
+    passport.deserializeUser((id, done) => {
+        Admin.findById(id, (err, user) => {
             done(err, user);
         });
     });

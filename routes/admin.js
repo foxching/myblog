@@ -6,7 +6,7 @@ const ObjectId = require('mongodb').ObjectID
 const Setting = require('../models/setting')
 const Admin = require('../models/user')
 
-const { ensureAuthenticated, forwardAuthenticated, ensureAdministrator, ensureOwnProfile } = require('../config/auth');
+const { ensureAuthenticated, forwardAuthenticated, ensureAdministrator, ensureRights, ensureOwnProfile } = require('../config/auth');
 
 
 /* 

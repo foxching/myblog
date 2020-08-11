@@ -14,18 +14,18 @@ const { displayRoles } = require('../util/helper')
 */
 router.get('/', ensureAuthenticated, ensureAdministrator, async (req, res) => {
 
-     try {
-        const users = await  Admin.aggregate([
-        {
-            $lookup: {
-                from: 'posts',
-                localField: "_id",
-                foreignField: "author",
-                as: "userPosts"
+    try {
+        const users = await Admin.aggregate([
+            {
+                $lookup: {
+                    from: 'posts',
+                    localField: "_id",
+                    foreignField: "author",
+                    as: "userPosts"
+                }
             }
-        }
-    ])
-    res.render('admin/users', { users: users })
+        ])
+        res.render('admin/users', { users: users })
     } catch (error) {
         console.log(error)
     }
@@ -47,7 +47,7 @@ router.post('/add-user', (req, res) => {
     if (password.length < 6) {
         res.send({ status: "error", msg: "Password must be atleast 6 character" })
     } else {
-        Admin.findOne({ email: email }, function (err, user) {
+        Admin.findOne({ email: email }, (err, user) => {
             if (user) {
                 res.send({ status: "error", msg: "Email Add already exists" })
             } else {
@@ -64,7 +64,7 @@ router.post('/add-user', (req, res) => {
                         if (err) throw err;
                         newUser.password = hash;
                         newUser
-                            .save(function (err, user) {
+                            .save((err) => {
                                 if (err) return console.log(err)
                                 res.send({ status: "success", msg: "User added successfully" })
                             })
@@ -98,10 +98,10 @@ router.post('/edit-user', async (req, res) => {
     const id = req.body._id
     try {
         const user = await Admin.findOne({ email: email, _id: { $ne: id } })
-        if(user){
+        if (user) {
             res.send({ status: "error", msg: "Email Add already exists" })
-        }else {
-            await  Admin.updateOne({ "_id": ObjectId(id) }, {
+        } else {
+            await Admin.updateOne({ "_id": ObjectId(id) }, {
                 $set: {
                     "email": email, "firstname": firstname, "lastname": lastname, "role": role, "bio": bio
                 }
@@ -134,48 +134,29 @@ router.get('/delete-user/:id', ensureAuthenticated, ensureAdministrator, async (
 /* 
 * POST delete user with options
 */
-router.post('/delete-user', (req, res) => {
+router.post('/delete-user', async (req, res) => {
     let choice = req.body.option
+    let userId = req.body.userId
+    let otherId = req.body.otherId
 
-    console.log(req.body)
-    if (choice == "option1") {
-        Admin.findByIdAndRemove({ "_id": ObjectId(req.body.userId) }, function (err, user) {
-            if (err) return console.log(err)
-            Post.deleteMany({ "author": ObjectId(req.body.userId) }, function (err) {
-                if (err) return console.log(err)
-                Page.deleteMany({ "author": ObjectId(req.body.userId) }, function (err, page) {
-                    if (err) return console.log(err)
-                    Page.find({}).exec(function (err, pages) {
-                        if (err) {
-                            console.log(err);
-                        } else {
-                            req.app.locals.pages = pages;
-                        }
-                    });
-                    res.send({ status: "success", msg: "User Removed successfully" })
-                })
+    try {
+        if (choice === "option1") {
+            await Admin.findByIdAndRemove({ "_id": ObjectId(userId) })
+            await Post.deleteMany({ "author": ObjectId(userId) })
+            await Page.deleteMany({ "author": ObjectId(userId) })
+            const pages = await Page.find({}).exec()
+            req.app.locals.pages = pages;
+            res.send({ status: "success", msg: "User Removed successfully" })
+        } else {
+            await Admin.findByIdAndRemove({ "_id": ObjectId(userId) })
+            await Post.updateMany({ "author": ObjectId(userId) }, { "author": ObjectId(otherId) })
+            await Page.updateMany({ "author": ObjectId(userId) }, { "author": ObjectId(otherId) })
+            const pages = await Page.find({}).exec()
+            req.app.locals.pages = pages;
+            res.send({ status: "success", msg: "User Removed and all Contents assigned" })
+        }
+    } catch (error) {
 
-            })
-        })
-    } else {
-        Admin.findByIdAndRemove({ "_id": ObjectId(req.body.userId) }, function (err, user) {
-            if (err) return console.log(err)
-            Post.updateMany({ "author": ObjectId(req.body.userId) }, { "author": ObjectId(req.body.user) }, function (err) {
-                if (err) return console.log(err)
-                Page.updateMany({ "author": ObjectId(req.body.userId) }, { "author": ObjectId(req.body.user) }, function (err, page) {
-                    if (err) return console.log(err)
-                    Page.find({}).exec(function (err, pages) {
-                        if (err) {
-                            console.log(err);
-                        } else {
-                            req.app.locals.pages = pages;
-                        }
-                    });
-                    res.send({ status: "success", msg: "User Removed and all Contents assigned" })
-                })
-
-            })
-        })
     }
 })
 
@@ -190,21 +171,24 @@ router.get('/create-pass', ensureAuthenticated, ensureAdministrator, (req, res) 
     res.send(password)
 })
 
-router.post('/update-pass',  (req, res) => {
+/* 
+* POST update  password
+*/
+router.post('/update-pass', (req, res) => {
     let userId = req.body._id;
     let newPassword = req.body.newPassword
 
     if (newPassword == "") {
         res.send({ status: "error", msg: "Please generate a new password!" })
     } else {
-        Admin.findOne({ "_id": ObjectId(userId) }, function (err, user) {
+        Admin.findOne({ "_id": ObjectId(userId) }, (err, user) => {
             if (err) return console.log(err)
             bcrypt.genSalt(10, (err, salt) => {
                 bcrypt.hash(newPassword, salt, (err, hash) => {
                     if (err) throw err;
                     user.password = hash;
                     user
-                        .save(function (err, user) {
+                        .save((err, user) => {
                             if (err) return console.log(err)
                             res.send({ status: "success", msg: "Password updated successfully" })
                         })

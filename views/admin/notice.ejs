@@ -36,7 +36,7 @@
                 </div>
                 <div class="col-md-2">
                     <div class="form-group">
-                        <select class="form-control" name="user">
+                        <select class="form-control" name="otherUser">
                             <% users.forEach(function(user) { %>
                             <% if(user.id != userInfo.id) { %>
                             <option value="<%= user.id %>"><%= user.username %></option>
@@ -60,7 +60,7 @@
             const formData = {
                 option: form.optradio.value,
                 userId: form.userId.value,
-                user: form.user.value
+                otherId: form.otherUser.value
             }
             $.ajax({
                 url: '/admin/users/delete-user',
