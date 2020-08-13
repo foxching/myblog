@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const nodemailer = require('nodemailer')
 const ObjectId = require('mongodb').ObjectID
-const Admin = require('../models/user')
+const User = require('../models/user')
 const Post = require('../models/post')
 const Category = require('../models/category')
 const Setting = require('../models/setting')
@@ -151,7 +151,7 @@ router.get('/category/:category', async (req, res) => {
 router.get('/author/:username', async (req, res) => {
     const authorSlug = req.params.username;
     try {
-        const user = await Admin.findOne({ "username": authorSlug })
+        const user = await User.findOne({ "username": authorSlug })
         let setting = await Setting.findOne({})
         let postLimit = parseInt(setting.post_limit)
         let page = req.query.page || 1

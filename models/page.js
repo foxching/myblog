@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-//Article Schema
+
 const pageSchema = mongoose.Schema({
     title: {
         type: String,
@@ -13,24 +13,16 @@ const pageSchema = mongoose.Schema({
         type: String,
     },
     sorting: { type: Number },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    },
-    updatedAt: {
-        type: Date,
-        default: Date.now
-    },
     author: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: 'Admin'
+        ref: 'User'
     },
     updatedBy: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Admin'
+        ref: 'User'
     },
 
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model('Page', pageSchema);

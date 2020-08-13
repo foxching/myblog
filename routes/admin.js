@@ -4,7 +4,7 @@ const passport = require('passport');
 const bcrypt = require('bcryptjs')
 const ObjectId = require('mongodb').ObjectID
 const Setting = require('../models/setting')
-const Admin = require('../models/user')
+const User = require('../models/user')
 
 const { ensureAuthenticated, forwardAuthenticated, ensureAdministrator, ensureRights, ensureOwnProfile } = require('../config/auth');
 
@@ -63,7 +63,7 @@ router.post('/register', (req, res) => {
             password2
         });
     } else {
-        Admin.findOne({ email: email }, (err, user) => {
+        User.findOne({ email: email }, (err, user) => {
             if (user) {
                 errors.push({ msg: 'Email already exists' });
                 res.render('admin/register', {
@@ -74,7 +74,7 @@ router.post('/register', (req, res) => {
                     password2
                 });
             } else {
-                const newUser = new Admin({
+                const newUser = new User({
                     username,
                     email,
                     password
@@ -105,7 +105,7 @@ router.post('/register', (req, res) => {
 router.get('/profile/edit/:id', ensureAuthenticated, ensureOwnProfile, async (req, res) => {
 
     try {
-        const user = await Admin.findOne({ "_id": req.params.id })
+        const user = await User.findOne({ "_id": req.params.id })
         res.render('admin/profile', { user: user })
     } catch (error) {
         console.log(error)
@@ -125,11 +125,11 @@ router.post('/profile/edit/', ensureAuthenticated, async (req, res) => {
     let userId = req.body._id;
 
     try {
-        const user = await Admin.findOne({ email: email, _id: { $ne: userId } })
+        const user = await User.findOne({ email: email, _id: { $ne: userId } })
         if (user) {
             res.send({ status: "error", msg: "Email Add already exists" })
         } else {
-            await Admin.updateOne({ "_id": ObjectId(userId) }, {
+            await User.updateOne({ "_id": ObjectId(userId) }, {
                 $set: {
                     "email": email, "firstname": firstname, "lastname": lastname, "bio": bio
                 }
@@ -150,7 +150,7 @@ router.post('/profile/update-pass', (req, res) => {
     let confirmPass = req.body.confirmPassword;
     let userId = req.body._id
 
-    Admin.findOne({ "_id": ObjectId(userId) }, (err, user) => {
+    User.findOne({ "_id": ObjectId(userId) }, (err, user) => {
         if (err) return console.log(err)
         if (!user) {
             res.send({ status: "error", msg: "User not found" })

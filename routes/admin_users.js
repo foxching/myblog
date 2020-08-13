@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs')
 const ObjectId = require('mongodb').ObjectID
 const generator = require('generate-password');
-const Admin = require('../models/user')
+const User = require('../models/user')
 const Post = require('../models/post')
 const Page = require('../models/page')
 const { ensureAuthenticated, ensureAdministrator } = require('../config/auth');
@@ -15,7 +15,7 @@ const { displayRoles } = require('../util/helper')
 router.get('/', ensureAuthenticated, ensureAdministrator, async (req, res) => {
 
     try {
-        const users = await Admin.aggregate([
+        const users = await User.aggregate([
             {
                 $lookup: {
                     from: 'posts',
@@ -35,7 +35,7 @@ router.get('/', ensureAuthenticated, ensureAdministrator, async (req, res) => {
 * GET new user
 */
 router.get('/add-user', ensureAuthenticated, ensureAdministrator, (req, res) => {
-    res.render('admin/add-user', { newUser: new Admin(), roles: displayRoles() })
+    res.render('admin/add-user', { newUser: new User(), roles: displayRoles() })
 })
 
 /* 
@@ -47,11 +47,11 @@ router.post('/add-user', (req, res) => {
     if (password.length < 6) {
         res.send({ status: "error", msg: "Password must be atleast 6 character" })
     } else {
-        Admin.findOne({ email: email }, (err, user) => {
+        User.findOne({ email: email }, (err, user) => {
             if (user) {
                 res.send({ status: "error", msg: "Email Add already exists" })
             } else {
-                const newUser = new Admin({
+                const newUser = new User({
                     username,
                     firstname,
                     lastname,
@@ -83,7 +83,7 @@ router.post('/add-user', (req, res) => {
 router.get('/edit-user/:id', ensureAuthenticated, ensureAdministrator, async (req, res) => {
     const userId = req.params.id
     try {
-        const user = await Admin.findOne({ "_id": ObjectId(userId) })
+        const user = await User.findOne({ "_id": ObjectId(userId) })
         res.render('admin/edit-user', { user: user, roles: displayRoles(), userRole: user.role.replace(/\s+/g, '-').toLowerCase() })
     } catch (error) {
         console.log(error)
@@ -97,11 +97,11 @@ router.post('/edit-user', async (req, res) => {
     const { email, firstname, lastname, role, bio } = req.body;
     const id = req.body._id
     try {
-        const user = await Admin.findOne({ email: email, _id: { $ne: id } })
+        const user = await User.findOne({ email: email, _id: { $ne: id } })
         if (user) {
             res.send({ status: "error", msg: "Email Add already exists" })
         } else {
-            await Admin.updateOne({ "_id": ObjectId(id) }, {
+            await User.updateOne({ "_id": ObjectId(id) }, {
                 $set: {
                     "email": email, "firstname": firstname, "lastname": lastname, "role": role, "bio": bio
                 }
@@ -121,8 +121,8 @@ router.post('/edit-user', async (req, res) => {
 
 router.get('/delete-user/:id', ensureAuthenticated, ensureAdministrator, async (req, res) => {
     try {
-        const users = await Admin.find({})
-        const userInfo = await Admin.findOne({ "_id": req.params.id })
+        const users = await User.find({})
+        const userInfo = await User.findOne({ "_id": req.params.id })
         res.render('admin/notice', { users: users, userInfo, userInfo })
     } catch (error) {
         console.log(error)
@@ -141,14 +141,14 @@ router.post('/delete-user', async (req, res) => {
 
     try {
         if (choice === "option1") {
-            await Admin.findByIdAndRemove({ "_id": ObjectId(userId) })
+            await User.findByIdAndRemove({ "_id": ObjectId(userId) })
             await Post.deleteMany({ "author": ObjectId(userId) })
             await Page.deleteMany({ "author": ObjectId(userId) })
             const pages = await Page.find({}).exec()
             req.app.locals.pages = pages;
             res.send({ status: "success", msg: "User Removed successfully" })
         } else {
-            await Admin.findByIdAndRemove({ "_id": ObjectId(userId) })
+            await User.findByIdAndRemove({ "_id": ObjectId(userId) })
             await Post.updateMany({ "author": ObjectId(userId) }, { "author": ObjectId(otherId) })
             await Page.updateMany({ "author": ObjectId(userId) }, { "author": ObjectId(otherId) })
             const pages = await Page.find({}).exec()
@@ -181,7 +181,7 @@ router.post('/update-pass', (req, res) => {
     if (newPassword == "") {
         res.send({ status: "error", msg: "Please generate a new password!" })
     } else {
-        Admin.findOne({ "_id": ObjectId(userId) }, (err, user) => {
+        User.findOne({ "_id": ObjectId(userId) }, (err, user) => {
             if (err) return console.log(err)
             bcrypt.genSalt(10, (err, salt) => {
                 bcrypt.hash(newPassword, salt, (err, hash) => {
