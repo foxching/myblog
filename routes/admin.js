@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 const bcrypt = require('bcryptjs')
 const ObjectId = require('mongodb').ObjectID
+const { check, validationResult } = require('express-validator');
 const Setting = require('../models/setting')
 const User = require('../models/user')
 
@@ -32,78 +33,66 @@ router.post('/login', (req, res, next) => {
 * GET admin register form
 */
 router.get('/register', forwardAuthenticated, (req, res) => {
-    res.render('admin/register')
+    res.render('admin/register', { user: new User() })
 })
 
 /* 
 * POST admin register form
 */
-router.post('/register', (req, res) => {
-    const { username, email, password, password2 } = req.body;
-    let errors = [];
+router.post('/register', [
+    check('email', 'Email required').not().isEmpty().isEmail().withMessage('Email is invalid'),
+    check('username', 'Username required').not().isEmpty().isLength({ min: 5 })
+        .withMessage('Username must be at least 5 chars long'),
+    check('password', 'Password is required').not().isEmpty().isLength({ min: 5 })
+        .withMessage('Password must be at least 5 chars long'),
+    check('password2').custom((value, { req }) => {
+        if (value !== req.body.password) {
+            throw new Error('Password confirmation does not match password');
+        }
+        // Indicates the success of this synchronous custom validator
+        return true;
+    })
+], async (req, res) => {
+    let newUser = new User(req.body)
 
-    if (!username || !email || !password || !password2) {
-        errors.push({ msg: 'Please enter all fields' });
-    }
+    let errors = validationResult(req);
 
-    if (password != password2) {
-        errors.push({ msg: 'Passwords do not match' });
-    }
-
-    if (password.length < 6) {
-        errors.push({ msg: 'Password must be at least 6 characters' });
-    }
-
-    if (errors.length > 0) {
-        res.render('admin/register', {
-            errors,
-            username,
-            email,
-            password,
-            password2
+    if (!errors.isEmpty()) {
+        return res.render('admin/register', {
+            errors: errors.array(),
+            user: newUser
         });
-    } else {
-        User.findOne({ email: email }, (err, user) => {
-            if (user) {
-                errors.push({ msg: 'Email already exists' });
-                res.render('admin/register', {
-                    errors,
-                    username,
-                    email,
-                    password,
-                    password2
-                });
-            } else {
-                const newUser = new User({
-                    username,
-                    email,
-                    password
-                });
-                bcrypt.genSalt(10, (err, salt) => {
-                    bcrypt.hash(newUser.password, salt, (err, hash) => {
-                        if (err) throw err;
-                        newUser.password = hash;
-                        newUser
-                            .save((err, user) => {
-                                if (err) return console.log(err)
-                                req.flash(
-                                    'success_msg',
-                                    'You are now registered and can log in'
-                                );
-                                res.redirect('/admin');
-                            })
-                    });
-                });
-            }
-        })
     }
+
+    try {
+        const userFound = await User.findOne({ email: newUser.email })
+        if (userFound) {
+            req.flash('error_msg', 'Email is taken');
+            res.render('admin/register', {
+                error: req.flash('error_msg'),
+                user: newUser
+            });
+        } else {
+            await newUser.save()
+            req.flash(
+                'success_msg',
+                'You are now registered and can log in'
+            );
+            res.redirect('/admin');
+        }
+    } catch (error) {
+        console.log(error)
+    }
+
+
+
+
 })
 
 /* 
 * GET edit profile
 */
 router.get('/profile/edit/:id', ensureAuthenticated, ensureOwnProfile, async (req, res) => {
-
     try {
         const user = await User.findOne({ "_id": req.params.id })
         res.render('admin/profile', { user: user })
@@ -144,40 +133,38 @@ router.post('/profile/edit/', ensureAuthenticated, async (req, res) => {
 /* 
 * POST update password
 */
-router.post('/profile/update-pass', (req, res) => {
+router.post('/profile/update-pass', async (req, res) => {
     let oldPass = req.body.oldPassword
     let newPass = req.body.newPassword;
     let confirmPass = req.body.confirmPassword;
     let userId = req.body._id
 
-    User.findOne({ "_id": ObjectId(userId) }, (err, user) => {
-        if (err) return console.log(err)
+    if (newPass != confirmPass) {
+        return res.send({ status: "error", msg: "Passwords dont match" })
+    }
+
+    if (newPass.length < 6) {
+        return res.send({ status: "error", msg: "Password must be at least six characters" })
+    }
+
+
+    try {
+        const user = await User.findOne({ "_id": ObjectId(userId) })
         if (!user) {
             res.send({ status: "error", msg: "User not found" })
         }
-        bcrypt.compare(oldPass, user.password, (err, isMatch) => {
-            if (err) throw err;
-            if (!isMatch) {
-                res.send({ status: "error", msg: "Old Password is incorrect" })
-            } else {
-                if (newPass != confirmPass) {
-                    res.send({ status: "error", msg: "Passwords dont match" })
-                } else {
-                    bcrypt.genSalt(10, (err, salt) => {
-                        bcrypt.hash(newPass, salt, (err, hash) => {
-                            if (err) throw err;
-                            user.password = hash;
-                            user
-                                .save((err, user) => {
-                                    if (err) return console.log(err)
-                                    res.send({ status: "success", msg: "Password updated successfully" })
-                                })
-                        });
-                    });
-                }
-            }
-        });
-    })
+        const isMatch = await bcrypt.compare(oldPass, user.password)
+        if (!isMatch) {
+            res.send({ status: "error", msg: "Old Password is incorrect" })
+        } else {
+            user.password = newPass;
+            await user.save()
+            res.send({ status: "success", msg: "Password updated successfully" })
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
 
 })
 
