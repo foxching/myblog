@@ -39,23 +39,52 @@
 <script>
     //send delete category to server
     function doDeleteCategory(catId) {
-        if (confirm('Are you sure want to delete?')) {
-            $.ajax({
-                url: '/admin/categories/delete-category',
-                method: "POST",
-                data: {
-                    "_id": catId,
+
+        bs4pop.confirm('Are you sure do want to delete this category?', function (sure) { }, {
+            title: 'Confirm Dialog',
+            hideRemove: true,
+            btns: [
+                {
+                    label: 'ok',
+                    onClick() {
+                        $.ajax({
+                            url: '/admin/categories/delete-category',
+                            method: "POST",
+                            data: {
+                                "_id": catId,
+                            },
+                            success: function (response) {
+                                if (response.status === "success") {
+                                    bs4pop.notice(response.msg, {
+                                        type: 'success',
+                                        position: 'bottomright',
+                                        appendType: 'append',
+                                        closeBtn: false,
+                                        className: ''
+                                    })
+                                    setTimeout(function () { window.location.href = "/admin/categories" }, 1000);
+                                } else if (response.status === "error") {
+                                    bs4pop.notice(response.msg, {
+                                        type: 'danger',
+                                        position: 'bottomright',
+                                        appendType: 'append',
+                                        closeBtn: false,
+                                        className: ''
+                                    })
+                                }
+                            }
+                        })
+                    }
                 },
-                success: function (response) {
-                    if (response.status === "success") {
-                        alert(response.msg)
-                        window.location.href = "/admin/categories"
-                    } else if (response.status === "error") {
-                        alert(response.msg)
+                {
+                    label: 'cancel',
+                    className: 'btn-secondary',
+                    onClick(e) {
+                        return e.preventDefault();
                     }
                 }
-            })
-        }
+            ]
+        })
     }
 </script>
 

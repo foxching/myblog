@@ -10,7 +10,7 @@
             <li class="breadcrumb-item active">Settings</li>
         </ol>
         <!-- Settings form -->
-        <form method="POST" action="/admin/settings">
+        <form method="POST" onsubmit="return updateSettings(this)">
             <div class="form-group">
                 <label>Post Limit</label>
                 <input name="post_limit" class="form-control" value="<%= setting %>">
@@ -20,6 +20,44 @@
         </form>
     </div>
 </main>
+
+<!-- AJAX to update settings-->
+
+<script>
+    function updateSettings(form) {
+        const formData = {
+            limit: form.post_limit.value,
+        }
+        $.ajax({
+            url: '/admin/settings',
+            method: "POST",
+            data: formData,
+            success: function (response) {
+                if (response.status === "success") {
+                    bs4pop.notice(response.msg, {
+                        type: 'success',
+                        position: 'bottomright',
+                        appendType: 'append',
+                        closeBtn: false,
+                        className: ''
+                    })
+                    setTimeout(function () { window.location.reload() }, 1000);
+                } else if (response.status === "error") {
+                    bs4pop.notice(response.msg, {
+                        type: 'danger',
+                        position: 'bottomright',
+                        appendType: 'append',
+                        closeBtn: false,
+                        className: ''
+                    })
+                }
+            }
+        })
+        return false
+    }
+
+</script>
+
 
 <!-- footer -->
 <%- include('../layouts/adminfooter.ejs') %>

@@ -57,7 +57,7 @@ router.post('/add-post', async (req, res) => {
             const post = await newPost.save()
             res.send({
                 status: "success",
-                msg: "Posted Successfully",
+                msg: "Post added Successfully",
                 _id: post._id,
                 createdAt: post.createdAt,
                 author: req.user.username,

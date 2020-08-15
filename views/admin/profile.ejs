@@ -9,6 +9,7 @@
             <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
             <li class="breadcrumb-item active">Edit</li>
         </ol>
+
         <!-- Nav tabs -->
         <ul class="nav nav-tabs">
             <li class="nav-item">
@@ -112,10 +113,23 @@
             data: formData,
             success: function (response) {
                 if (response.status === "success") {
-                    alert(response.msg)
-                    window.location.reload()
+                    bs4pop.notice(response.msg, {
+                        type: 'success',
+                        position: 'bottomright',
+                        appendType: 'append',
+                        closeBtn: false,
+                        className: ''
+                    })
+                    setTimeout(function () { window.location.reload() }, 1000);
                 } else if (response.status === "error") {
-                    alert(response.msg)
+                    bs4pop.notice(response.msg, {
+                        type: 'danger',
+                        position: 'bottomright',
+                        appendType: 'append',
+                        closeBtn: false,
+                        className: ''
+                    })
+                    setTimeout(function () { window.location.reload() }, 1000);
                 }
             }
         })
@@ -135,17 +149,32 @@
             },
             success: function (response) {
                 if (response.status === "success") {
-                    alert(response.msg)
+                    bs4pop.notice(response.msg, {
+                        type: 'success',
+                        position: 'bottomright',
+                        appendType: 'append',
+                        closeBtn: false,
+                        className: ''
+                    })
                     form.oldPassword.value = ''
                     form.newPassword.value = ''
                     form.confirmPassword.value = ''
                 } else if (response.status === "error") {
-                    alert(response.msg)
+                    bs4pop.notice(response.msg, {
+                        type: 'danger',
+                        position: 'bottomright',
+                        appendType: 'append',
+                        closeBtn: false,
+                        className: ''
+                    })
+
                 }
             }
         })
         return false
     }
+
+
 </script>
 
 <!-- footer -->

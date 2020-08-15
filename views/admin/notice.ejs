@@ -55,29 +55,62 @@
 <!-- AJAX to delete user -->
 <script>
     //send delete user to server
-    function doDeleteUser(form) {
-        if (confirm('Are you sure want to delete?')) {
-            const formData = {
-                option: form.optradio.value,
-                userId: form.userId.value,
-                otherId: form.otherUser.value
-            }
-            $.ajax({
-                url: '/admin/users/delete-user',
-                method: "POST",
-                data: formData,
-                success: function (response) {
-                    if (response.status === "success") {
-                        alert(response.msg)
-                        window.location.href = "/admin/users"
-                    } else if (response.status === "error") {
-                        alert(response.msg)
+    let userId = '<%= userInfo.id %>'
+    function doDeleteUser(form, ) {
+
+
+        bs4pop.confirm('Are you sure do want to delete this post?', function (sure) { }, {
+            title: 'Confirm Dialog',
+            hideRemove: true,
+            btns: [
+                {
+                    label: 'ok',
+                    onClick() {
+                        const formData = {
+                            option: form.optradio.value,
+                            userId: userId,
+                            otherId: form.otherUser.value
+                        }
+                        $.ajax({
+                            url: '/admin/users/delete-user',
+                            method: "POST",
+                            data: formData,
+                            success: function (response) {
+                                if (response.status === "success") {
+                                    bs4pop.notice(response.msg, {
+                                        type: 'success',
+                                        position: 'bottomright',
+                                        appendType: 'append',
+                                        closeBtn: false,
+                                        className: ''
+                                    })
+                                    setTimeout(function () { window.location.href = "/admin/users" }, 1000);
+                                } else if (response.status === "error") {
+                                    bs4pop.notice(response.msg, {
+                                        type: 'danger',
+                                        position: 'bottomright',
+                                        appendType: 'append',
+                                        closeBtn: false,
+                                        className: ''
+                                    })
+
+                                }
+                            }
+                        })
+                    }
+                },
+                {
+                    label: 'cancel',
+                    className: 'btn-secondary',
+                    onClick(e) {
+                        return e.preventDefault();
                     }
                 }
-            })
-            return false
-        }
+            ]
 
+
+        })
+        return false
     }
 </script>
 

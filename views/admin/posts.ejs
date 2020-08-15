@@ -54,25 +54,56 @@
     //socket variable
     let socket = io();
     //send delete post to server
-    function doDeletePost(postId, image) {
-        if (confirm('Are you sure want to delete?')) {
-            $.ajax({
-                url: '/admin/posts/delete-post',
-                method: "POST",
-                data: {
-                    "_id": postId, "image": image
+    function doDeletePost(postId, image, e) {
+
+        bs4pop.confirm('Are you sure do want to delete this post?', function (sure) { }, {
+            title: 'Confirm Dialog',
+            hideRemove: true,
+            btns: [
+                {
+                    label: 'ok',
+                    onClick() {
+                        $.ajax({
+                            url: '/admin/posts/delete-post',
+                            method: "POST",
+                            data: {
+                                "_id": postId, "image": image
+                            },
+                            success: function (response) {
+                                if (response.status === "success") {
+                                    bs4pop.notice(response.msg, {
+                                        type: 'success',
+                                        position: 'bottomright',
+                                        appendType: 'append',
+                                        closeBtn: false,
+                                        className: ''
+                                    })
+                                    socket.emit('delete_post', postId)
+                                    setTimeout(function () { window.location.href = "/admin/posts" }, 1000);
+                                } else if (response.status === "error") {
+                                    bs4pop.notice(response.msg, {
+                                        type: 'danger',
+                                        position: 'bottomright',
+                                        appendType: 'append',
+                                        closeBtn: false,
+                                        className: ''
+                                    })
+                                }
+                            }
+                        })
+                    }
                 },
-                success: function (response) {
-                    if (response.status === "success") {
-                        alert(response.msg)
-                        socket.emit('delete_post', postId)
-                        window.location.href = "/admin/posts"
-                    } else if (response.status === "error") {
-                        alert(response.msg)
+                {
+                    label: 'cancel',
+                    className: 'btn-secondary',
+                    onClick(e) {
+                        return e.preventDefault();
                     }
                 }
-            })
-        }
+            ]
+
+
+        })
     }
 </script>
 

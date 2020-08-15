@@ -46,23 +46,53 @@
 <script>
     //send delete page to server
     function doDeletePage(pageId) {
-        if (confirm('Are you sure want to delete?')) {
-            $.ajax({
-                url: '/admin/pages/delete-page',
-                method: "POST",
-                data: {
-                    "_id": pageId,
+        bs4pop.confirm('Are you sure do want to delete this page?', function (sure) { }, {
+            title: 'Confirm Dialog',
+            hideRemove: true,
+            btns: [
+                {
+                    label: 'ok',
+                    onClick() {
+                        $.ajax({
+                            url: '/admin/pages/delete-page',
+                            method: "POST",
+                            data: {
+                                "_id": pageId,
+                            },
+                            success: function (response) {
+                                if (response.status === "success") {
+                                    bs4pop.notice(response.msg, {
+                                        type: 'success',
+                                        position: 'bottomright',
+                                        appendType: 'append',
+                                        closeBtn: false,
+                                        className: ''
+                                    })
+                                    setTimeout(function () { window.location.href = "/admin/pages" }, 1000);
+                                } else if (response.status === "error") {
+                                    bs4pop.notice(response.msg, {
+                                        type: 'danger',
+                                        position: 'bottomright',
+                                        appendType: 'append',
+                                        closeBtn: false,
+                                        className: ''
+                                    })
+                                }
+                            }
+                        })
+                    }
                 },
-                success: function (response) {
-                    if (response.status === "success") {
-                        alert(response.msg)
-                        window.location.href = "/admin/pages"
-                    } else if (response.status === "error") {
-                        alert(response.msg)
+                {
+                    label: 'cancel',
+                    className: 'btn-secondary',
+                    onClick(e) {
+                        return e.preventDefault();
                     }
                 }
-            })
-        }
+            ]
+
+
+        })
 
     }
 </script>

@@ -73,10 +73,22 @@
             data: formData,
             success: function (response) {
                 if (response.status === "success") {
-                    alert(response.msg)
-                    window.location.href = "/admin/users"
+                    bs4pop.notice(response.msg, {
+                        type: 'success',
+                        position: 'bottomright',
+                        appendType: 'append',
+                        closeBtn: false,
+                        className: ''
+                    })
+                    setTimeout(function () { window.location.href = "/admin/users" }, 1000);
                 } else if (response.status === "error") {
-                    alert(response.msg)
+                    bs4pop.notice(response.msg, {
+                        type: 'danger',
+                        position: 'bottomright',
+                        appendType: 'append',
+                        closeBtn: false,
+                        className: ''
+                    })
                 }
             },
         })

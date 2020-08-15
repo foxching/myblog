@@ -196,8 +196,8 @@ router.get('/settings', ensureAuthenticated, ensureAdministrator, async (req, re
 router.post('/settings', async (req, res) => {
 
     try {
-        await Setting.updateOne({}, { "post_limit": req.body.post_limit }, { upsert: true })
-        res.redirect('/admin/settings')
+        await Setting.updateOne({}, { "post_limit": req.body.limit }, { upsert: true })
+        res.send({ status: "success", msg: "Setting updated successfully" })
     } catch (error) {
         console.log(error)
     }

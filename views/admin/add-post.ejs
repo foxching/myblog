@@ -95,15 +95,27 @@
             data: formData,
             success: function (response) {
                 if (response.status === "success") {
-                    alert(response.msg)
+                    bs4pop.notice(response.msg, {
+                        type: 'success',
+                        position: 'bottomright',
+                        appendType: 'append',
+                        closeBtn: false,
+                        className: ''
+                    })
                     formData._id = response._id
                     formData.createdAt = response.createdAt
                     formData.author = response.author
                     formData.slug = response.slug
                     socket.emit("new_post", formData)
-                    window.location.href = "/admin/posts"
+                    setTimeout(function () { window.location.href = "/admin/posts" }, 1000);
                 } else if (response.status === "error") {
-                    alert(response.msg)
+                    bs4pop.notice(response.msg, {
+                        type: 'danger',
+                        position: 'bottomright',
+                        appendType: 'append',
+                        closeBtn: false,
+                        className: ''
+                    })
                 }
             },
 
