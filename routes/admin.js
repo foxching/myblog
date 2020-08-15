@@ -4,7 +4,7 @@ const passport = require('passport');
 const bcrypt = require('bcryptjs')
 const ObjectId = require('mongodb').ObjectID
 const { check, validationResult } = require('express-validator');
-const Setting = require('../models/setting')
+
 const User = require('../models/user')
 
 const { ensureAuthenticated, forwardAuthenticated, ensureAdministrator, ensureRights, ensureOwnProfile } = require('../config/auth');
@@ -176,32 +176,7 @@ router.get('/dashboard', ensureAuthenticated, (req, res) => {
     res.render('admin/dashboard')
 })
 
-/* 
-* GET admin settings
-*/
-router.get('/settings', ensureAuthenticated, ensureAdministrator, async (req, res) => {
 
-    try {
-        const setting = await Setting.findOne({})
-        res.render('admin/settings', { setting: setting.post_limit })
-    } catch (error) {
-        console.log(error)
-    }
-})
-
-
-/* 
-* POST update admin settings
-*/
-router.post('/settings', async (req, res) => {
-
-    try {
-        await Setting.updateOne({}, { "post_limit": req.body.limit }, { upsert: true })
-        res.send({ status: "success", msg: "Setting updated successfully" })
-    } catch (error) {
-        console.log(error)
-    }
-})
 
 /* 
 * GET admin error routes

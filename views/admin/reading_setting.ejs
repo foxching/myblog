@@ -4,20 +4,27 @@
 <!-- Settings Column -->
 <main>
     <div class="container-fluid">
-        <h1 class="mt-4">Settings</h1>
+        <h1 class="mt-4">Reading Settings</h1>
         <ol class="breadcrumb mb-4">
             <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
             <li class="breadcrumb-item active">Settings</li>
         </ol>
         <!-- Settings form -->
         <form method="POST" onsubmit="return updateSettings(this)">
-            <div class="form-group">
-                <label>Post Limit</label>
-                <input name="post_limit" class="form-control" value="<%= setting %>">
+            <div class="form-group row">
+                <label for="inputEmail3" class="col-sm-2 col-form-label">No. of Posts</label>
+                <div class="col-sm-4">
+                    <input type="text" name="post_limit" class="form-control" value="<%= limit %>">
+                </div>
             </div>
-
-            <input type="submit" class="btn btn-info" value="Save Settings">
+            <br>
+            <div class="form-group row">
+                <div class="col-sm-10">
+                    <button type="submit" class="btn btn-primary">Save Setting</button>
+                </div>
+            </div>
         </form>
+
     </div>
 </main>
 
@@ -29,7 +36,7 @@
             limit: form.post_limit.value,
         }
         $.ajax({
-            url: '/admin/settings',
+            url: '/admin/settings/reading',
             method: "POST",
             data: formData,
             success: function (response) {
