@@ -30,6 +30,8 @@ router.get('/', async (req, res, next) => {
             .exec()
         res.render('user/posts', {
             posts: posts,
+            dateFormat: setting.dateFormat,
+            timeFormat: setting.timeFormat,
             current: page,
             postPages: Math.ceil(count / postLimit),
             searchOptions: req.query,
@@ -47,8 +49,14 @@ router.get('/', async (req, res, next) => {
 */
 router.get('/:slug', async (req, res) => {
     try {
+        const setting = await Setting.findOne({})
         const post = await Post.findOne({ slug: req.params.slug }).populate('author').exec()
-        res.render('user/post', { post: post, searchOptions: req.query })
+        res.render('user/post', {
+            post: post,
+            dateFormat: setting.dateFormat,
+            timeFormat: setting.timeFormat,
+            searchOptions: req.query
+        })
     } catch (error) {
         console.log(error)
     }
@@ -134,6 +142,8 @@ router.get('/category/:category', async (req, res) => {
             .exec()
         res.render('user/category', {
             posts: posts,
+            dateFormat: setting.dateFormat,
+            timeFormat: setting.timeFormat,
             current: page,
             category: categorySlug,
             author: "",
@@ -166,6 +176,8 @@ router.get('/author/:username', async (req, res) => {
             .exec()
         res.render('user/category', {
             posts: posts,
+            dateFormat: setting.dateFormat,
+            timeFormat: setting.timeFormat,
             current: page,
             category: "",
             author: authorSlug,

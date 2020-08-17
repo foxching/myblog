@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 const bcrypt = require('bcryptjs')
 const ObjectId = require('mongodb').ObjectID
+const Setting = require('../models/setting')
 const { check, validationResult } = require('express-validator');
 
 const User = require('../models/user')
@@ -65,6 +66,7 @@ router.post('/register', [
     }
 
     try {
+        const setting = await Setting.findOne({})
         const userFound = await User.findOne({ email: newUser.email })
         if (userFound) {
             req.flash('error_msg', 'Email is taken');
@@ -73,6 +75,7 @@ router.post('/register', [
                 user: newUser
             });
         } else {
+            newUser.role = setting.defaultRole
             await newUser.save()
             req.flash(
                 'success_msg',

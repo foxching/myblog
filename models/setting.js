@@ -1,18 +1,24 @@
 const mongoose = require('mongoose');
 
 const settingSchema = mongoose.Schema({
-    title: {
+    blogTitle: {
         type: String,
         default: "My Blog"
     },
-    user_role: {
+    defaultRole: {
         type: String,
-        required: true
+        default: "subscriber"
     },
     post_limit: {
         type: String,
         required: true
     },
-});
+    dateFormat: {
+        type: String,
+    },
+    timeFormat: {
+        type: String
+    }
+}, { timestamps: true });
 
 module.exports = mongoose.model('Setting', settingSchema);

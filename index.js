@@ -45,6 +45,17 @@ Category.find((err, categories) => {
     }
 });
 
+//Setting Model
+var Setting = require('./models/setting');
+
+Setting.findOne({}, (err, setting) => {
+    if (err) {
+        console.log(err);
+    } else {
+        app.locals.setting = setting;
+    }
+});
+
 
 //express session
 app.use(

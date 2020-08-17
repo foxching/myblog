@@ -25,7 +25,7 @@
                         <a href="/posts/<%= post.slug %>" class="btn btn-primary">Read More &rarr;</a>
                     </div>
                     <div class="card-footer text-muted">
-                        Posted on <%- format(post.createdAt, 'MMMM d yyyy') %> by
+                        Posted on <%- format(post.createdAt, dateFormat) %> by
                         <a href="/posts/author/<%= post.author.username %>"><%= post.author.username %></a>
                     </div>
                 </div>
