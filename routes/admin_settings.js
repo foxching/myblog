@@ -13,7 +13,7 @@ const { ensureAuthenticated, ensureAdministrator } = require('../config/auth');
 router.get('/reading', ensureAuthenticated, ensureAdministrator, async (req, res) => {
     try {
         const setting = await Setting.findOne({})
-        res.render('admin/reading_setting', { limit: setting.post_limit })
+        res.render('admin/reading_setting', { headerTitle: "Reading Settings", limit: setting.post_limit })
     } catch (error) {
         console.log(error)
     }
@@ -41,7 +41,7 @@ router.post('/reading', async (req, res) => {
 router.get('/general', ensureAuthenticated, ensureAdministrator, async (req, res) => {
     try {
         const setting = await Setting.findOne({})
-        res.render('admin/general_setting', { setting: setting, roles: displayRoles(), })
+        res.render('admin/general_setting', { headerTitle: "General Settings", setting: setting, roles: displayRoles(), })
     } catch (error) {
         console.log(error)
     }

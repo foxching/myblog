@@ -11,7 +11,7 @@ const { ensureAuthenticated, ensureRights } = require('../config/auth');
 router.get('/', ensureAuthenticated, ensureRights, async (req, res) => {
     try {
         const pages = await Page.find({}).populate('author').exec()
-        res.render('admin/pages', { pages: pages })
+        res.render('admin/pages', { headerTitle: "Pages", pages: pages })
     } catch (error) {
         console.log(error)
     }
@@ -23,7 +23,7 @@ router.get('/', ensureAuthenticated, ensureRights, async (req, res) => {
 * GET new page
 */
 router.get('/add-page', ensureAuthenticated, ensureRights, (req, res) => {
-    res.render('admin/add-page', { newPage: new Page() })
+    res.render('admin/add-page', { headerTitle: "New Page", newPage: new Page() })
 })
 
 
@@ -64,7 +64,7 @@ router.post('/create-page', async (req, res) => {
 router.get('/edit-page/:id', ensureAuthenticated, ensureRights, async (req, res) => {
     try {
         const page = await Page.findById({ "_id": ObjectId(req.params.id) })
-        res.render('admin/edit-page', { page: page })
+        res.render('admin/edit-page', { headerTitle: "Edit Page", page: page })
     } catch (error) {
         console.log(error)
     }

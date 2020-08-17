@@ -15,7 +15,7 @@ const { ensureAuthenticated, forwardAuthenticated, ensureAdministrator, ensureRi
 * GET admin login form
 */
 router.get('/', forwardAuthenticated, (req, res) => {
-    res.render('admin/login')
+    res.render('admin/login', { headerTitle: "Login" })
 })
 
 
@@ -34,7 +34,7 @@ router.post('/login', (req, res, next) => {
 * GET admin register form
 */
 router.get('/register', forwardAuthenticated, (req, res) => {
-    res.render('admin/register', { user: new User() })
+    res.render('admin/register', { headerTitle: "Register", user: new User() })
 })
 
 /* 
@@ -86,11 +86,16 @@ router.post('/register', [
     } catch (error) {
         console.log(error)
     }
-
-
-
-
 })
+
+/* 
+* GET forgot password
+*/
+
+router.get('/forgot-password', (req, res) => {
+    res.render('admin/password', { headerTitle: "Forgot Password", })
+})
+
 
 /* 
 * GET edit profile
@@ -98,7 +103,7 @@ router.post('/register', [
 router.get('/profile/edit/:id', ensureAuthenticated, ensureOwnProfile, async (req, res) => {
     try {
         const user = await User.findOne({ "_id": req.params.id })
-        res.render('admin/profile', { user: user })
+        res.render('admin/profile', { headerTitle: "Profile", user: user })
     } catch (error) {
         console.log(error)
     }
@@ -176,7 +181,7 @@ router.post('/profile/update-pass', async (req, res) => {
 * GET admin dashboard
 */
 router.get('/dashboard', ensureAuthenticated, (req, res) => {
-    res.render('admin/dashboard')
+    res.render('admin/dashboard', { headerTitle: "Dashboard" })
 })
 
 
@@ -185,7 +190,7 @@ router.get('/dashboard', ensureAuthenticated, (req, res) => {
 * GET admin error routes
 */
 router.get('/error', ensureAuthenticated, (req, res) => {
-    res.render('admin/error')
+    res.render('admin/error', { headerTitle: "Invalid" })
 })
 
 

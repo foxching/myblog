@@ -25,7 +25,7 @@ router.get('/', ensureAuthenticated, ensureAdministrator, async (req, res) => {
                 }
             }
         ])
-        res.render('admin/users', { users: users })
+        res.render('admin/users', { headerTitle: "Users", users: users })
     } catch (error) {
         console.log(error)
     }
@@ -35,7 +35,7 @@ router.get('/', ensureAuthenticated, ensureAdministrator, async (req, res) => {
 * GET new user
 */
 router.get('/add-user', ensureAuthenticated, ensureAdministrator, (req, res) => {
-    res.render('admin/add-user', { newUser: new User(), roles: displayRoles() })
+    res.render('admin/add-user', { headerTitle: "New User", newUser: new User(), roles: displayRoles() })
 })
 
 /* 
@@ -84,7 +84,7 @@ router.get('/edit-user/:id', ensureAuthenticated, ensureAdministrator, async (re
     const userId = req.params.id
     try {
         const user = await User.findOne({ "_id": ObjectId(userId) })
-        res.render('admin/edit-user', { user: user, roles: displayRoles(), userRole: user.role.replace(/\s+/g, '-').toLowerCase() })
+        res.render('admin/edit-user', { headerTitle: "Edit User", user: user, roles: displayRoles(), userRole: user.role.replace(/\s+/g, '-').toLowerCase() })
     } catch (error) {
         console.log(error)
     }
@@ -123,7 +123,7 @@ router.get('/delete-user/:id', ensureAuthenticated, ensureAdministrator, async (
     try {
         const users = await User.find({})
         const userInfo = await User.findOne({ "_id": req.params.id })
-        res.render('admin/notice', { users: users, userInfo, userInfo })
+        res.render('admin/notice', { headerTitle: "Delete User", users: users, userInfo, userInfo })
     } catch (error) {
         console.log(error)
     }

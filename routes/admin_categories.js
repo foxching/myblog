@@ -11,7 +11,7 @@ const { ensureAuthenticated, ensureRights } = require('../config/auth');
 router.get('/', ensureAuthenticated, ensureRights, async (req, res) => {
     try {
         const categories = await Category.find({}).populate('author').exec()
-        res.render('admin/categories', { categories: categories })
+        res.render('admin/categories', { headerTitle: "Categories", categories: categories })
     } catch (error) {
         console.log(error)
     }
@@ -21,7 +21,7 @@ router.get('/', ensureAuthenticated, ensureRights, async (req, res) => {
 * GET new category
 */
 router.get('/add-category', ensureAuthenticated, ensureRights, (req, res) => {
-    res.render('admin/add-category', { newCategory: new Category() })
+    res.render('admin/add-category', { headerTitle: "New Category", newCategory: new Category() })
 })
 
 /* 
@@ -54,7 +54,7 @@ router.get('/edit-category/:id', ensureAuthenticated, ensureRights, async (req, 
     const id = req.params.id
     try {
         const category = await Category.findById({ "_id": ObjectId(id) })
-        res.render('admin/edit-category', { category: category })
+        res.render('admin/edit-category', { headerTitle: "Edit Category", category: category })
     } catch (error) {
         console.log(error)
     }

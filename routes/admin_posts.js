@@ -15,7 +15,7 @@ router.get('/', ensureAuthenticated, ensureRights, async (req, res) => {
 
     try {
         const posts = await Post.find({}).populate('author').exec()
-        res.render('admin/posts', { posts: posts })
+        res.render('admin/posts', { headerTitle: "Posts", posts: posts })
     } catch (error) {
         console.log(error)
     }
@@ -29,7 +29,7 @@ router.get('/', ensureAuthenticated, ensureRights, async (req, res) => {
 router.get('/add-post', ensureAuthenticated, ensureRights, async (req, res) => {
     try {
         const categories = await Category.find({})
-        res.render('admin/add-post', { newPost: new Post(), categories: categories })
+        res.render('admin/add-post', { headerTitle: "New Post", newPost: new Post(), categories: categories })
     } catch (error) {
         console.log(error)
     }
@@ -78,7 +78,7 @@ router.get('/edit-post/:id', ensureAuthenticated, ensureRights, async (req, res)
     try {
         const categories = await Category.find({})
         const post = await Post.findById({ "_id": ObjectId(id) })
-        res.render('admin/edit-post', { post: post, categories: categories, category: post.category.replace(/\s+/g, '-').toLowerCase(), })
+        res.render('admin/edit-post', { headerTitle: "Edit Post", post: post, categories: categories, category: post.category.replace(/\s+/g, '-').toLowerCase(), })
     } catch (error) {
         console.log(error)
     }
