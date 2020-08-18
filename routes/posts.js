@@ -91,6 +91,7 @@ router.post('/add-comment', async (req, res) => {
 */
 router.post('/add-reply', (req, res) => {
     let reply_id = ObjectId()
+    console.log(req.body)
     Post.updateOne(
         { "_id": new ObjectId(req.body.post_id), "comments._id": new ObjectId(req.body.comment_id) },
         { $push: { "comments.$.replies": { _id: reply_id, username: req.body.username, reply: req.body.reply } } },

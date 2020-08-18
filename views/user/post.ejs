@@ -44,15 +44,20 @@
                 <div class="card-body">
                     <form method="POST" onsubmit="return doComment(this)">
                         <input type="hidden" id="post_id" name="post_id" value="<%= post._id %>">
+                        <% if(userLogin) { %>
+                        <input type="hidden" id="username" name="username" value="<%= userLogin.username %>">
+                        <input type="hidden" id="email" name="email" value="<%= userLogin.email %>">
+                        <% } else { %>
                         <div class="form-group">
                             <input type="text" name="username" class="form-control" placeholder="Username">
                         </div>
                         <div class="form-group">
                             <input type="text" name="email" class="form-control" placeholder="Email">
                         </div>
+                        <% } %>
                         <div class="form-group">
-                            <textarea name="comment" class="form-control" rows="3"
-                                placeholder="Comment here.."></textarea>
+                            <textarea name="comment" class="form-control" rows="3" placeholder="Comment here.."
+                                required></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
@@ -143,13 +148,15 @@
         return false
     }
 
+    let postId = '<%= post._id %>'
     //socket func()
     socket.on('new_comment', (commentData) => {
-        //console.log(commentData)
+        console.log(commentData)
         if (commentData.post_id != $("#post_id").val()) {
             return
         }
         let html = "";
+
         html += '<div class="media mb-4" >';
         html += '<img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">';
         html += '<div class="media-body">';
@@ -157,6 +164,23 @@
         html += ' ' + commentData.comment + '';
         html += '</div>';
         html += '</div>';
+
+
+        html += '<div class="col-md-8 mt-2">';
+        html += '<form method="POST" onsubmit="return doReply(this)">';
+        html += '<input type="hidden" name="post_id" value=' + commentData.post_id + ' ">';
+        html += '<input type="hidden" name="comment_id" value= ' + commentData._id + ' ">';
+        html += '<input type = "hidden" name = "comment_email" value = ' + commentData.email + '" >';
+
+        html += '<div class="form-group">';
+        html += '<input type="text" name="username" class="form-control" placeholder="Your Name">';
+        html += '</div >';
+        html += '<div class="form-group">';
+        html += '<textarea name="reply" class="form-control" placeholder="Enter Reply"></textarea>';
+        html += '</div>';
+        html += '<input type="submit" class="btn btn-info btn-sm" value="Reply">';
+        html += ' </form >';
+        html += '</div >';
         $("#comments").prepend(html)
 
     })
@@ -175,7 +199,7 @@
             method: "POST",
             data: formData,
             success: function (response) {
-                //alert(response.text)
+                alert(response.text)
                 formData._id = response._id
                 socket.emit("new_reply", formData)
                 form.username.value = ""

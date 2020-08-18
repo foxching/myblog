@@ -60,6 +60,7 @@ router.post('/register', [
 
     if (!errors.isEmpty()) {
         return res.render('admin/register', {
+            headerTitle: "Register",
             errors: errors.array(),
             user: newUser
         });
@@ -71,6 +72,7 @@ router.post('/register', [
         if (userFound) {
             req.flash('error_msg', 'Email is taken');
             res.render('admin/register', {
+                headerTitle: "Register",
                 error: req.flash('error_msg'),
                 user: newUser
             });
