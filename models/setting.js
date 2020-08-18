@@ -13,6 +13,9 @@ const settingSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    allowRegister: {
+        type: Boolean
+    },
     dateFormat: {
         type: String,
     },

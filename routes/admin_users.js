@@ -41,37 +41,31 @@ router.get('/add-user', ensureAuthenticated, ensureAdministrator, (req, res) => 
 /* 
 * POST admin add user
 */
-router.post('/add-user', (req, res) => {
+router.post('/add-user', async (req, res) => {
     const { username, email, firstname, lastname, role, password } = req.body;
 
     if (password.length < 6) {
-        res.send({ status: "error", msg: "Password must be atleast 6 character" })
-    } else {
-        User.findOne({ email: email }, (err, user) => {
-            if (user) {
-                res.send({ status: "error", msg: "Email Add already exists" })
-            } else {
-                const newUser = new User({
-                    username,
-                    firstname,
-                    lastname,
-                    email,
-                    role,
-                    password
-                });
-                bcrypt.genSalt(10, (err, salt) => {
-                    bcrypt.hash(newUser.password, salt, (err, hash) => {
-                        if (err) throw err;
-                        newUser.password = hash;
-                        newUser
-                            .save((err) => {
-                                if (err) return console.log(err)
-                                res.send({ status: "success", msg: "User added successfully" })
-                            })
-                    });
-                });
-            }
-        })
+        return res.send({ status: "error", msg: "Password must be atleast 6 character" })
+    }
+
+    try {
+        const user = await User.findOne({ email: email })
+        if (user) {
+            res.send({ status: "error", msg: "Email Add already exists" })
+        } else {
+            const newUser = new User({
+                username,
+                firstname,
+                lastname,
+                email,
+                role,
+                password
+            });
+            await newUser.save()
+            res.send({ status: "success", msg: "User added successfully" })
+        }
+    } catch (error) {
+        console.log(error)
     }
 
 })
@@ -174,30 +168,26 @@ router.get('/create-pass', ensureAuthenticated, ensureAdministrator, (req, res) 
 /* 
 * POST update  password
 */
-router.post('/update-pass', (req, res) => {
+router.post('/update-pass', async (req, res) => {
     let userId = req.body._id;
     let newPassword = req.body.newPassword
 
-    if (newPassword == "") {
-        res.send({ status: "error", msg: "Please generate a new password!" })
-    } else {
-        User.findOne({ "_id": ObjectId(userId) }, (err, user) => {
-            if (err) return console.log(err)
-            bcrypt.genSalt(10, (err, salt) => {
-                bcrypt.hash(newPassword, salt, (err, hash) => {
-                    if (err) throw err;
-                    user.password = hash;
-                    user
-                        .save((err, user) => {
-                            if (err) return console.log(err)
-                            res.send({ status: "success", msg: "Password updated successfully" })
-                        })
-                });
-            });
 
-        })
+    if (newPassword == "") {
+        return res.send({ status: "error", msg: "Please generate a new password!" })
     }
 
+    try {
+        const user = await User.findOne({ "_id": ObjectId(userId) })
+        if (!user) {
+            res.send({ status: "error", msg: "User not found" })
+        }
+        user.password = newPassword
+        await user.save()
+        res.send({ status: "success", msg: "Password updated successfully" })
+    } catch (error) {
+        console.log(error)
+    }
 
 })
 

@@ -143,6 +143,10 @@ io.on("connection", (socket) => {
 
 })
 
+app.use((req, res, next) => {
+    res.render('404')
+})
+
 http.listen(3000, () => {
     console.log('Server is running at port')
 })

@@ -51,9 +51,10 @@ router.get('/general', ensureAuthenticated, ensureAdministrator, async (req, res
 * POST general settings
 */
 router.post('/general', async (req, res) => {
+    //console.log(req.body)
     try {
         await Setting.updateOne({},
-            { "blogTitle": req.body.blogTitle, "defaultRole": req.body.defaultRole, "dateFormat": req.body.dateFormat, "timeFormat": req.body.timeFormat }, { upsert: true })
+            { "blogTitle": req.body.blogTitle, "defaultRole": req.body.defaultRole, "allowRegister": req.body.allowRegister, "dateFormat": req.body.dateFormat, "timeFormat": req.body.timeFormat }, { upsert: true })
         const setting = await Setting.findOne({})
         req.app.locals.setting = setting;
         res.send({ status: "success", msg: "Setting updated successfully" })

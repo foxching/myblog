@@ -29,6 +29,7 @@ router.get('/', async (req, res, next) => {
         const count = await Post.countDocuments(searchOptions)
             .exec()
         res.render('user/posts', {
+            headerTitle: 'Posts',
             posts: posts,
             dateFormat: setting.dateFormat,
             timeFormat: setting.timeFormat,
@@ -51,7 +52,9 @@ router.get('/:slug', async (req, res) => {
     try {
         const setting = await Setting.findOne({})
         const post = await Post.findOne({ slug: req.params.slug }).populate('author').exec()
+        if (!post) return res.render('404')
         res.render('user/post', {
+            headerTitle: post.title,
             post: post,
             dateFormat: setting.dateFormat,
             timeFormat: setting.timeFormat,
@@ -128,6 +131,7 @@ router.get('/category/:category', async (req, res) => {
     const categorySlug = req.params.category;
     try {
         const category = await Category.findOne({ slug: categorySlug })
+        if (!category) return res.render('404')
         const setting = await Setting.findOne({})
         let postLimit = parseInt(setting.post_limit)
         let page = req.query.page || 1
@@ -141,6 +145,7 @@ router.get('/category/:category', async (req, res) => {
             .countDocuments()
             .exec()
         res.render('user/category', {
+            headerTitle: categorySlug,
             posts: posts,
             dateFormat: setting.dateFormat,
             timeFormat: setting.timeFormat,
@@ -162,6 +167,7 @@ router.get('/author/:username', async (req, res) => {
     const authorSlug = req.params.username;
     try {
         const user = await User.findOne({ "username": authorSlug })
+        if (!user) return res.render('404')
         let setting = await Setting.findOne({})
         let postLimit = parseInt(setting.post_limit)
         let page = req.query.page || 1
@@ -175,6 +181,7 @@ router.get('/author/:username', async (req, res) => {
             .countDocuments()
             .exec()
         res.render('user/category', {
+            headerTitle: authorSlug,
             posts: posts,
             dateFormat: setting.dateFormat,
             timeFormat: setting.timeFormat,

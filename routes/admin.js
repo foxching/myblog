@@ -190,7 +190,7 @@ router.get('/dashboard', ensureAuthenticated, (req, res) => {
 * GET admin error routes
 */
 router.get('/error', ensureAuthenticated, (req, res) => {
-    res.render('admin/error', { headerTitle: "Invalid" })
+    res.render('401')
 })
 
 
