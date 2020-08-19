@@ -56,13 +56,15 @@
                         </div>
                         <% } %>
                         <div class="form-group">
-                            <textarea name="comment" class="form-control" rows="3" placeholder="Comment here.."
-                                required></textarea>
+                            <textarea name="comment" class="form-control" rows="3"
+                                placeholder="Comment here.."></textarea>
                         </div>
+                        <div id="message"></div>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>
             </div>
+
 
             <!-- Comments -->
             <div id="comments">
@@ -96,13 +98,13 @@
                                 <input type="hidden" name="post_id" value="<%= post._id %>">
                                 <input type="hidden" name="comment_id" value="<%= comment._id %>">
                                 <input type="hidden" name="comment_email" value="<%= comment.email %>">
-
                                 <div class="form-group">
                                     <input type="text" name="username" class="form-control" placeholder="Your Name">
                                 </div>
                                 <div class="form-group">
                                     <textarea name="reply" class="form-control" placeholder="Enter Reply"></textarea>
                                 </div>
+                                <div id="replymessage"></div>
                                 <input type="submit" class="btn btn-info btn-sm" value="Reply">
                             </form>
                         </div>
@@ -138,40 +140,56 @@
             method: "POST",
             data: formData,
             success: function (response) {
-                formData._id = response._id
-                socket.emit("new_comment", formData)
-                form.username.value = ""
-                form.email.value = ""
-                form.comment.value = ""
+                if (response.status === "success") {
+                    let msg = ""
+                    msg += '<div class="alert alert-success p-0">' + response.msg + ' </div>';
+                    $('#message').html(msg);
+                    setTimeout(function () { $(".alert").remove(); }, 2000);
+
+                    formData._id = response._id
+                    socket.emit("new_comment", formData)
+
+                    form.username.value = ""
+                    form.email.value = ""
+                    form.comment.value = ""
+
+                } else {
+                    let msg = ""
+                    msg += '<div class="alert alert-danger p-0">' + response.msg + ' </div>';
+                    $('#message').html(msg);
+                    setTimeout(function () { $(".alert").remove(); }, 2000);
+                }
+
             }
         })
         return false
     }
 
-    let postId = '<%= post._id %>'
+
     //socket func()
     socket.on('new_comment', (commentData) => {
         console.log(commentData)
         if (commentData.post_id != $("#post_id").val()) {
             return
         }
+
+
         let html = "";
 
-        html += '<div class="media mb-4" >';
+        html += '<div class="media mb-4">';
         html += '<img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">';
         html += '<div class="media-body">';
         html += '<h5 class="mt-0"> ' + commentData.username + ' </h5>';
         html += ' ' + commentData.comment + '';
-        html += '</div>';
-        html += '</div>';
 
+        html += '<div id="comments-' + commentData._id + '">';
+        html += '</div>';
 
         html += '<div class="col-md-8 mt-2">';
         html += '<form method="POST" onsubmit="return doReply(this)">';
         html += '<input type="hidden" name="post_id" value=' + commentData.post_id + ' ">';
         html += '<input type="hidden" name="comment_id" value= ' + commentData._id + ' ">';
         html += '<input type = "hidden" name = "comment_email" value = ' + commentData.email + '" >';
-
         html += '<div class="form-group">';
         html += '<input type="text" name="username" class="form-control" placeholder="Your Name">';
         html += '</div >';
@@ -181,6 +199,10 @@
         html += '<input type="submit" class="btn btn-info btn-sm" value="Reply">';
         html += ' </form >';
         html += '</div >';
+
+        html += '</div>';
+        html += '</div>';
+
         $("#comments").prepend(html)
 
     })
@@ -199,11 +221,23 @@
             method: "POST",
             data: formData,
             success: function (response) {
-                alert(response.text)
-                formData._id = response._id
-                socket.emit("new_reply", formData)
-                form.username.value = ""
-                form.reply.value = ""
+                if (response.status === "success") {
+                    let msg = ""
+                    msg += '<div class="alert alert-success p-0">' + response.msg + ' </div>';
+                    $('#replymessage').html(msg);
+                    setTimeout(function () { $(".alert").remove(); }, 2000);
+
+                    formData._id = response._id
+                    socket.emit("new_reply", formData)
+                    form.username.value = ""
+                    form.reply.value = ""
+
+                } else {
+                    let msg = ""
+                    msg += '<div class="alert alert-danger p-0">' + response.msg + ' </div>';
+                    $('#replymessage').html(msg);
+                    setTimeout(function () { $(".alert").remove(); }, 2000);
+                }
             }
         })
         return false
@@ -211,7 +245,7 @@
 
     //socket func()
     socket.on('new_reply', (replyData) => {
-        //console.log(replyData)
+        console.log(replyData)
         let html = ""
         html += '<div class="media mb-4">';
         html += '<img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">';

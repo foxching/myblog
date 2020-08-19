@@ -73,13 +73,20 @@ router.get('/:slug', async (req, res) => {
 router.post('/add-comment', async (req, res) => {
     let comment_id = ObjectId()
     let postId = req.body.post_id
+
+    const { email, username, comment } = req.body
+    if (email == "" || username == "" || comment == "") {
+        return res.send({ status: "error", msg: "All fields must not be empty" })
+    }
+
     try {
-        const result = await Post.updateOne(
+        await Post.updateOne(
             { "_id": new ObjectId(postId) },
             { $push: { comments: { _id: comment_id, username: req.body.username, email: req.body.email, comment: req.body.comment } } })
         res.send({
-            text: "Comment Successfully",
-            _id: result.id
+            status: "success",
+            msg: "Comment Posted",
+            _id: comment_id
         });
     } catch (error) {
         console.log(error)
@@ -91,11 +98,17 @@ router.post('/add-comment', async (req, res) => {
 */
 router.post('/add-reply', (req, res) => {
     let reply_id = ObjectId()
-    console.log(req.body)
+
+    const { username, reply } = req.body
+    if (username == "" || reply == "") {
+        return res.send({ status: "error", msg: "Value must not be empty" })
+    }
+
+
     Post.updateOne(
         { "_id": new ObjectId(req.body.post_id), "comments._id": new ObjectId(req.body.comment_id) },
         { $push: { "comments.$.replies": { _id: reply_id, username: req.body.username, reply: req.body.reply } } },
-        (err, result) => {
+        (err, ) => {
             if (err) {
                 console.log(err)
             } else {
@@ -116,7 +129,8 @@ router.post('/add-reply', (req, res) => {
 
                 transporter.sendMail(mailOptions, (err, info) => {
                     res.send({
-                        text: "Replied Successfully",
+                        status: "success",
+                        msg: "Replied Successfully",
                         _id: reply_id
                     })
                 })

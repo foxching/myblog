@@ -46,7 +46,20 @@
     <div class="card my-4">
         <h5 class="card-header">Meta</h5>
         <div class="card-body">
-            <a href="/admin">Login</a>
+            <ul class="list-unstyled mb-0">
+                <% if(userLogin) { %>
+                <li>
+                    <a href="/admin/user-logout">Logout</a>
+                </li>
+                <% } else { %>
+                <li>
+                    <a href="/admin">Login</a>
+                </li>
+                <% } %>
+                <li>
+                    <a href="#">Entries Feed</a>
+                </li>
+            </ul>
         </div>
     </div>
 

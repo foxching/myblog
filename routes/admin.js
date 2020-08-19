@@ -206,6 +206,15 @@ router.get('/logout', (req, res) => {
     res.redirect('/admin');
 })
 
+/* 
+* GET user redirect logout
+*/
+router.get('/user-logout', (req, res) => {
+    req.logout();
+    res.redirect('/');
+})
+
+
 
 
 module.exports = router
