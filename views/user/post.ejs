@@ -70,7 +70,7 @@
             <div id="comments">
                 <% if(post.comments) { %>
                 <% post.comments = post.comments.reverse() %>
-                <% post.comments.forEach((comment) => { %>
+                <% post.comments.forEach((comment, index) => { %>
                 <div class="media mb-4">
                     <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
                     <div class="media-body">
@@ -87,6 +87,7 @@
                                     <h5 class="mt-0"><%= reply.username %></h5>
                                     <%= reply.reply %>
                                 </div>
+
                             </div>
                             <% }) %>
                             <% } %>
@@ -104,7 +105,7 @@
                                 <div class="form-group">
                                     <textarea name="reply" class="form-control" placeholder="Enter Reply"></textarea>
                                 </div>
-                                <div id="replymessage"></div>
+                                <div id="<%= comment._id %>"></div>
                                 <input type="submit" class="btn btn-info btn-sm" value="Reply">
                             </form>
                         </div>
@@ -173,7 +174,6 @@
             return
         }
 
-
         let html = "";
 
         html += '<div class="media mb-4">';
@@ -196,6 +196,7 @@
         html += '<div class="form-group">';
         html += '<textarea name="reply" class="form-control" placeholder="Enter Reply"></textarea>';
         html += '</div>';
+        html += ' <div id="' + commentData._id + '"></div>';
         html += '<input type="submit" class="btn btn-info btn-sm" value="Reply">';
         html += ' </form >';
         html += '</div >';
@@ -216,15 +217,17 @@
             reply: form.reply.value,
             comment_email: form.comment_email.value
         }
+
         $.ajax({
             url: '/posts/add-reply',
             method: "POST",
             data: formData,
             success: function (response) {
+                console.log(response._id)
                 if (response.status === "success") {
                     let msg = ""
                     msg += '<div class="alert alert-success p-0">' + response.msg + ' </div>';
-                    $('#replymessage').html(msg);
+                    $('#' + response.commentId + '').html(msg);
                     setTimeout(function () { $(".alert").remove(); }, 2000);
 
                     formData._id = response._id
@@ -235,7 +238,7 @@
                 } else {
                     let msg = ""
                     msg += '<div class="alert alert-danger p-0">' + response.msg + ' </div>';
-                    $('#replymessage').html(msg);
+                    $('#' + response.commentId + '').html(msg);
                     setTimeout(function () { $(".alert").remove(); }, 2000);
                 }
             }
@@ -245,8 +248,9 @@
 
     //socket func()
     socket.on('new_reply', (replyData) => {
-        console.log(replyData)
+
         let html = ""
+        // html += '<div>' + replyData.comment_id + '</div>';
         html += '<div class="media mb-4">';
         html += '<img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">';
         html += '<div class="media-body">';

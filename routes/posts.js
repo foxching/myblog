@@ -101,7 +101,7 @@ router.post('/add-reply', (req, res) => {
 
     const { username, reply } = req.body
     if (username == "" || reply == "") {
-        return res.send({ status: "error", msg: "Value must not be empty" })
+        return res.send({ status: "error", msg: "Value must not be empty", commentId: req.body.comment_id })
     }
 
 
@@ -131,6 +131,7 @@ router.post('/add-reply', (req, res) => {
                     res.send({
                         status: "success",
                         msg: "Replied Successfully",
+                        commentId: req.body.comment_id,
                         _id: reply_id
                     })
                 })
