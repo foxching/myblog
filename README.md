@@ -10,7 +10,7 @@ A full blog based in Nodejs/Express with frontend/backend features. almost ident
 
 
 ### Frontend
-![dark theme](https://user-images.githubusercontent.com/41753498/92038966-d315d980-eda6-11ea-8379-32f18c0ac1f8.png)
+![dark theme](https://user-images.githubusercontent.com/41753498/92039254-60f1c480-eda7-11ea-9deb-7a70dc4e858d.png)
 
 
 
