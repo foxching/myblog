@@ -21,7 +21,7 @@
             <hr>
 
             <!-- Date/Time -->
-            <p>Posted on <%- format(post.createdAt, dateFormat + " 'at' " + timeFormat) %></p>
+            <p>Posted on <%- formatDate(post.createdAt, dateFormat + " 'at' " + timeFormat) %></p>
 
             <hr>
             <% if(post.image) { %>

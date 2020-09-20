@@ -1,7 +1,7 @@
 
 # MyBlog
 
-A full blog based in Nodejs/Express with frontend/backend features. almost identical features with any popular CMS platform like Wordpress
+A full blown blog based in Nodejs/Express with frontend/backend features.
 
 ## Screenshot
 
@@ -40,6 +40,9 @@ To serve in the browser
 ```sh
 $ npm  start
 ```
+## Notice
+
+This project is still under development. some features are not yet fully completed..Feel free to contribute!
 
 ## License
 MIT 

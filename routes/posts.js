@@ -6,6 +6,7 @@ const User = require('../models/user')
 const Post = require('../models/post')
 const Category = require('../models/category')
 const Setting = require('../models/setting')
+const { formatDate, truncate } = require('../util/helper')
 
 /* 
 * GET all posts
@@ -31,6 +32,8 @@ router.get('/', async (req, res, next) => {
         res.render('user/posts', {
             headerTitle: 'Posts',
             posts: posts,
+            formatDate,
+            truncate,
             dateFormat: setting.dateFormat,
             timeFormat: setting.timeFormat,
             current: page,
@@ -56,6 +59,7 @@ router.get('/:slug', async (req, res) => {
         res.render('user/post', {
             headerTitle: post.title,
             post: post,
+            formatDate,
             dateFormat: setting.dateFormat,
             timeFormat: setting.timeFormat,
             searchOptions: req.query
@@ -163,6 +167,8 @@ router.get('/category/:category', async (req, res) => {
         res.render('user/category', {
             headerTitle: categorySlug,
             posts: posts,
+            formatDate,
+            truncate,
             dateFormat: setting.dateFormat,
             timeFormat: setting.timeFormat,
             current: page,
@@ -199,6 +205,8 @@ router.get('/author/:username', async (req, res) => {
         res.render('user/category', {
             headerTitle: authorSlug,
             posts: posts,
+            formatDate,
+            truncate,
             dateFormat: setting.dateFormat,
             timeFormat: setting.timeFormat,
             current: page,

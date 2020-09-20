@@ -50,28 +50,28 @@
                             <input class="form-check-input" type="radio" name="date" id="date" value="MMMM d yyyy"
                                 <%= setting.dateFormat == "MMMM d yyyy" ? 'checked' : '' %>>
                             <label class="form-check-label" for="date">
-                                <%- format(Date.now(), "MMMM d yyyy") %> <span class="ml-4">f j Y</span>
+                                <%- formatDate(Date.now(), "MMMM d yyyy") %> <span class="ml-4">f j Y</span>
                             </label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="date" id="date" value="yyyy/MM/dd"
                                 <%= setting.dateFormat == "yyyy/MM/dd" ? 'checked' : '' %>>
                             <label class="form-check-label" for="date">
-                                <%- format(Date.now(), "yyyy/MM/dd") %> <span class="ml-4">Y-m-d</span>
+                                <%- formatDate(Date.now(), "yyyy/MM/dd") %> <span class="ml-4">Y-m-d</span>
                             </label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="date" id="date" value="MM/dd/yyyy"
                                 <%= setting.dateFormat == "MM/dd/yyyy" ? 'checked' : '' %>>
                             <label class="form-check-label" for="date">
-                                <%- format(Date.now(), "MM/dd/yyyy") %> <span class="ml-4">m/d/y</span>
+                                <%- formatDate(Date.now(), "MM/dd/yyyy") %> <span class="ml-4">m/d/y</span>
                             </label>
                         </div>
                         <div class="form-check disabled">
                             <input class="form-check-input" type="radio" name="date" id="date" value="dd/MM/yyyy"
                                 <%= setting.dateFormat == "dd/MM/yyyy" ? 'checked' : '' %>>
                             <label class="form-check-label" for="date">
-                                <%- format(Date.now(), "dd/MM/yyyy") %><span class="ml-4">d/m/y</span>
+                                <%- formatDate(Date.now(), "dd/MM/yyyy") %><span class="ml-4">d/m/y</span>
                             </label>
                         </div>
                     </div>
@@ -85,21 +85,21 @@
                             <input class="form-check-input" type="radio" name="time" id="time" value="h:mm aaaa"
                                 <%= setting.timeFormat == "h:mm aaaa" ? 'checked' : '' %>>
                             <label class="form-check-label" for="time">
-                                <%- format(Date.now(), "h:mm aaaa") %> <span class="ml-4">g:i a</span>
+                                <%- formatDate(Date.now(), "h:mm aaaa") %> <span class="ml-4">g:i a</span>
                             </label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="time" id="time" value="h:mm aaa"
                                 <%= setting.timeFormat == "h:mm aaa" ? 'checked' : '' %>>
                             <label class="form-check-label" for="time">
-                                <%- format(Date.now(), "h:mm aaa") %> <span class="ml-4">g:i A</span>
+                                <%- formatDate(Date.now(), "h:mm aaa") %> <span class="ml-4">g:i A</span>
                             </label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="time" id="time" value="k:mm"
                                 <%= setting.timeFormat  == "k:mm" ? 'checked' : '' %>>
                             <label class="form-check-label" for="time">
-                                <%- format(Date.now(), "k:mm ") %> <span class="ml-4"> H:i</span>
+                                <%- formatDate(Date.now(), "k:mm ") %> <span class="ml-4"> H:i</span>
                             </label>
                         </div>
 

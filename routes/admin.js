@@ -192,7 +192,7 @@ router.get('/dashboard', ensureAuthenticated, (req, res) => {
 * GET admin error routes
 */
 router.get('/error', ensureAuthenticated, (req, res) => {
-    res.render('401')
+    res.render('error/401')
 })
 
 

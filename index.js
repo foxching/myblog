@@ -1,7 +1,6 @@
 const express = require('express')
 const mongoose = require('mongoose');
 const passport = require('passport');
-const { format } = require('date-fns');
 const flash = require('connect-flash');
 const session = require('express-session')
 const app = express()
@@ -83,12 +82,6 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use((req, res, next) => {
-    res.locals.format = format;
-    next();
-});
-
-
 const pages = require('./routes/pages')
 const admin = require('./routes/admin')
 const posts = require('./routes/posts')
@@ -143,8 +136,8 @@ io.on("connection", (socket) => {
 
 })
 
-app.use((req, res, next) => {
-    res.render('404')
+app.use('*', (req, res, next) => {
+    res.render('error/404')
 })
 
 http.listen(3000, () => {

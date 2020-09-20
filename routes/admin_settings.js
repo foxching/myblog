@@ -3,6 +3,7 @@ const router = express.Router();
 const Setting = require('../models/setting')
 const { displayRoles } = require('../util/helper')
 const { ensureAuthenticated, ensureAdministrator } = require('../config/auth');
+const { formatDate } = require('../util/helper')
 
 
 
@@ -41,7 +42,7 @@ router.post('/reading', async (req, res) => {
 router.get('/general', ensureAuthenticated, ensureAdministrator, async (req, res) => {
     try {
         const setting = await Setting.findOne({})
-        res.render('admin/general_setting', { headerTitle: "General Settings", setting: setting, roles: displayRoles(), })
+        res.render('admin/general_setting', { headerTitle: "General Settings", setting: setting, formatDate, roles: displayRoles(), })
     } catch (error) {
         console.log(error)
     }
