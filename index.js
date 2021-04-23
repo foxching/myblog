@@ -3,10 +3,12 @@ const mongoose = require("mongoose");
 const passport = require("passport");
 const flash = require("connect-flash");
 const session = require("express-session");
+const cors = require("cors");
 const app = express();
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
 
+app.use(cors());
 // Passport Config
 require("./config/passport")(passport);
 
