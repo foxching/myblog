@@ -96,15 +96,16 @@ app.use("/admin", admin);
 app.use("/posts", posts);
 app.use("/", pages);
 
+const dotenv = require("dotenv");
+
+dotenv.config();
+
 //mongodb connection
-mongoose.connect(
-  "mongodb+srv://rechie:iloveRuthy123@mern-blog.ova4i.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false
-  }
-);
+mongoose.connect(process.env.DB_CONNECTION, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false
+});
 let db = mongoose.connection;
 
 db.once("open", function() {
