@@ -142,6 +142,7 @@ app.use("*", (req, res, next) => {
   res.render("error/404");
 });
 
-http.listen(3000, () => {
+const port = process.env.PORT || 5000;
+http.listen(port, () => {
   console.log("Server is running at port");
 });
